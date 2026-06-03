@@ -1,0 +1,125 @@
+{
+  "version": "0.1",
+  "status": "m1-locked-for-planning",
+  "generated_on": "2026-06-02",
+  "tokens": {
+    "colour": {
+      "ink": {
+        "900": "#171414",
+        "700": "#3A3230"
+      },
+      "parchment": {
+        "050": "#FFF8E6",
+        "100": "#F3E7C9"
+      },
+      "stone": {
+        "300": "#A9A39A",
+        "600": "#5E5A54"
+      },
+      "brand": {
+        "oxblood700": "#6B1212",
+        "brass500": "#C99731",
+        "paperWhite": "#FFFDF7"
+      },
+      "status": {
+        "selected": "#0072B2",
+        "success": "#009E73",
+        "warning": "#E69F00",
+        "error": "#D55E00",
+        "info": "#56B4E9",
+        "missing": "#CC79A7",
+        "disabled": "#6F6F6F"
+      },
+      "biome": {
+        "temperate": {
+          "base": "#6F8B4B",
+          "surface": "#A7B879",
+          "shadow": "#39442D",
+          "accent": "#7A5A35",
+          "labelSafeDark": "#24301E"
+        },
+        "desert": {
+          "base": "#C89145",
+          "surface": "#E7C27A",
+          "shadow": "#7A4A21",
+          "accent": "#2E6F7E",
+          "labelSafeDark": "#3D2815"
+        },
+        "tundra": {
+          "base": "#9EB9C7",
+          "surface": "#DCEAF0",
+          "shadow": "#415666",
+          "accent": "#6E8FA8",
+          "labelSafeDark": "#213341"
+        },
+        "volcanic": {
+          "base": "#2D2A2A",
+          "surface": "#5A4540",
+          "shadow": "#151313",
+          "accent": "#E06024",
+          "labelSafeDark": "#FFF0D7"
+        },
+        "oceanic": {
+          "base": "#2E8390",
+          "surface": "#8FC8C0",
+          "shadow": "#1B4655",
+          "accent": "#D7B36A",
+          "labelSafeDark": "#12303B"
+        },
+        "corrupted": {
+          "base": "#4A315F",
+          "surface": "#71508A",
+          "shadow": "#241A2E",
+          "accent": "#A7D946",
+          "labelSafeDark": "#F5E9FF"
+        }
+      }
+    },
+    "typography": {
+      "title": {
+        "fontFamily": "Cinzel SemiBold",
+        "fallback": "Georgia, serif",
+        "sizeSp": [28, 34]
+      },
+      "sectionHeader": {
+        "fontFamily": "Atkinson Hyperlegible Bold",
+        "fallback": "System UI Bold",
+        "sizeSp": [20, 24]
+      },
+      "body": {
+        "fontFamily": "Atkinson Hyperlegible Regular",
+        "fallback": "System UI, Roboto, San Francisco",
+        "sizeSp": [15, 17]
+      },
+      "uiLabel": {
+        "fontFamily": "Atkinson Hyperlegible Medium",
+        "fallback": "System UI Medium",
+        "sizeSp": [14, 16]
+      },
+      "data": {
+        "fontFamily": "JetBrains Mono Medium",
+        "fallback": "SF Mono, Roboto Mono",
+        "sizeSp": [12, 14]
+      }
+    },
+    "spacingPx": [4, 8, 12, 16, 24, 32],
+    "radiusPx": {
+      "button": 8,
+      "input": 8,
+      "card": 12,
+      "bottomSheet": 16
+    },
+    "touchTargetPx": {
+      "minimum": 44,
+      "preferredButtonHeight": 48
+    },
+    "icons": {
+      "gridPx": 24,
+      "strokePx": 2,
+      "cornerRadiusPx": 2,
+      "largeCornerRadiusPx": 4,
+      "strokeCaps": "round",
+      "strokeJoins": "round"
+    }
+  }
+}

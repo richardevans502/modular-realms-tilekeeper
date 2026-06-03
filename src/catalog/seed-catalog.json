@@ -1,0 +1,3708 @@
+[
+  {
+    "tile_type_id": "mr-seed-1x1-floor-wood-cracked",
+    "official_name": "Wood / Cracked Stone",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "cracked-stone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from 20 1x1 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-floor-wood-flagstone",
+    "official_name": "Wood / Flagstone",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "flagstone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from 20 1x1 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-floor-wood-blank",
+    "official_name": "Wood / Blank",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from 20 1x1 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-floor-cracked-flagstone",
+    "official_name": "Cracked Stone / Flagstone",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cracked-stone",
+      "flagstone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from 20 1x1 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-floor-cracked-blank",
+    "official_name": "Cracked Stone / Blank",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cracked-stone",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from 20 1x1 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-floor-flagstone-blank",
+    "official_name": "Flagstone / Blank",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "flagstone",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from 20 1x1 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-2x2-floor-wood-cracked",
+    "official_name": "Wood / Cracked Stone",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 2,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "cracked-stone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x2 floor tiles confirmed by product owner."
+  },
+  {
+    "tile_type_id": "mr-seed-2x2-floor-wood-flagstone",
+    "official_name": "Wood / Flagstone",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 2,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "flagstone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x2 floor tiles confirmed by product owner."
+  },
+  {
+    "tile_type_id": "mr-seed-2x2-floor-wood-blank",
+    "official_name": "Wood / Blank",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 2,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x2 floor tiles confirmed by product owner."
+  },
+  {
+    "tile_type_id": "mr-seed-2x2-floor-cracked-flagstone",
+    "official_name": "Cracked Stone / Flagstone",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 2,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cracked-stone",
+      "flagstone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x2 floor tiles confirmed by product owner."
+  },
+  {
+    "tile_type_id": "mr-seed-2x2-floor-cracked-blank",
+    "official_name": "Cracked Stone / Blank",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 2,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cracked-stone",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x2 floor tiles confirmed by product owner."
+  },
+  {
+    "tile_type_id": "mr-seed-2x2-floor-flagstone-blank",
+    "official_name": "Flagstone / Blank",
+    "product_set_name": "20 1x1 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 2,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "flagstone",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x2 floor tiles confirmed by product owner."
+  },
+  {
+    "tile_type_id": "mr-seed-3x3-floor-wood-cracked",
+    "official_name": "Wood / Cracked Stone",
+    "product_set_name": "Taster Set - 10 3x3 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 3,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 1,
+          "y": 2
+        },
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "cracked-stone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from Taster Set - 10 3x3 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-3x3-floor-wood-flagstone",
+    "official_name": "Wood / Flagstone",
+    "product_set_name": "Taster Set - 10 3x3 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 3,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 1,
+          "y": 2
+        },
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "flagstone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from Taster Set - 10 3x3 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-3x3-floor-wood-blank",
+    "official_name": "Wood / Blank",
+    "product_set_name": "Taster Set - 10 3x3 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 3,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 1,
+          "y": 2
+        },
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wood",
+        "face_name": "Wood",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wood",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from Taster Set - 10 3x3 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-3x3-floor-cracked-flagstone",
+    "official_name": "Cracked Stone / Flagstone",
+    "product_set_name": "Taster Set - 10 3x3 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 3,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 1,
+          "y": 2
+        },
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cracked-stone",
+      "flagstone",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from Taster Set - 10 3x3 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-3x3-floor-cracked-blank",
+    "official_name": "Cracked Stone / Blank",
+    "product_set_name": "Taster Set - 10 3x3 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 3,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 1,
+          "y": 2
+        },
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cracked-stone",
+        "face_name": "Cracked Stone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cracked-stone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cracked-stone",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from Taster Set - 10 3x3 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-3x3-floor-flagstone-blank",
+    "official_name": "Flagstone / Blank",
+    "product_set_name": "Taster Set - 10 3x3 tiles",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 3,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 1,
+          "y": 2
+        },
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-flagstone",
+        "face_name": "Flagstone",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "flagstone",
+          "floor"
+        ]
+      },
+      {
+        "face_id": "face-b-blank",
+        "face_name": "Blank",
+        "role_tags": [
+          "floor"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "east",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "south",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          },
+          {
+            "face": "west",
+            "socket_type": "open-floor",
+            "bidirectional": true,
+            "reason": "floor edge connects to adjacent floor tiles"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "blank",
+          "floor"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "flagstone",
+      "blank",
+      "floor",
+      "double-sided"
+    ],
+    "category": "floor",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; variant from Taster Set - 10 3x3 tiles pack."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-wall-cobble-wattle",
+    "official_name": "Cobblestone / Wattle & Daub",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cobblestone",
+      "wattle-daub",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 1x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-wall-cobble-cobble",
+    "official_name": "Cobblestone / Cobblestone",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cobblestone",
+      "cobblestone",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 1x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-wall-wattle-wattle",
+    "official_name": "Wattle & Daub / Wattle & Daub",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wattle-daub",
+      "wattle-daub",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 1x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-2x1-wall-cobble-wattle",
+    "official_name": "Cobblestone / Wattle & Daub",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cobblestone",
+      "wattle-daub",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-2x1-wall-cobble-cobble",
+    "official_name": "Cobblestone / Cobblestone",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cobblestone",
+      "cobblestone",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-2x1-wall-wattle-wattle",
+    "official_name": "Wattle & Daub / Wattle & Daub",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 2,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wattle-daub",
+      "wattle-daub",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 2x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-3x1-wall-cobble-wattle",
+    "official_name": "Cobblestone / Wattle & Daub",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cobblestone",
+      "wattle-daub",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 3x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-3x1-wall-cobble-cobble",
+    "official_name": "Cobblestone / Cobblestone",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-cobblestone",
+        "face_name": "Cobblestone",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "cobblestone",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "cobblestone",
+      "cobblestone",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 3x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-3x1-wall-wattle-wattle",
+    "official_name": "Wattle & Daub / Wattle & Daub",
+    "product_set_name": "Magnetic Walls Pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 3,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-a-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      },
+      {
+        "face_id": "face-b-wattle-daub",
+        "face_name": "Wattle Daub",
+        "role_tags": [
+          "wall",
+          "divider"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "wall edge forms dungeon boundary"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": true
+        },
+        "theme_tags": [
+          "wattle-daub",
+          "wall"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wattle-daub",
+      "wattle-daub",
+      "wall",
+      "double-sided"
+    ],
+    "category": "wall",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; 3x1 magnetic wall tile variant."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-door-wooden",
+    "official_name": "Wooden Door",
+    "product_set_name": "Wooden Doors - 10 pack",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-wooden-door",
+        "face_name": "Wooden Door",
+        "role_tags": [
+          "doorway",
+          "transition"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "doorway",
+            "bidirectional": true,
+            "reason": "doorway connects separate floor areas"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "door frame blocks east adjacency"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "door frame blocks south adjacency"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "door frame blocks west adjacency"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": false
+        },
+        "theme_tags": [
+          "wood",
+          "doorway"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "wood",
+      "doorway"
+    ],
+    "category": "doorway",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; snap-on wooden door piece."
+  },
+  {
+    "tile_type_id": "mr-seed-1x1-trap-spell-circle",
+    "official_name": "Spell Circle Interactive Trap",
+    "product_set_name": "Spell Circle Interactive Trap",
+    "dimensions": {
+      "unit": "grid-cell",
+      "width": 1,
+      "height": 1,
+      "grid_cells": [
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "faces": [
+      {
+        "face_id": "face-spell-circle",
+        "face_name": "Spell Circle",
+        "role_tags": [
+          "scatter",
+          "trap"
+        ],
+        "edge_sockets": [
+          {
+            "face": "north",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "trap edge blocks adjacency"
+          },
+          {
+            "face": "east",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "trap edge blocks adjacency"
+          },
+          {
+            "face": "south",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "trap edge blocks adjacency"
+          },
+          {
+            "face": "west",
+            "socket_type": "wall",
+            "bidirectional": true,
+            "reason": "trap edge blocks adjacency"
+          }
+        ],
+        "rotation_rules": {
+          "allowed_rotations": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "flip_allowed": false
+        },
+        "theme_tags": [
+          "spell",
+          "trap",
+          "scatter"
+        ]
+      }
+    ],
+    "theme_tags": [
+      "spell",
+      "trap",
+      "scatter"
+    ],
+    "category": "scatter",
+    "catalog_status": "official",
+    "catalog_version": "2026.06.03",
+    "notes": "Real Modular Realms product; interactive trap decal/tile overlay."
+  }
+]

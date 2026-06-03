@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+dist-web/
+android/build/
+ios/build/
+web-build/
+.expo/
+*.apk
+*.aab
+
+# Native
+*.orig
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local env files (but keep the template)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Playwright / E2E
+/playwright-report/
+/test-results/
+
+# Temporary / test artefacts
+*.db-journal
+*.db-shm
+*.db-wal
+/tmp/
+*.tmp
