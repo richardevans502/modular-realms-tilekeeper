@@ -6,6 +6,8 @@ export interface CatalogRepository {
   upsertTileType(tile: TileType): Promise<void>;
   getTileType(id: string): Promise<TileType | null>;
   listTileTypes(): Promise<TileType[]>;
+  searchTileTypes(query: string): Promise<TileType[]>;
+  deleteTileType(id: string): Promise<boolean>;
 }
 
 interface TileTypeRow {
@@ -23,7 +25,25 @@ function bindSql(db: TileKeeperDatabase, sql: string, params: unknown[]): Promis
   return db.runAsync(sql, params);
 }
 
+async function tileExists(db: TileKeeperDatabase, id: string): Promise<boolean> {
+  const row = await db.getFirstAsync<{ id: string }>('SELECT id FROM tile_types WHERE id = ?', [id]);
+  return row !== null;
+}
+
 export function createCatalogRepository(db: TileKeeperDatabase): CatalogRepository {
+  async function listTileTypes(): Promise<TileType[]> {
+    if (!db.getAllAsync) {
+      const row = await db.getFirstAsync<{ tile_json: string | null }>(
+        "SELECT '[' || group_concat(tile_json) || ']' AS tile_json FROM tile_types ORDER BY id",
+      );
+      const json = row?.tile_json ?? '[]';
+      return (JSON.parse(json) as unknown[]).map((tile) => tileTypeSchema.parse(tile) as TileType);
+    }
+
+    const rows = await db.getAllAsync<TileTypeRow>('SELECT tile_json FROM tile_types ORDER BY id');
+    return rows.map((row) => parseTileTypeJson(row.tile_json));
+  }
+
   return {
     async upsertTileType(tile: TileType): Promise<void> {
       const parsedTile = tileTypeSchema.parse(tile);
@@ -57,17 +77,29 @@ export function createCatalogRepository(db: TileKeeperDatabase): CatalogReposito
       return parseTileTypeJson(row.tile_json);
     },
 
-    async listTileTypes(): Promise<TileType[]> {
-      if (!db.getAllAsync) {
-        const row = await db.getFirstAsync<{ tile_json: string | null }>(
-          "SELECT '[' || group_concat(tile_json) || ']' AS tile_json FROM tile_types ORDER BY id",
-        );
-        const json = row?.tile_json ?? '[]';
-        return (JSON.parse(json) as unknown[]).map((tile) => tileTypeSchema.parse(tile) as TileType);
+    listTileTypes,
+
+    async searchTileTypes(query: string): Promise<TileType[]> {
+      const normalizedQuery = query.trim().toLowerCase();
+      if (!normalizedQuery) {
+        return listTileTypes();
       }
 
-      const rows = await db.getAllAsync<TileTypeRow>('SELECT tile_json FROM tile_types ORDER BY id');
-      return rows.map((row) => parseTileTypeJson(row.tile_json));
+      const tiles = await listTileTypes();
+      return tiles.filter((tile) => {
+        const haystack = [tile.id, tile.name, tile.product_set, tile.category, tile.catalog_status, ...tile.tags, ...tile.faces.flatMap((face) => [face.face_name, ...face.role_tags, ...face.theme_tags])]
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(normalizedQuery);
+      });
+    },
+
+    async deleteTileType(id: string): Promise<boolean> {
+      if (!(await tileExists(db, id))) {
+        return false;
+      }
+      await bindSql(db, 'DELETE FROM tile_types WHERE id = ?', [id]);
+      return true;
     },
   };
 }

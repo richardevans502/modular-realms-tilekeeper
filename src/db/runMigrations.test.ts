@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { createCatalogRepository } from './catalogRepository';
-import { getSchemaVersion, INITIAL_MIGRATION, runMigrations, type TileKeeperDatabase } from './runMigrations';
+import { getSchemaVersion, INITIAL_MIGRATION, INVENTORY_MIGRATION, MIGRATIONS, runMigrations, type TileKeeperDatabase } from './runMigrations';
 import type { TileType } from '../shared/types';
 
 class NodeSqliteAdapter implements TileKeeperDatabase {
@@ -86,6 +86,14 @@ describe('SQLite migration runner v0.1', () => {
     expect(INITIAL_MIGRATION.sql).toBe(migrationFileSql);
   });
 
+  test('keeps every bundled migration SQL file aligned with the executable migrations', () => {
+    for (const migration of MIGRATIONS) {
+      const migrationFileSql = readFileSync(join(__dirname, 'migrations', `${migration.id}.sql`), 'utf8').trim();
+
+      expect(migration.sql).toBe(migrationFileSql);
+    }
+  });
+
   test('applies 001_initial.sql once and creates all baseline tables', async () => {
     const { db, adapter } = openTestDb();
 
@@ -105,9 +113,29 @@ describe('SQLite migration runner v0.1', () => {
       'migration_log',
       'saved_layouts',
       'tile_types',
+      'user_inventory',
     ]);
-    expect(await getSchemaVersion(adapter)).toBe(1);
+    expect(await getSchemaVersion(adapter)).toBe(2);
     expect(db.prepare('SELECT COUNT(*) AS count FROM migration_log WHERE id = ?').get(INITIAL_MIGRATION.id)).toEqual({ count: 1 });
+    expect(db.prepare('SELECT COUNT(*) AS count FROM migration_log WHERE id = ?').get(INVENTORY_MIGRATION.id)).toEqual({ count: 1 });
+  });
+
+  test('applies 002_inventory.sql once and creates the user inventory table', async () => {
+    const { db, adapter } = openTestDb();
+
+    await runMigrations(adapter);
+    await runMigrations(adapter);
+
+    const userInventoryTable = db
+      .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'user_inventory'")
+      .get();
+    const userInventoryIndexes = db
+      .prepare("SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'user_inventory' ORDER BY name")
+      .all()
+      .map((row) => (row as { name: string }).name);
+
+    expect(userInventoryTable).toEqual({ name: 'user_inventory' });
+    expect(userInventoryIndexes).toEqual(['idx_user_inventory_tile_type_id', 'sqlite_autoindex_user_inventory_1']);
   });
 
   test('round-trips a tile record intact through the catalog repository', async () => {

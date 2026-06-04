@@ -87,7 +87,31 @@ export const INITIAL_MIGRATION: DbMigration = {
   sql: INITIAL_MIGRATION_SQL,
 };
 
-export const MIGRATIONS: DbMigration[] = [INITIAL_MIGRATION];
+export const INVENTORY_MIGRATION_SQL = `PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS user_inventory (
+  tile_type_id TEXT PRIMARY KEY,
+  owned_quantity INTEGER NOT NULL DEFAULT 0 CHECK (owned_quantity >= 0),
+  reserved INTEGER NOT NULL DEFAULT 0 CHECK (reserved >= 0),
+  item_json TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CHECK (reserved <= owned_quantity),
+  FOREIGN KEY (tile_type_id) REFERENCES tile_types(id) ON DELETE RESTRICT
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_inventory_tile_type_id ON user_inventory(tile_type_id);
+
+INSERT OR IGNORE INTO migration_log (id, schema_version, product_version)
+VALUES ('002_inventory', 2, '0.2');`;
+
+export const INVENTORY_MIGRATION: DbMigration = {
+  id: '002_inventory',
+  schemaVersion: 2,
+  productVersion: '0.2',
+  sql: INVENTORY_MIGRATION_SQL,
+};
+
+export const MIGRATIONS: DbMigration[] = [INITIAL_MIGRATION, INVENTORY_MIGRATION];
 
 const MIGRATION_LOG_BOOTSTRAP_SQL = `CREATE TABLE IF NOT EXISTS migration_log (
   id TEXT PRIMARY KEY,
