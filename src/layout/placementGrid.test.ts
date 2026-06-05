@@ -4,7 +4,9 @@ import {
   canPlaceOnGrid,
   createPlacementGrid,
   getOccupiedCells,
+  isLayoutConnected,
   placeOnGrid,
+  validateSocketCompatibility,
 } from './placementGrid';
 
 const baseTile: TileType = {
@@ -142,5 +144,99 @@ describe('placement grid phase 0', () => {
 
     expect(() => buildPlacement(baseTile, 'missing-face', { x: 0, y: 0 }, 0)).toThrow("Face 'missing-face' not found");
     expect(() => buildPlacement(lockedTile, 'room-a', { x: 0, y: 0 }, 90)).toThrow('Rotation 90 is not allowed');
+  });
+});
+
+function singleCellTile(id: string, sockets: Record<'north' | 'east' | 'south' | 'west', 'wall' | 'open-floor' | 'doorway'>): TileType {
+  return {
+    id,
+    name: id,
+    product_set: 'Socket Test Pack',
+    dimensions: {
+      unit: 'grid-cell',
+      width: 1,
+      height: 1,
+      grid_cells: [{ x: 0, y: 0 }],
+    },
+    faces: [
+      {
+        face_id: 'front',
+        face_name: 'Front',
+        role_tags: ['room'],
+        edge_sockets: (['north', 'east', 'south', 'west'] as const).map((face) => ({
+          face,
+          socket_type: sockets[face],
+          bidirectional: true,
+          reason: `${face} ${sockets[face]}`,
+        })),
+        rotation_rules: { allowed_rotations: [0, 90, 180, 270], flip_allowed: false },
+        theme_tags: ['test'],
+      },
+    ],
+    catalog_status: 'custom',
+    category: 'floor',
+    tags: ['test'],
+    catalog_version: 'test',
+  };
+}
+
+const doorwayTile = singleCellTile('doorway-room', {
+  north: 'wall',
+  east: 'doorway',
+  south: 'wall',
+  west: 'doorway',
+});
+
+const wallTile = singleCellTile('wall-room', {
+  north: 'wall',
+  east: 'wall',
+  south: 'wall',
+  west: 'wall',
+});
+
+describe('placement grid phase 1 socket compatibility and connectedness', () => {
+  test('flags adjacent placements when touching sockets do not match', () => {
+    const grid = createPlacementGrid({ width: 3, height: 1 }, [
+      buildPlacement(doorwayTile, 'front', { x: 0, y: 0 }, 0),
+      buildPlacement(wallTile, 'front', { x: 1, y: 0 }, 0),
+    ]);
+
+    expect(validateSocketCompatibility(grid, [doorwayTile, wallTile])).toEqual({
+      ok: false,
+      reason: 'socket-incompatibility',
+      issues: [
+        {
+          fromPlacementIndex: 0,
+          toPlacementIndex: 1,
+          fromCell: { x: 0, y: 0 },
+          toCell: { x: 1, y: 0 },
+          fromFace: 'east',
+          toFace: 'west',
+          fromSocket: 'doorway',
+          toSocket: 'wall',
+        },
+      ],
+    });
+  });
+
+  test('accepts matching doorway sockets and treats them as a traversable connected layout edge', () => {
+    const grid = createPlacementGrid({ width: 2, height: 1 }, [
+      buildPlacement(doorwayTile, 'front', { x: 0, y: 0 }, 0),
+      buildPlacement(doorwayTile, 'front', { x: 1, y: 0 }, 0),
+    ]);
+
+    expect(validateSocketCompatibility(grid, [doorwayTile])).toEqual({ ok: true });
+    expect(isLayoutConnected(grid, [doorwayTile])).toBe(true);
+  });
+
+  test('requires every placement to be connected through compatible non-wall sockets', () => {
+    const grid = createPlacementGrid({ width: 4, height: 1 }, [
+      buildPlacement(doorwayTile, 'front', { x: 0, y: 0 }, 0),
+      buildPlacement(doorwayTile, 'front', { x: 1, y: 0 }, 0),
+      buildPlacement(wallTile, 'front', { x: 3, y: 0 }, 0),
+    ]);
+
+    expect(validateSocketCompatibility(grid, [doorwayTile, wallTile])).toEqual({ ok: true });
+    expect(isLayoutConnected(grid, [doorwayTile, wallTile])).toBe(false);
   });
 });
