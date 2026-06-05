@@ -168,9 +168,9 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 
 ---
 
-### M4 — Preview, Save & Export Beta (Weeks 17–24)
+### M4 — Preview, Save, Export & UI Beta (Weeks 17–24)
 
-**Objective:** Turn solver output into useful tabletop prep artifacts.
+**Objective:** Turn solver output into useful tabletop prep artifacts with a whimsical but functional UI, ready for human testing.
 
 **Key Deliverables:**
 
@@ -180,7 +180,26 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 4. **JSON Export/Import** — machine-readable layout graph with catalog version and solver version.
 5. **PNG Export** — shareable layout map image.
 6. **PDF Export** — printable prep sheet with map, tile list, missing tiles, notes, and source/version metadata.
-7. **Internal Beta Distribution** — TestFlight/Play internal track or Expo/EAS equivalent for controlled testing.
+7. **React Native UI Screens (M4-UI)** — whimsical but functional mobile interface:
+   - **Style:** Tactile fantasy utility. Warm, inviting, not corporate.
+   - **Colour Palette:** Aligned with modularrealms.com:
+     - Background: warm parchment/cream `#FFF9E5`
+     - Primary accents: deep maroon/oxblood `#8B0000`–`#800000`
+     - Secondary accents: gold/mustard `#DAA520`–`#B8860B`
+     - Dark framing: charcoal `#1A1A1A` for headers, nav bars, bottom sheets
+     - Text: near-black on light backgrounds, white on dark surfaces
+   - **Typography:** Clean sans-serif for body; optional serif or slab-serif for headings to echo tabletop RPG manuals.
+   - **Screens required:**
+     - Inventory list (search, filter, add/edit quantities)
+     - Tile detail view (faces, dimensions, sockets, notes)
+     - Layout goal setup (table bounds, constraints, seed)
+     - Layout preview (schematic grid, pan/zoom, tile inspection)
+     - Saved layouts library (list, tags, favourites, search)
+     - Export/share sheet (JSON/PNG/PDF, destination picker)
+     - Settings (theme toggle, backup, catalog refresh, about)
+   - **Local-First Architecture:** All generation engine, layout storage, and theming is local to the device. No hosted server holds user data.
+   - **Optional Cloud Backup:** Integrate OAuth-based links to Google Drive, OneDrive, or Dropbox for encrypted backup/restore of inventory and layouts. Cloud is opt-in, additive only — app remains fully functional offline.
+8. **Internal Beta Distribution** — TestFlight/Play internal track or Expo/EAS equivalent for controlled testing.
 
 **Acceptance Criteria:**
 
@@ -189,9 +208,12 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 - [ ] Exported JSON round-trips through import validation.
 - [ ] Exported PNG and PDF match the saved placement graph.
 - [ ] PDF includes tile checklist, missing tiles, notes, catalog version, and solver version.
+- [ ] UI screens are navigable, touch targets meet 44 px minimum, and colour-blind-safe states use icon + label + shape (never colour alone).
+- [ ] App operates fully offline for inventory, layout generation, and theming.
+- [ ] Optional cloud backup exports/imports an encrypted backup envelope without exposing raw user data to the app server.
 - [ ] Beta build can be installed by internal stakeholders.
 
-**Critical Path:** Preview model → saved layout storage → export adapters → beta build.
+**Critical Path:** Preview model → saved layout storage → export adapters → M4-UI screens → beta build.
 
 ---
 
@@ -271,7 +293,8 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 5. Expo React Native + TypeScript remains sufficient for a utility app with schematic rendering and export workflows.
 6. The app must be useful offline after catalog data is cached or manually entered.
 7. Cloud catalog hosting is optional and additive, not required for local inventory/layout use.
-8. Android and iOS are both target platforms, but implementation may validate one platform first before parity.
+8. Cloud backup (Google Drive, OneDrive, Dropbox) is opt-in only; all core functionality remains offline.
+9. Android and iOS are both target platforms, but implementation may validate one platform first before parity.
 
 ---
 
