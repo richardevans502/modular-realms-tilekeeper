@@ -3,6 +3,7 @@
     "name": "TileKeeper",
     "slug": "modular-realms-tilekeeper",
     "version": "0.1.0",
+    "scheme": "tilekeeper",
     "orientation": "portrait",
     "platforms": ["android", "ios", "web"],
     "assetBundlePatterns": ["**/*"],
