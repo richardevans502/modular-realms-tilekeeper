@@ -105,12 +105,11 @@ android {
             keyPassword 'android'
         }
         release {
-            if (project.hasProperty('TILEKEEPER_RELEASE_STORE_FILE')) {
-                storeFile file(TILEKEEPER_RELEASE_STORE_FILE)
-                storePassword TILEKEEPER_RELEASE_STORE_PASSWORD
-                keyAlias TILEKEEPER_RELEASE_KEY_ALIAS
-                keyPassword TILEKEEPER_RELEASE_KEY_PASSWORD
-            }
+            // Fallback to debug keystore for pre-release builds
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
         }
     }
     buildTypes {
