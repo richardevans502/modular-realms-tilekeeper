@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 
-import { initTileKeeperDatabase } from '../src/db/init';
-import type { SavedLayoutRepository } from '../src/db/savedLayoutRepository';
-import { SavedLayoutsScreen } from '../src/layoutLibrary/SavedLayoutsScreen';
+import { initTileKeeperDatabase } from '../../src/db/init';
+import type { SavedLayoutRepository } from '../../src/db/savedLayoutRepository';
+import { SavedLayoutsScreen } from '../../src/layoutLibrary/SavedLayoutsScreen';
 
 export default function SavedLayoutsRoute() {
   const router = useRouter();

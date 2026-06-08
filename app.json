@@ -15,6 +15,17 @@
     },
     "web": {
       "bundler": "metro"
+    },
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1A1A1A",
+      "imageWidth": 200,
+      "dark": {
+        "image": "./assets/images/splash-dark.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#0A0A0A"
+      }
     }
   }
 }

@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { initTileKeeperDatabase } from '../src/db/init';
-import type { SavedLayoutRepository } from '../src/db/savedLayoutRepository';
-import { SaveLayoutModal, type SaveLayoutFormData } from '../src/preview/SaveLayoutModal';
+import { initTileKeeperDatabase } from '../../src/db/init';
+import type { SavedLayoutRepository } from '../../src/db/savedLayoutRepository';
+import { SaveLayoutModal, type SaveLayoutFormData } from '../../src/preview/SaveLayoutModal';
 
-import { loadSeedCatalog } from '../src/catalog/loadSeedCatalog';
-import { useLayoutSolver } from '../src/hooks/useLayoutSolver';
+import { loadSeedCatalog } from '../../src/catalog/loadSeedCatalog';
+import { useLayoutSolver } from '../../src/hooks/useLayoutSolver';
 import {
   DEFAULT_LAYOUT_GOAL_FORM,
   LAYOUT_GOAL_REQUIRED_CATEGORIES,
@@ -24,12 +24,12 @@ import {
   type LayoutGoalForm,
   type LayoutGoalRequest,
   type LayoutGoalRequiredCategory,
-} from '../src/layout/layoutGoalScreenModel';
-import { suggestMissingTiles, type RequiredCategory } from '../src/layout/missingTileSuggestions';
-import { SolverInsightPanel } from '../src/layout/SolverInsightPanel';
-import { buildSolverInsightViewModel } from '../src/layout/solverInsightViewModel';
-import type { InventoryItem } from '../src/shared/types';
-import { tileKeeperTheme } from '../src/ui/theme';
+} from '../../src/layout/layoutGoalScreenModel';
+import { suggestMissingTiles, type RequiredCategory } from '../../src/layout/missingTileSuggestions';
+import { SolverInsightPanel } from '../../src/layout/SolverInsightPanel';
+import { buildSolverInsightViewModel } from '../../src/layout/solverInsightViewModel';
+import type { InventoryItem } from '../../src/shared/types';
+import { tileKeeperTheme } from '../../src/ui/theme';
 
 type LayoutGoalField = keyof LayoutGoalForm;
 

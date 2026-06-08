@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
-import { loadSeedCatalog } from '../src/catalog/loadSeedCatalog';
-import { initTileKeeperDatabase } from '../src/db/init';
-import type { InventoryRepository } from '../src/db/inventoryRepository';
-import type { CatalogRepository } from '../src/db/catalogRepository';
-import { InventoryScreen } from '../src/inventory/InventoryScreen';
-import { tileKeeperTheme } from '../src/ui/theme';
+import { loadSeedCatalog } from '../../src/catalog/loadSeedCatalog';
+import { initTileKeeperDatabase } from '../../src/db/init';
+import type { InventoryRepository } from '../../src/db/inventoryRepository';
+import type { CatalogRepository } from '../../src/db/catalogRepository';
+import { InventoryScreen } from '../../src/inventory/InventoryScreen';
+import { tileKeeperTheme } from '../../src/ui/theme';
 
 const seedCatalog = loadSeedCatalog();
 

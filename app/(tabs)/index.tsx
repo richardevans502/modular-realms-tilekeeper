@@ -1,17 +1,14 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { tileKeeperRoutes } from '../src/ui/navigation';
-import { tileKeeperTheme } from '../src/ui/theme';
+import { tileKeeperRoutes } from '../../src/ui/navigation';
+import { tileKeeperTheme } from '../../src/ui/theme';
 
 export default function HomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.eyebrow}>Modular Realms</Text>
       <Text style={styles.title}>TileKeeper</Text>
-      <Text style={styles.subtitle}>
-        Inventory, deterministic layouts, previews, saved plans, and export tools.
-      </Text>
       <View style={styles.grid}>
         {tileKeeperRoutes.filter((route) => route.path !== '/').map((route) => (
           <Link key={route.path} href={route.path} style={styles.card}>
@@ -29,7 +26,6 @@ const styles = StyleSheet.create({
   container: { padding: 20, gap: 14, backgroundColor: tileKeeperTheme.colours.background },
   eyebrow: { color: tileKeeperTheme.colours.primary, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' },
   title: { color: tileKeeperTheme.colours.text, fontSize: 36, fontWeight: '900' },
-  subtitle: { color: tileKeeperTheme.colours.mutedText, fontSize: 16, lineHeight: 24 },
   grid: { gap: 12, marginTop: 8 },
   card: {
     minHeight: tileKeeperTheme.touch.minimum,
