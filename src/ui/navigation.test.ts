@@ -7,7 +7,6 @@ describe('TileKeeper UI shell navigation and theming', () => {
       'home',
       'inventory',
       'layout-goal',
-      'preview',
       'saved-layouts',
       'export',
       'settings',

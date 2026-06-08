@@ -31,6 +31,9 @@ web-build/
 .DS_Store
 Thumbs.db
 
+# Secrets manifest (contains plaintext credentials)
+docs/SECRETS_MANIFEST.md
+
 # Logs
 *.log
 

@@ -10,7 +10,7 @@ export default function HomeScreen() {
       <Text style={styles.eyebrow}>Modular Realms</Text>
       <Text style={styles.title}>TileKeeper</Text>
       <Text style={styles.subtitle}>
-        Local-first tabletop terrain planning: inventory, deterministic layouts, previews, saved plans, and export tools.
+        Inventory, deterministic layouts, previews, saved plans, and export tools.
       </Text>
       <View style={styles.grid}>
         {tileKeeperRoutes.filter((route) => route.path !== '/').map((route) => (
