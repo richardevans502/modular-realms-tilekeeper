@@ -10,6 +10,5 @@ export {
 } from './schematicPreview';
 
 export {
-  renderSchematicPreviewPng,
   type SchematicCanvasRenderOptions,
 } from './schematicCanvas';

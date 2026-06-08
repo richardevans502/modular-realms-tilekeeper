@@ -1,5 +1,5 @@
 import type { LayoutPlacement, TileType } from '../shared/types';
-import { renderSchematicPreviewPng } from './schematicCanvas';
+import { renderSchematicPreviewPng } from './schematicCanvasNode';
 
 const previewOptions = {
   cellSize: 24,
