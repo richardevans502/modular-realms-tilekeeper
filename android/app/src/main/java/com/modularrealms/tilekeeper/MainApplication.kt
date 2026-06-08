@@ -31,10 +31,12 @@ class MainApplication : Application(), ReactApplication {
 
   @Suppress("DEPRECATION")
   override val reactNativeHost: ReactNativeHost by lazy {
-    DefaultReactNativeHost.getDefaultReactNativeHost(
-      applicationContext,
-      PackageList(this).packages
-    )
+    object : DefaultReactNativeHost(this) {
+      override fun getPackages(): List<ReactPackage> =
+        PackageList(this@MainApplication).packages
+
+      override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+    }
   }
 
   override fun onCreate() {
