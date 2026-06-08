@@ -12,9 +12,11 @@ export default function HomeScreen() {
       <View style={styles.grid}>
         {tileKeeperRoutes.filter((route) => route.path !== '/').map((route) => (
           <Link key={route.path} href={route.path} style={styles.card}>
-            <Text style={styles.cardIcon}>{route.icon}</Text>
-            <Text style={styles.cardTitle}>{route.label}</Text>
-            <Text style={styles.cardDescription}>{route.description}</Text>
+            <View>
+              <Text style={styles.cardIcon}>{route.icon}</Text>
+              <Text style={styles.cardTitle}>{route.label}</Text>
+              <Text style={styles.cardDescription}>{route.description}</Text>
+            </View>
           </Link>
         ))}
       </View>
