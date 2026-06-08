@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
 
 import { initTileKeeperDatabase } from '../src/db/init';
 import type { SavedLayoutRepository } from '../src/db/savedLayoutRepository';
@@ -8,6 +8,7 @@ import { SavedLayoutsScreen } from '../src/layoutLibrary/SavedLayoutsScreen';
 export default function SavedLayoutsRoute() {
   const router = useRouter();
   const [repository, setRepository] = useState<SavedLayoutRepository | undefined>();
+  const [reloadTrigger, setReloadTrigger] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -21,9 +22,16 @@ export default function SavedLayoutsRoute() {
     };
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      setReloadTrigger((t) => t + 1);
+    }, [])
+  );
+
   return (
     <SavedLayoutsScreen
       repository={repository}
+      reloadTrigger={reloadTrigger}
       onPreviewLayout={(layoutId) => router.push({ pathname: '/preview', params: { layoutId } })}
     />
   );

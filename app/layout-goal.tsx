@@ -1,6 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+import { initTileKeeperDatabase } from '../src/db/init';
+import type { SavedLayoutRepository } from '../src/db/savedLayoutRepository';
+import { SaveLayoutModal, type SaveLayoutFormData } from '../src/preview/SaveLayoutModal';
 
 import { loadSeedCatalog } from '../src/catalog/loadSeedCatalog';
 import { useLayoutSolver } from '../src/hooks/useLayoutSolver';
@@ -52,6 +56,9 @@ export default function LayoutGoalScreen() {
   const router = useRouter();
   const [form, setForm] = useState<LayoutGoalForm>(DEFAULT_LAYOUT_GOAL_FORM);
   const [generatedRequest, setGeneratedRequest] = useState<LayoutGoalRequest | null>(null);
+  const [repository, setRepository] = useState<SavedLayoutRepository | null>(null);
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const errors = validateLayoutGoalForm(form, demoInventory);
   const inventoryAvailable = hasAvailableInventory(demoInventory);
   const solverGoal = useMemo(
@@ -137,6 +144,37 @@ export default function LayoutGoalScreen() {
     const request = buildLayoutGoalRequest(form, new Date().toISOString());
     setGeneratedRequest(request);
     await generateLayouts();
+  }
+
+  useEffect(() => {
+    let mounted = true;
+    void initTileKeeperDatabase().then((persistence) => {
+      if (mounted) {
+        setRepository(persistence.savedLayoutRepository);
+      }
+    });
+    return () => { mounted = false; };
+  }, []);
+
+  async function handleSaveLayout(data: SaveLayoutFormData): Promise<void> {
+    if (!repository) {
+      throw new Error('Database not ready');
+    }
+    const bestLayout = layouts[0]?.layout;
+    if (!bestLayout) {
+      throw new Error('No layout available to save');
+    }
+    const savedLayout = {
+      id: `saved-${bestLayout.id}-${Date.now()}`,
+      name: data.name,
+      layout: bestLayout,
+      tags: data.tags,
+      favourite: data.favourite,
+      notes: data.notes || undefined,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    await repository.createLayout(savedLayout);
   }
 
   return (
@@ -265,6 +303,36 @@ export default function LayoutGoalScreen() {
       </View>
 
       {solverInsight ? <SolverInsightPanel model={solverInsight} /> : null}
+
+      {layouts.length > 0 && repository ? (
+        <TouchableOpacity
+          accessibilityLabel="Save generated layout to library"
+          accessibilityRole="button"
+          onPress={() => setSaveModalOpen(true)}
+          style={styles.secondaryButton}
+        >
+          <Text style={styles.secondaryButtonText}>Save generated layout to library</Text>
+        </TouchableOpacity>
+      ) : null}
+
+      {saveStatus === 'saved' ? <Text style={styles.saveStatus}>✓ Saved</Text> : null}
+      {saveStatus === 'error' ? <Text style={styles.saveError}>Save failed</Text> : null}
+
+      <SaveLayoutModal
+        visible={saveModalOpen}
+        initialName={form.goal}
+        onCancel={() => setSaveModalOpen(false)}
+        onSave={async (data) => {
+          setSaveModalOpen(false);
+          setSaveStatus('saving');
+          try {
+            await handleSaveLayout(data);
+            setSaveStatus('saved');
+          } catch {
+            setSaveStatus('error');
+          }
+        }}
+      />
     </ScrollView>
   );
 }
@@ -475,4 +543,18 @@ const styles = StyleSheet.create({
   },
   generatedMetric: { color: tileKeeperTheme.colours.secondaryBright, fontSize: 18, fontWeight: '900' },
   generatedText: { color: tileKeeperTheme.colours.onFrame, fontSize: 14, lineHeight: 20 },
+  saveStatus: {
+    color: '#22c55e',
+    fontSize: 14,
+    fontWeight: '800',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  saveError: {
+    color: '#ef4444',
+    fontSize: 14,
+    fontWeight: '800',
+    textAlign: 'center',
+    marginTop: 8,
+  },
 });

@@ -15,9 +15,11 @@ export interface SavedLayoutsScreenProps {
   layouts?: SavedLayoutLibraryItem[];
   repository?: Pick<SavedLayoutRepository, 'listLayouts' | 'deleteLayout' | 'updateLayout'>;
   onPreviewLayout?: (layoutId: string) => void;
+  /** Increment to force a reload from the repository when the screen is already mounted. */
+  reloadTrigger?: number;
 }
 
-export function SavedLayoutsScreen({ layouts = [], repository, onPreviewLayout }: SavedLayoutsScreenProps) {
+export function SavedLayoutsScreen({ layouts = [], repository, onPreviewLayout, reloadTrigger }: SavedLayoutsScreenProps) {
   const [filters, setFilters] = useState<SavedLayoutsFilterState>({
     searchText: '',
     selectedTags: [],
@@ -48,7 +50,7 @@ export function SavedLayoutsScreen({ layouts = [], repository, onPreviewLayout }
 
   useEffect(() => {
     void loadLayouts();
-  }, [loadLayouts]);
+  }, [loadLayouts, reloadTrigger]);
 
   const libraryLayouts = useMemo(() => {
     if (repositoryLayouts) {
