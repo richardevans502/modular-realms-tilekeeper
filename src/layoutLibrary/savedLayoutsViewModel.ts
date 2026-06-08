@@ -1,3 +1,6 @@
+import type { SavedLayout } from '../db/savedLayoutRepository';
+import type { GridCell, Layout } from '../shared/types';
+
 export interface SavedLayoutLibraryItem {
   id: string;
   name: string;
@@ -10,6 +13,7 @@ export interface SavedLayoutLibraryItem {
   placement_count: number;
   catalog_version: string;
   solver_version: string;
+  thumbnailCells?: GridCell[];
 }
 
 export interface SavedLayoutFilters {
@@ -51,6 +55,63 @@ function includesSearchText(layout: SavedLayoutLibraryItem, searchText: string):
 
 function normalizeTag(tag: string): string {
   return tag.trim().toLowerCase();
+}
+
+function titleFromGoal(goal: string, id: string): string {
+  const firstLine = goal.split(/\r?\n/).map((line) => line.trim()).find(Boolean);
+  return firstLine ?? id;
+}
+
+function notesFromGoal(goal: string): string | undefined {
+  const rest = goal.split(/\r?\n/).slice(1).map((line) => line.trim()).filter(Boolean).join(' ');
+  return rest || undefined;
+}
+
+function tagsFromLayout(layout: Layout): string[] {
+  const tags = new Set<string>();
+  for (const placement of layout.placements) {
+    tags.add(normalizeTag(placement.tile_type_id));
+  }
+  return Array.from(tags).sort((left, right) => left.localeCompare(right));
+}
+
+function isSavedLayoutRecord(layout: Layout | SavedLayout): layout is SavedLayout {
+  return 'layout' in layout;
+}
+
+export function toSavedLayoutLibraryItem(layoutRecord: Layout | SavedLayout, favouriteIds?: ReadonlySet<string>): SavedLayoutLibraryItem {
+  if (isSavedLayoutRecord(layoutRecord)) {
+    const layout = layoutRecord.layout;
+    return {
+      id: layoutRecord.id,
+      name: layoutRecord.name,
+      goal: layout.goal,
+      notes: layoutRecord.notes,
+      tags: layoutRecord.tags.map(normalizeTag).sort((left, right) => left.localeCompare(right)),
+      favourite: favouriteIds ? favouriteIds.has(layoutRecord.id) : layoutRecord.favourite,
+      created_at: layoutRecord.created_at,
+      updated_at: layoutRecord.updated_at,
+      placement_count: layout.placements.length,
+      catalog_version: layout.catalog_version,
+      solver_version: layout.solver_version,
+      thumbnailCells: layout.placements.flatMap((placement) => placement.grid_cells),
+    };
+  }
+
+  return {
+    id: layoutRecord.id,
+    name: titleFromGoal(layoutRecord.goal, layoutRecord.id),
+    goal: layoutRecord.goal,
+    notes: notesFromGoal(layoutRecord.goal),
+    tags: tagsFromLayout(layoutRecord),
+    favourite: favouriteIds?.has(layoutRecord.id) ?? false,
+    created_at: layoutRecord.created_at,
+    updated_at: layoutRecord.created_at,
+    placement_count: layoutRecord.placements.length,
+    catalog_version: layoutRecord.catalog_version,
+    solver_version: layoutRecord.solver_version,
+    thumbnailCells: layoutRecord.placements.flatMap((placement) => placement.grid_cells),
+  };
 }
 
 export function filterSavedLayouts(layouts: SavedLayoutLibraryItem[], filters: SavedLayoutFilters): SavedLayoutLibraryItem[] {

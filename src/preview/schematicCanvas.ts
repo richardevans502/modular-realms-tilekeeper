@@ -183,6 +183,84 @@ export function renderSchematicPreviewPng(
   return PNG.sync.write(png);
 }
 
+/** Browser-only: renders a schematic preview to a PNG data URL using HTML Canvas. */
+export function renderSchematicPreviewPngDataUrl(
+  placements: LayoutPlacement[],
+  catalog: TileType[],
+  options: SchematicCanvasRenderOptions = {},
+): string {
+  if (typeof document === 'undefined') {
+    throw new Error('renderSchematicPreviewPngDataUrl requires a browser environment with document');
+  }
+  const scale = Math.max(1, Math.round(options.scale ?? 1));
+  const baseOpts: SchematicPreviewOptions = {
+    cellSize: (options.cellSize ?? 32) * scale,
+    padding: (options.padding ?? 12) * scale,
+    showGrid: options.showGrid,
+  };
+  const model = buildSchematicPreviewModel(placements, catalog, baseOpts);
+  const htmlCanvas = document.createElement('canvas');
+  htmlCanvas.width = model.width;
+  htmlCanvas.height = model.height;
+  const ctx = htmlCanvas.getContext('2d');
+  if (!ctx) {
+    throw new Error('Unable to get 2D canvas context');
+  }
+
+  ctx.fillStyle = options.backgroundColor ?? '#ffffff';
+  ctx.fillRect(0, 0, model.width, model.height);
+
+  if (options.showGrid ?? false) {
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1 * scale;
+    for (const cell of model.gridCells) {
+      ctx.strokeRect(cell.x, cell.y, model.cellSize, model.cellSize);
+    }
+  }
+
+  for (const tile of model.tiles) {
+    for (const cell of tile.cells) {
+      ctx.fillStyle = tile.color;
+      ctx.fillRect(cell.x, cell.y, model.cellSize, model.cellSize);
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1 * scale;
+      ctx.strokeRect(cell.x, cell.y, model.cellSize, model.cellSize);
+    }
+    for (const socket of tile.sockets) {
+      ctx.strokeStyle =
+        socket.socketType === 'wall'
+          ? '#334155'
+          : socket.socketType === 'doorway'
+            ? '#f59e0b'
+            : '#22c55e';
+      ctx.lineWidth = 4 * scale;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(socket.x1, socket.y1);
+      ctx.lineTo(socket.x2, socket.y2);
+      ctx.stroke();
+    }
+    const marker = rotationMarkerPoints(tile.labelAnchor, tile.rotation, scale);
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 2 * scale;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(marker[0].x, marker[0].y);
+    ctx.lineTo(marker[1].x, marker[1].y);
+    ctx.lineTo(marker[2].x, marker[2].y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = `600 ${10 * scale}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(tile.label, tile.labelAnchor.x, tile.labelAnchor.y);
+  }
+
+  return htmlCanvas.toDataURL('image/png');
+}
+
 function rotationMarkerPoints(
   anchor: { x: number; y: number },
   rotation: 0 | 90 | 180 | 270,

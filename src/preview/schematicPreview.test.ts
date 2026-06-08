@@ -107,6 +107,7 @@ describe('schematic preview renderer', () => {
           tileTypeId: 'room-2x1',
           faceId: 'front',
           label: 'Room 2x1',
+          category: 'floor',
           rotation: 0,
           color: '#7dd3fc',
           cells: [
@@ -114,10 +115,10 @@ describe('schematic preview renderer', () => {
             { key: '3,1', grid: { x: 3, y: 1 }, x: 104, y: 32 },
           ],
           sockets: [
-            { face: 'north', socketType: 'wall', x1: 80, y1: 32, x2: 128, y2: 32 },
-            { face: 'east', socketType: 'doorway', x1: 128, y1: 32, x2: 128, y2: 56 },
-            { face: 'south', socketType: 'open-floor', x1: 80, y1: 56, x2: 128, y2: 56 },
-            { face: 'west', socketType: 'wall', x1: 80, y1: 32, x2: 80, y2: 56 },
+            { face: 'north', socketType: 'wall', compatibility: 'compatible', x1: 80, y1: 32, x2: 128, y2: 32 },
+            { face: 'east', socketType: 'doorway', compatibility: 'incompatible', x1: 128, y1: 32, x2: 128, y2: 56 },
+            { face: 'south', socketType: 'open-floor', compatibility: 'incompatible', x1: 80, y1: 56, x2: 128, y2: 56 },
+            { face: 'west', socketType: 'wall', compatibility: 'compatible', x1: 80, y1: 32, x2: 80, y2: 56 },
           ],
           labelAnchor: { x: 104, y: 44 },
         },
@@ -127,14 +128,15 @@ describe('schematic preview renderer', () => {
           tileTypeId: 'pillar-1x1',
           faceId: 'front',
           label: 'Pillar',
+          category: 'floor',
           rotation: 90,
-          color: '#c4b5fd',
+          color: '#7dd3fc',
           cells: [{ key: '-1,0', grid: { x: -1, y: 0 }, x: 8, y: 8 }],
           sockets: [
-            { face: 'east', socketType: 'wall', x1: 32, y1: 8, x2: 32, y2: 32 },
-            { face: 'south', socketType: 'doorway', x1: 8, y1: 32, x2: 32, y2: 32 },
-            { face: 'west', socketType: 'open-floor', x1: 8, y1: 8, x2: 8, y2: 32 },
-            { face: 'north', socketType: 'wall', x1: 8, y1: 8, x2: 32, y2: 8 },
+            { face: 'east', socketType: 'wall', compatibility: 'compatible', x1: 32, y1: 8, x2: 32, y2: 32 },
+            { face: 'south', socketType: 'doorway', compatibility: 'incompatible', x1: 8, y1: 32, x2: 32, y2: 32 },
+            { face: 'west', socketType: 'open-floor', compatibility: 'incompatible', x1: 8, y1: 8, x2: 8, y2: 32 },
+            { face: 'north', socketType: 'wall', compatibility: 'compatible', x1: 8, y1: 8, x2: 32, y2: 8 },
           ],
           labelAnchor: { x: 20, y: 20 },
         },
@@ -147,7 +149,7 @@ describe('schematic preview renderer', () => {
 
     expect(svg).toContain('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="72" viewBox="0 0 120 72" role="img" aria-label="TileKeeper schematic preview: 2 placements">');
     expect(svg).toContain('<rect class="tile-cell" data-placement-index="0" data-tile-type-id="room-2x1" data-face-id="front" x="80" y="32" width="24" height="24" rx="3" fill="#7dd3fc"/>');
-    expect(svg).toContain('<line class="socket socket-doorway" data-placement-index="0" data-face="east" x1="128" y1="32" x2="128" y2="56" stroke="#f59e0b" stroke-width="4" stroke-linecap="round"/>');
+    expect(svg).toContain('<line class="socket socket-doorway socket-incompatible" data-placement-index="0" data-face="east" data-compatibility="incompatible" x1="128" y1="32" x2="128" y2="56" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>');
     expect(svg).toContain('<text class="tile-label" x="104" y="44" text-anchor="middle" dominant-baseline="central">Room 2x1</text>');
     expect(svg).toContain('<path class="rotation-marker" data-placement-index="1" d="M 20 13 L 24 20 L 20 27" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>');
   });

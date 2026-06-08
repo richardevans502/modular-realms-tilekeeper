@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
+import type { SavedLayout } from '../db/savedLayoutRepository';
 import type { CatalogRepository } from '../db/catalogRepository';
 import type { InventoryRepository } from '../db/inventoryRepository';
+import type { SavedLayoutRepository } from '../db/savedLayoutRepository';
 import { inventoryItemSchema, layoutSchema, tileTypeSchema } from '../shared/schemas';
 import type { InventoryItem, Layout, TileType } from '../shared/types';
 
@@ -25,6 +27,12 @@ export interface BackupEnvelope {
 export interface BackupRepositories {
   catalogRepository: Pick<CatalogRepository, 'upsertTileType' | 'getTileType' | 'listTileTypes' | 'deleteTileType'>;
   inventoryRepository: Pick<InventoryRepository, 'upsertInventoryItem' | 'listInventoryItems' | 'deleteInventoryItem'>;
+  /**
+   * Optional repository for saved layouts. When provided, createBackupEnvelope
+   * includes all saved layouts in the backup payload, and restoreBackupEnvelope
+   * restores them in replace or merge mode.
+   */
+  savedLayoutRepository?: Pick<SavedLayoutRepository, 'listLayouts' | 'deleteLayout' | 'upsertLayout'>;
   /**
    * Optional repository-level transaction wrapper for atomic restore operations.
    * Callers that provide SQLite-backed repositories should pass the database
@@ -115,18 +123,26 @@ function normalizeEnvelope(input: BackupEnvelopeInput): BackupEnvelope {
 }
 
 export async function createBackupEnvelope(
-  repositories: Pick<BackupRepositories, 'catalogRepository' | 'inventoryRepository'>,
+  repositories: BackupRepositories,
   options: CreateBackupEnvelopeOptions = {},
 ): Promise<BackupEnvelope> {
+  const [catalogTiles, inventoryItems, savedLayouts] = await Promise.all([
+    repositories.catalogRepository.listTileTypes(),
+    repositories.inventoryRepository.listInventoryItems(),
+    repositories.savedLayoutRepository
+      ? repositories.savedLayoutRepository.listLayouts().then((layouts) => layouts.map((saved) => saved.layout))
+      : Promise.resolve([] as Layout[]),
+  ]);
+
   const envelope = {
     format: BACKUP_ENVELOPE_FORMAT,
     schema_version: BACKUP_ENVELOPE_SCHEMA_VERSION,
     product_version: options.productVersion ?? defaultProductVersion(),
     exported_at: options.exportedAt ?? new Date().toISOString(),
     payload: {
-      catalog_tiles: await repositories.catalogRepository.listTileTypes(),
-      inventory_items: await repositories.inventoryRepository.listInventoryItems(),
-      saved_layouts: [],
+      catalog_tiles: catalogTiles,
+      inventory_items: inventoryItems,
+      saved_layouts: savedLayouts,
     },
   };
 
@@ -154,7 +170,23 @@ export function serializeBackupEnvelope(envelope: BackupEnvelope): string {
   return `${JSON.stringify(parsedEnvelope, null, 2)}\n`;
 }
 
-async function replaceCatalogAndInventory(envelope: BackupEnvelope, repositories: BackupRepositories): Promise<void> {
+function layoutToSavedLayout(layout: Layout): SavedLayout {
+  const tags = new Set(layout.placements.map((p) => p.tile_type_id));
+  return {
+    id: layout.id,
+    name: layout.goal.split(/\r?\n/)[0]?.trim() || layout.id,
+    layout,
+    tags: Array.from(tags).sort(),
+    favourite: false,
+    created_at: layout.created_at,
+    updated_at: new Date().toISOString(),
+  };
+}
+
+async function replaceCatalogInventoryAndLayouts(
+  envelope: BackupEnvelope,
+  repositories: BackupRepositories,
+): Promise<void> {
   const backupTileIds = new Set(envelope.payload.catalog_tiles.map((tile) => tile.id));
   const existingInventory = await repositories.inventoryRepository.listInventoryItems();
   for (const item of existingInventory) {
@@ -165,6 +197,13 @@ async function replaceCatalogAndInventory(envelope: BackupEnvelope, repositories
   for (const tile of existingCatalog) {
     if (!backupTileIds.has(tile.id)) {
       await repositories.catalogRepository.deleteTileType(tile.id);
+    }
+  }
+
+  if (repositories.savedLayoutRepository) {
+    const existingLayouts = await repositories.savedLayoutRepository.listLayouts();
+    for (const layout of existingLayouts) {
+      await repositories.savedLayoutRepository!.deleteLayout(layout.id);
     }
   }
 }
@@ -179,7 +218,7 @@ export async function restoreBackupEnvelope(
 
   const restore = async (): Promise<void> => {
     if (mode === 'replace') {
-      await replaceCatalogAndInventory(envelope, repositories);
+      await replaceCatalogInventoryAndLayouts(envelope, repositories);
     }
 
     for (const tile of envelope.payload.catalog_tiles) {
@@ -188,6 +227,12 @@ export async function restoreBackupEnvelope(
 
     for (const item of envelope.payload.inventory_items) {
       await repositories.inventoryRepository.upsertInventoryItem(item);
+    }
+
+    if (repositories.savedLayoutRepository) {
+      for (const layout of envelope.payload.saved_layouts) {
+        await repositories.savedLayoutRepository.upsertLayout(layoutToSavedLayout(layout));
+      }
     }
   };
 

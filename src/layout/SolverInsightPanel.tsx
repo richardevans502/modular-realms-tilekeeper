@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState, type ReactNode } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import type { SolverInsightViewModel } from './solverInsightViewModel';
 import { tileKeeperTheme } from '../ui/theme';
@@ -15,32 +16,44 @@ export function SolverInsightPanel({ model }: SolverInsightPanelProps) {
         <Text style={styles.bannerMessage}>{model.statusBanner.message}</Text>
       </View>
 
-      <View style={styles.statGrid}>
-        {model.traceSummary.map((stat) => (
-          <View key={stat.label} style={styles.statCard}>
-            <Text style={styles.statLabel}>{stat.label}</Text>
-            <Text style={styles.statValue}>{stat.value}</Text>
-            <Text style={styles.statDetail}>{stat.detail}</Text>
-          </View>
-        ))}
-      </View>
+      <CollapsibleSection title="Trace Summary" initiallyExpanded>
+        <Text style={styles.foundSummary}>{model.foundSummary}</Text>
+        <View style={styles.statGrid}>
+          {model.traceSummary.map((stat) => (
+            <View key={stat.label} style={styles.statCard}>
+              <Text style={styles.statLabel}>{stat.label}</Text>
+              <Text style={styles.statValue}>{stat.value}</Text>
+              <Text style={styles.statDetail}>{stat.detail}</Text>
+            </View>
+          ))}
+        </View>
+      </CollapsibleSection>
 
-      <View style={styles.sectionCard}>
-        <Text style={styles.sectionTitle}>Rejected candidate breakdown</Text>
+      <CollapsibleSection title="Rejected Placements" initiallyExpanded={model.rejectedCandidateRows.length > 0}>
         {model.rejectionBreakdown.length === 0 ? (
           <Text style={styles.emptyText}>No rejected candidates on this run.</Text>
         ) : (
-          model.rejectionBreakdown.map((row) => (
-            <View key={row.reason} style={styles.breakdownRow}>
-              <Text style={styles.breakdownReason}>{row.reason}</Text>
-              <Text style={styles.breakdownCount}>{row.count}</Text>
-            </View>
-          ))
+          <>
+            {model.rejectionBreakdown.map((row) => (
+              <View key={row.reason} style={styles.breakdownRow}>
+                <Text style={styles.breakdownReason}>{row.reason}</Text>
+                <Text style={styles.breakdownCount}>{row.count}</Text>
+              </View>
+            ))}
+            {model.rejectedCandidateRows.map((row) => (
+              <View key={row.id} style={styles.rejectedCard}>
+                <View style={styles.suggestionHeader}>
+                  <Text style={styles.suggestionTitle}>{row.title}</Text>
+                  <Text style={styles.badge}>{row.reason}</Text>
+                </View>
+                <Text style={styles.suggestionSubtitle}>{row.detail}</Text>
+              </View>
+            ))}
+          </>
         )}
-      </View>
+      </CollapsibleSection>
 
-      <View style={styles.sectionCard}>
-        <Text style={styles.sectionTitle}>Missing-tile suggestions</Text>
+      <CollapsibleSection title="Missing Tile Suggestions" initiallyExpanded={model.missingTileRows.length > 0}>
         {model.missingTileRows.length === 0 ? (
           <Text style={styles.emptyText}>{model.emptySuggestionsMessage}</Text>
         ) : (
@@ -54,7 +67,35 @@ export function SolverInsightPanel({ model }: SolverInsightPanelProps) {
             </View>
           ))
         )}
-      </View>
+      </CollapsibleSection>
+    </View>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  initiallyExpanded = false,
+  children,
+}: {
+  title: string;
+  initiallyExpanded?: boolean;
+  children: ReactNode;
+}) {
+  const [expanded, setExpanded] = useState(initiallyExpanded);
+
+  return (
+    <View style={styles.sectionCard}>
+      <TouchableOpacity
+        accessibilityLabel={`${expanded ? 'Collapse' : 'Expand'} ${title}`}
+        accessibilityRole="button"
+        accessibilityState={{ expanded }}
+        onPress={() => setExpanded((current) => !current)}
+        style={styles.sectionHeader}
+      >
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <Text style={styles.sectionToggle}>{expanded ? '−' : '+'}</Text>
+      </TouchableOpacity>
+      {expanded ? <View style={styles.sectionBody}>{children}</View> : null}
     </View>
   );
 }
@@ -90,6 +131,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     marginTop: tileKeeperTheme.spacing.xs,
+  },
+  foundSummary: {
+    color: tileKeeperTheme.colours.secondaryBright,
+    fontSize: 16,
+    fontWeight: '900',
   },
   statGrid: {
     flexDirection: 'row',
@@ -128,9 +174,22 @@ const styles = StyleSheet.create({
     gap: tileKeeperTheme.spacing.sm,
     padding: tileKeeperTheme.spacing.lg,
   },
+  sectionHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  sectionBody: {
+    gap: tileKeeperTheme.spacing.sm,
+  },
   sectionTitle: {
     color: tileKeeperTheme.colours.text,
     fontSize: 18,
+    fontWeight: '900',
+  },
+  sectionToggle: {
+    color: tileKeeperTheme.colours.primary,
+    fontSize: 24,
     fontWeight: '900',
   },
   breakdownRow: {
@@ -154,6 +213,13 @@ const styles = StyleSheet.create({
   suggestionCard: {
     backgroundColor: tileKeeperTheme.colours.raisedSurface,
     borderRadius: tileKeeperTheme.radius.card,
+    padding: tileKeeperTheme.spacing.md,
+  },
+  rejectedCard: {
+    backgroundColor: '#FFF7DB',
+    borderColor: tileKeeperTheme.colours.warning,
+    borderRadius: tileKeeperTheme.radius.card,
+    borderWidth: 1,
     padding: tileKeeperTheme.spacing.md,
   },
   suggestionHeader: {

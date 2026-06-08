@@ -71,6 +71,7 @@ describe('solver insight view model', () => {
       tone: 'warning',
       message: 'Placed 2 of 5 requested tiles. Review the missing-tile suggestions before saving this layout.',
     });
+    expect(model.foundSummary).toBe('2 of 5 placements found');
     expect(model.traceSummary).toEqual([
       { label: 'Requested', value: '5', detail: 'target placements' },
       { label: 'Placed', value: '2', detail: 'tiles on grid' },
@@ -82,6 +83,26 @@ describe('solver insight view model', () => {
       { reason: 'socket incompatibility', count: 1 },
       { reason: 'collision', count: 1 },
       { reason: 'out of bounds', count: 1 },
+    ]);
+    expect(model.rejectedCandidateRows).toEqual([
+      {
+        id: 'wall-cap-front-1-0-90-0',
+        title: 'wall-cap · front',
+        detail: 'Grid (1, 0) · 90° rotation',
+        reason: 'socket incompatibility',
+      },
+      {
+        id: 'wall-cap-front-2-0-0-1',
+        title: 'wall-cap · front',
+        detail: 'Grid (2, 0) · 0° rotation',
+        reason: 'collision',
+      },
+      {
+        id: 'room-large-front-3-0-0-2',
+        title: 'room-large · front',
+        detail: 'Grid (3, 0) · 0° rotation',
+        reason: 'out of bounds',
+      },
     ]);
     expect(model.missingTileRows).toEqual([
       {

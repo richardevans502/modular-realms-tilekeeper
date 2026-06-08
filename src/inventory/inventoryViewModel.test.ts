@@ -1,4 +1,4 @@
-import { filterInventoryRows, toInventoryRows } from './inventoryViewModel';
+import { filterInventoryRows, mergeCatalogWithInventory, toInventoryRows } from './inventoryViewModel';
 import type { InventoryDetail } from '../db/inventoryRepository';
 import type { TileType } from '../shared/types';
 
@@ -68,6 +68,7 @@ describe('inventory UI view model', () => {
         available_quantity: 4,
         condition: 'good',
         notes: 'demo count',
+        storage_location: 'core box',
       },
       {
         id: 'custom-missing-ref',
@@ -78,6 +79,7 @@ describe('inventory UI view model', () => {
         available_quantity: 2,
         condition: 'unknown',
         notes: undefined,
+        storage_location: 'loose tray',
       },
     ]);
   });
@@ -92,5 +94,16 @@ describe('inventory UI view model', () => {
       'custom-missing-ref',
     ]);
     expect(filterInventoryRows(rows, { searchText: 'tray', condition: 'good' })).toEqual([]);
+  });
+
+  test('mergeCatalogWithInventory shows all catalog tiles including zero-owned', () => {
+    const merged = mergeCatalogWithInventory([floorTile], [details[0]]);
+    expect(merged).toHaveLength(1);
+    expect(merged[0].item.owned_quantity).toBe(5);
+
+    const mergedZero = mergeCatalogWithInventory([floorTile], []);
+    expect(mergedZero).toHaveLength(1);
+    expect(mergedZero[0].item.owned_quantity).toBe(0);
+    expect(mergedZero[0].item.condition).toBe('unknown');
   });
 });

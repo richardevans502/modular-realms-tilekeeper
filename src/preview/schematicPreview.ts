@@ -1,4 +1,4 @@
-import type { EdgeFace, GridCell, LayoutPlacement, Rotation, SocketType, TileFace, TileType } from '../shared/types';
+import type { EdgeFace, GridCell, LayoutPlacement, Rotation, SocketType, TileCategory, TileFace, TileType } from '../shared/types';
 
 export interface SchematicPreviewOptions {
   cellSize?: number;
@@ -25,6 +25,7 @@ export interface SchematicPreviewGridCell {
 export interface SchematicPreviewSocketSegment {
   face: CardinalFace;
   socketType: SocketType;
+  compatibility: SocketCompatibility;
   x1: number;
   y1: number;
   x2: number;
@@ -37,6 +38,7 @@ export interface SchematicPreviewTile {
   tileTypeId: string;
   faceId: string;
   label: string;
+  category: TileCategory;
   rotation: Rotation;
   color: string;
   cells: SchematicPreviewGridCell[];
@@ -56,14 +58,25 @@ export interface SchematicPreviewModel {
 }
 
 type CardinalFace = 'north' | 'east' | 'south' | 'west';
+export type SocketCompatibility = 'compatible' | 'incompatible';
 
 const DEFAULT_CELL_SIZE = 32;
 const DEFAULT_PADDING = 12;
-const TILE_COLORS = ['#7dd3fc', '#c4b5fd', '#86efac', '#fde68a', '#fca5a5', '#f0abfc'];
+export const CATEGORY_COLORS: Record<TileCategory, string> = {
+  floor: '#7dd3fc',
+  wall: '#c4b5fd',
+  scatter: '#86efac',
+  doorway: '#fde68a',
+  custom: '#f0abfc',
+};
 const SOCKET_STROKES: Record<SocketType, string> = {
   wall: '#334155',
   doorway: '#f59e0b',
   'open-floor': '#22c55e',
+};
+const SOCKET_COMPATIBILITY_STROKES: Record<SocketCompatibility, string> = {
+  compatible: '#22c55e',
+  incompatible: '#ef4444',
 };
 const CARDINAL_FACES: CardinalFace[] = ['north', 'east', 'south', 'west'];
 
@@ -79,6 +92,8 @@ export function buildSchematicPreviewModel(
   const catalogById = new Map(catalog.map((tile) => [tile.id, tile]));
   const gridCells = buildGridCells(bounds, origin, cellSize, padding);
   const gridCellByKey = new Map(gridCells.map((cell) => [cell.key, cell]));
+  const placementContexts = buildPlacementSocketContexts(placements, catalogById);
+  const cellOwners = buildCellOwners(placements);
 
   return {
     width: bounds.width * cellSize,
@@ -113,10 +128,11 @@ export function buildSchematicPreviewModel(
         tileTypeId: placement.tile_type_id,
         faceId: placement.face_id,
         label: tile.name,
+        category: tile.category,
         rotation: placement.rotation,
-        color: TILE_COLORS[placementIndex % TILE_COLORS.length],
+        color: CATEGORY_COLORS[tile.category],
         cells,
-        sockets: buildSocketSegments(face, placement.rotation, cells, cellSize),
+        sockets: buildSocketSegments(face, placement.rotation, cells, cellSize, placementIndex, placement, placementContexts, cellOwners),
         labelAnchor: calculateLabelAnchor(cells, cellSize),
       };
     }),
@@ -153,7 +169,7 @@ export function renderSchematicPreviewSvg(
     parts.push(
       ...tile.sockets.map(
         (socket) =>
-          `<line class="socket socket-${socket.socketType}" data-placement-index="${tile.placementIndex}" data-face="${socket.face}" x1="${socket.x1}" y1="${socket.y1}" x2="${socket.x2}" y2="${socket.y2}" stroke="${SOCKET_STROKES[socket.socketType]}" stroke-width="4" stroke-linecap="round"/>`,
+          `<line class="socket socket-${socket.socketType} socket-${socket.compatibility}" data-placement-index="${tile.placementIndex}" data-face="${socket.face}" data-compatibility="${socket.compatibility}" x1="${socket.x1}" y1="${socket.y1}" x2="${socket.x2}" y2="${socket.y2}" stroke="${SOCKET_COMPATIBILITY_STROKES[socket.compatibility] ?? SOCKET_STROKES[socket.socketType]}" stroke-width="4" stroke-linecap="round"/>`,
       ),
     );
     parts.push(renderRotationMarker(tile));
@@ -206,6 +222,10 @@ function buildSocketSegments(
   rotation: Rotation,
   cells: SchematicPreviewGridCell[],
   cellSize: number,
+  placementIndex: number,
+  placement: LayoutPlacement,
+  placementContexts: PlacementSocketContext[],
+  cellOwners: Map<string, number>,
 ): SchematicPreviewSocketSegment[] {
   const extents = calculatePixelExtents(cells, cellSize);
   return face.edge_sockets
@@ -214,8 +234,95 @@ function buildSocketSegments(
     .map((socket) => ({
       face: socket.face,
       socketType: socket.socket_type,
+      compatibility: determineSocketCompatibility(socket.face, socket.socket_type, placementIndex, placement, placementContexts, cellOwners),
       ...edgeSegmentForFace(socket.face, extents),
     }));
+}
+
+interface PlacementSocketContext {
+  socketsByFace: Map<CardinalFace, SocketType>;
+}
+
+function buildPlacementSocketContexts(placements: LayoutPlacement[], catalogById: Map<string, TileType>): PlacementSocketContext[] {
+  return placements.map((placement) => {
+    const tile = catalogById.get(placement.tile_type_id);
+    const face = tile?.faces.find((candidate) => candidate.face_id === placement.face_id);
+    const socketsByFace = new Map<CardinalFace, SocketType>();
+    for (const socket of face?.edge_sockets ?? []) {
+      const rotatedFace = rotateFace(socket.face, placement.rotation);
+      if (rotatedFace) {
+        socketsByFace.set(rotatedFace, socket.socket_type);
+      }
+    }
+    return { socketsByFace };
+  });
+}
+
+function buildCellOwners(placements: LayoutPlacement[]): Map<string, number> {
+  const owners = new Map<string, number>();
+  placements.forEach((placement, placementIndex) => {
+    placement.grid_cells.forEach((cell) => owners.set(cellKey(cell), placementIndex));
+  });
+  return owners;
+}
+
+function determineSocketCompatibility(
+  face: CardinalFace,
+  socketType: SocketType,
+  placementIndex: number,
+  placement: LayoutPlacement,
+  placementContexts: PlacementSocketContext[],
+  cellOwners: Map<string, number>,
+): SocketCompatibility {
+  const neighborIndex = findNeighborPlacementIndex(placement, placementIndex, face, cellOwners);
+  if (neighborIndex === null) {
+    return socketType === 'wall' ? 'compatible' : 'incompatible';
+  }
+
+  const oppositeSocketType = placementContexts[neighborIndex]?.socketsByFace.get(oppositeFace(face));
+  return oppositeSocketType === socketType ? 'compatible' : 'incompatible';
+}
+
+function findNeighborPlacementIndex(
+  placement: LayoutPlacement,
+  placementIndex: number,
+  face: CardinalFace,
+  cellOwners: Map<string, number>,
+): number | null {
+  const delta = deltaForFace(face);
+  for (const cell of placement.grid_cells) {
+    const owner = cellOwners.get(cellKey({ x: cell.x + delta.x, y: cell.y + delta.y }));
+    if (owner !== undefined && owner !== placementIndex) {
+      return owner;
+    }
+  }
+  return null;
+}
+
+function deltaForFace(face: CardinalFace): GridCell {
+  switch (face) {
+    case 'north':
+      return { x: 0, y: -1 };
+    case 'east':
+      return { x: 1, y: 0 };
+    case 'south':
+      return { x: 0, y: 1 };
+    case 'west':
+      return { x: -1, y: 0 };
+  }
+}
+
+function oppositeFace(face: CardinalFace): CardinalFace {
+  switch (face) {
+    case 'north':
+      return 'south';
+    case 'east':
+      return 'west';
+    case 'south':
+      return 'north';
+    case 'west':
+      return 'east';
+  }
 }
 
 function calculatePixelExtents(cells: SchematicPreviewGridCell[], cellSize: number): {

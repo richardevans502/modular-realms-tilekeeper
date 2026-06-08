@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useRef, useState } from 'react';
+import { PanResponder, Pressable, StyleSheet, Text, View, type GestureResponderEvent, type PanResponderGestureState } from 'react-native';
 
-import type { GridCell, Layout, LayoutPlacement, TileType } from '../shared/types';
+import type { GridCell, Layout, LayoutPlacement, Rotation, TileType } from '../shared/types';
 import {
   buildLayoutPreviewScreenModel,
   inspectTileAtGridCell,
@@ -11,16 +11,20 @@ import {
   type LayoutPreviewTileInspection,
   type LayoutPreviewViewport,
 } from './layoutPreviewScreenModel';
+import { SaveLayoutModal, type SaveLayoutFormData } from './SaveLayoutModal';
+import type { SchematicPreviewSocketSegment } from './schematicPreview';
 
 export interface LayoutPreviewScreenProps {
   layout: Layout;
   catalog: TileType[];
+  onBackToLayoutGoal?: () => void;
+  onSaveLayout?: (data: SaveLayoutFormData) => Promise<void> | void;
 }
 
 const VIEWPORT = { width: 340, height: 360 };
 const CONTROL_PAN_STEP = 48;
 
-export function LayoutPreviewScreen({ layout, catalog }: LayoutPreviewScreenProps) {
+export function LayoutPreviewScreen({ layout, catalog, onBackToLayoutGoal, onSaveLayout }: LayoutPreviewScreenProps) {
   const [viewport, setViewport] = useState<LayoutPreviewViewport>({
     width: VIEWPORT.width,
     height: VIEWPORT.height,
@@ -28,6 +32,52 @@ export function LayoutPreviewScreen({ layout, catalog }: LayoutPreviewScreenProp
     zoom: 1,
   });
   const [selectedPlacementIndex, setSelectedPlacementIndex] = useState<number | null>(null);
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const gestureRef = useRef<{ lastPan: { x: number; y: number }; lastDistance: number | null }>({
+    lastPan: { x: 0, y: 0 },
+    lastDistance: null,
+  });
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: (event) => {
+          gestureRef.current.lastPan = { x: 0, y: 0 };
+          gestureRef.current.lastDistance = touchDistance(event);
+        },
+        onPanResponderMove: (event, gestureState) => {
+          const distance = touchDistance(event);
+          if (distance && gestureRef.current.lastDistance) {
+            setViewport((value) => zoomLayoutPreview(value, distance / gestureRef.current.lastDistance!));
+            gestureRef.current.lastDistance = distance;
+            return;
+          }
+
+          gestureRef.current.lastDistance = null;
+          panFromGesture(gestureState);
+        },
+        onPanResponderRelease: resetGesture,
+        onPanResponderTerminate: resetGesture,
+      }),
+    [],
+  );
+
+  function panFromGesture(gestureState: PanResponderGestureState) {
+    const delta = {
+      x: gestureState.dx - gestureRef.current.lastPan.x,
+      y: gestureState.dy - gestureRef.current.lastPan.y,
+    };
+    gestureRef.current.lastPan = { x: gestureState.dx, y: gestureState.dy };
+    setViewport((value) => panLayoutPreview(value, delta));
+  }
+
+  function resetGesture() {
+    gestureRef.current.lastPan = { x: 0, y: 0 };
+    gestureRef.current.lastDistance = null;
+  }
 
   const model = useMemo(
     () =>
@@ -66,15 +116,36 @@ export function LayoutPreviewScreen({ layout, catalog }: LayoutPreviewScreenProp
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>TileKeeper</Text>
-        <Text style={styles.title}>{model.title}</Text>
+        <View style={styles.headerRow}>
+          <View style={styles.headerCopy}>
+            <Text style={styles.eyebrow}>TileKeeper</Text>
+            <Text style={styles.title}>{model.title}</Text>
+          </View>
+          <View style={styles.headerActions}>
+            {onSaveLayout && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Save layout to library"
+                onPress={() => setSaveModalOpen(true)}
+                style={[styles.backButton, styles.saveButton]}
+              >
+                <Text style={styles.backButtonText}>Save</Text>
+              </Pressable>
+            )}
+            <Pressable accessibilityRole="button" accessibilityLabel="Back to Layout Goal" style={styles.backButton} onPress={onBackToLayoutGoal}>
+              <Text style={styles.backButtonText}>← Goal</Text>
+            </Pressable>
+          </View>
+        </View>
         <Text style={styles.subtitle}>
-          {model.layoutSummary.goal} · {model.layoutSummary.placementCount} tiles
+          {model.layoutSummary.goal} · {model.layoutSummary.placementCount} tiles · zoom {model.viewport.zoom.toFixed(1)}×
         </Text>
+        {saveStatus === 'saved' && <Text style={styles.saveStatusText}>✓ Saved to library</Text>}
+        {saveStatus === 'error' && <Text style={styles.saveErrorText}>Could not save layout.</Text>}
       </View>
 
       <View style={styles.previewFrame}>
-        <View style={styles.viewport}>
+        <View style={styles.viewport} {...panResponder.panHandlers}>
           <View
             style={[
               styles.schematicLayer,
@@ -119,6 +190,20 @@ export function LayoutPreviewScreen({ layout, catalog }: LayoutPreviewScreenProp
                     ]}
                   />
                 ))}
+                {tile.sockets.map((socket) => (
+                  <View
+                    key={`${tile.key}:${socket.face}:${socket.socketType}`}
+                    accessibilityLabel={`${socket.compatibility} ${socket.socketType} socket on ${socket.face}`}
+                    style={[
+                      styles.socketIndicator,
+                      socket.compatibility === 'compatible' ? styles.socketCompatible : styles.socketIncompatible,
+                      socketIndicatorStyle(socket),
+                    ]}
+                  />
+                ))}
+                <Text style={[styles.rotationMarker, { left: tile.labelAnchor.x - 8, top: tile.labelAnchor.y + 12 }]}>
+                  {rotationArrow(tile.rotation)}
+                </Text>
                 <Text style={[styles.tileLabel, { left: tile.labelAnchor.x - 46, top: tile.labelAnchor.y - 9 }]}>
                   {tile.label}
                 </Text>
@@ -147,11 +232,75 @@ export function LayoutPreviewScreen({ layout, catalog }: LayoutPreviewScreenProp
             <Text style={styles.controlText}>－</Text>
           </Pressable>
         </View>
+
+        <View style={styles.legend}>
+          {model.legend.map((item) => (
+            <View key={item.category} style={styles.legendItem}>
+              <View style={[styles.legendSwatch, { backgroundColor: item.color }]} />
+              <Text style={styles.legendText}>{item.label}</Text>
+            </View>
+          ))}
+          <View style={styles.legendItem}>
+            <View style={[styles.socketLegendLine, styles.socketCompatible]} />
+            <Text style={styles.legendText}>Compatible socket</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.socketLegendLine, styles.socketIncompatible]} />
+            <Text style={styles.legendText}>Mismatch / open socket</Text>
+          </View>
+        </View>
       </View>
 
       <TileInspectionPanel tile={selectedTile} />
+
+      <SaveLayoutModal
+        visible={saveModalOpen}
+        initialName={layout.goal}
+        onCancel={() => setSaveModalOpen(false)}
+        onSave={async (data) => {
+          setSaveModalOpen(false);
+          setSaveStatus('saving');
+          try {
+            await onSaveLayout?.(data);
+            setSaveStatus('saved');
+          } catch {
+            setSaveStatus('error');
+          }
+        }}
+      />
     </View>
   );
+}
+
+function touchDistance(event: GestureResponderEvent): number | null {
+  const [first, second] = event.nativeEvent.touches;
+  if (!first || !second) {
+    return null;
+  }
+  return Math.hypot(first.pageX - second.pageX, first.pageY - second.pageY);
+}
+
+function rotationArrow(rotation: Rotation): string {
+  switch (rotation) {
+    case 0:
+      return '↑';
+    case 90:
+      return '→';
+    case 180:
+      return '↓';
+    case 270:
+      return '←';
+  }
+}
+
+function socketIndicatorStyle(socket: SchematicPreviewSocketSegment) {
+  const horizontal = socket.face === 'north' || socket.face === 'south';
+  return {
+    left: socket.x1,
+    top: socket.y1,
+    width: horizontal ? Math.max(8, Math.abs(socket.x2 - socket.x1)) : 5,
+    height: horizontal ? 5 : Math.max(8, Math.abs(socket.y2 - socket.y1)),
+  };
 }
 
 function TileInspectionPanel({ tile }: { tile: LayoutPreviewTileInspection | null }) {
@@ -170,6 +319,8 @@ function TileInspectionPanel({ tile }: { tile: LayoutPreviewTileInspection | nul
       <Text style={styles.panelBody}>
         {tile.faceName} · {tile.category} · rotation {tile.rotation}°
       </Text>
+      <Text style={styles.panelBody}>tile_type_id: {tile.tileTypeId}</Text>
+      <Text style={styles.panelBody}>face_id: {tile.faceId}</Text>
       <Text style={styles.panelBody}>Set: {tile.productSet}</Text>
       <Text style={styles.panelBody}>Cells: {tile.occupiedCells.map((cell) => `(${cell.x},${cell.y})`).join(', ')}</Text>
       <Text style={styles.panelBody}>Sockets: {tile.sockets.map((socket) => `${socket.face}:${socket.socketType}`).join(', ')}</Text>
@@ -212,6 +363,21 @@ const styles = StyleSheet.create({
   header: {
     gap: 4,
   },
+  headerRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'space-between',
+  },
+  headerActions: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  headerCopy: {
+    flex: 1,
+    gap: 4,
+  },
   eyebrow: {
     color: '#fbbf24',
     fontSize: 13,
@@ -227,6 +393,34 @@ const styles = StyleSheet.create({
   subtitle: {
     color: '#cbd5e1',
     fontSize: 14,
+  },
+  saveStatusText: {
+    color: '#22c55e',
+    fontSize: 13,
+    fontWeight: '800',
+    marginTop: 4,
+  },
+  saveErrorText: {
+    color: '#ef4444',
+    fontSize: 13,
+    fontWeight: '800',
+    marginTop: 4,
+  },
+  backButton: {
+    alignItems: 'center',
+    backgroundColor: '#fbbf24',
+    borderRadius: 999,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  saveButton: {
+    backgroundColor: '#22c55e',
+  },
+  backButtonText: {
+    color: '#111827',
+    fontSize: 13,
+    fontWeight: '900',
   },
   previewFrame: {
     backgroundColor: '#111827',
@@ -261,6 +455,26 @@ const styles = StyleSheet.create({
     borderColor: '#fbbf24',
     borderWidth: 4,
   },
+  socketIndicator: {
+    position: 'absolute',
+    borderColor: '#020617',
+    borderRadius: 999,
+    borderWidth: 1,
+    opacity: 0.9,
+  },
+  socketCompatible: {
+    backgroundColor: '#22c55e',
+  },
+  socketIncompatible: {
+    backgroundColor: '#ef4444',
+  },
+  rotationMarker: {
+    position: 'absolute',
+    color: '#0f172a',
+    fontSize: 16,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
   tileLabel: {
     position: 'absolute',
     width: 92,
@@ -286,6 +500,39 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontSize: 16,
     fontWeight: '900',
+  },
+  legend: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  legendItem: {
+    alignItems: 'center',
+    backgroundColor: '#1e293b',
+    borderColor: '#334155',
+    borderRadius: 999,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  legendSwatch: {
+    borderColor: '#020617',
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 12,
+    width: 12,
+  },
+  legendText: {
+    color: '#e2e8f0',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  socketLegendLine: {
+    borderRadius: 999,
+    height: 5,
+    width: 24,
   },
   inspectionPanel: {
     borderColor: '#334155',

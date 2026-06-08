@@ -1,5 +1,5 @@
-import type { EdgeFace, GridCell, Layout, LayoutPlacement, Rotation, SocketType, TileFace, TileType } from '../shared/types';
-import { buildSchematicPreviewModel, type SchematicPreviewModel, type SchematicPreviewOptions } from './schematicPreview';
+import type { EdgeFace, GridCell, Layout, LayoutPlacement, Rotation, SocketType, TileCategory, TileFace, TileType } from '../shared/types';
+import { CATEGORY_COLORS, buildSchematicPreviewModel, type SchematicPreviewModel, type SchematicPreviewOptions } from './schematicPreview';
 
 export interface LayoutPreviewPoint {
   x: number;
@@ -23,6 +23,12 @@ export interface LayoutPreviewSummary {
   id: string;
   goal: string;
   placementCount: number;
+}
+
+export interface LayoutPreviewLegendItem {
+  category: TileCategory;
+  color: string;
+  label: string;
 }
 
 export interface LayoutPreviewTileInspection {
@@ -51,6 +57,7 @@ export interface LayoutPreviewScreenModel {
   viewport: LayoutPreviewViewport;
   contentTransform: LayoutPreviewTransform;
   schematic: SchematicPreviewModel;
+  legend: LayoutPreviewLegendItem[];
   selectedTile: LayoutPreviewTileInspection | null;
 }
 
@@ -81,6 +88,12 @@ export function buildLayoutPreviewScreenModel(
     zoom: options.zoom ?? DEFAULT_ZOOM,
   });
 
+  const schematic = buildSchematicPreviewModel(layout.placements, catalog, {
+    cellSize: options.cellSize,
+    padding: options.padding,
+    showGrid: options.showGrid ?? true,
+  });
+
   return {
     title: 'Layout Preview',
     layoutSummary: {
@@ -90,11 +103,8 @@ export function buildLayoutPreviewScreenModel(
     },
     viewport,
     contentTransform: transformFromViewport(viewport),
-    schematic: buildSchematicPreviewModel(layout.placements, catalog, {
-      cellSize: options.cellSize,
-      padding: options.padding,
-      showGrid: options.showGrid ?? true,
-    }),
+    schematic,
+    legend: buildLegend(schematic.tiles.map((tile) => tile.category)),
     selectedTile:
       options.selectedPlacementIndex === null || options.selectedPlacementIndex === undefined
         ? null
@@ -144,6 +154,34 @@ export function selectTileByPlacementIndex(
   }
 
   return buildLayoutPreviewScreenModel(layout, catalog, { ...options, selectedPlacementIndex: placementIndex });
+}
+
+function buildLegend(categories: TileCategory[]): LayoutPreviewLegendItem[] {
+  const seen = new Set<TileCategory>();
+  return categories
+    .filter((category) => {
+      if (seen.has(category)) {
+        return false;
+      }
+      seen.add(category);
+      return true;
+    })
+    .map((category) => ({ category, color: CATEGORY_COLORS[category], label: labelForCategory(category) }));
+}
+
+function labelForCategory(category: TileCategory): string {
+  switch (category) {
+    case 'floor':
+      return 'Floor';
+    case 'wall':
+      return 'Wall';
+    case 'doorway':
+      return 'Doorway';
+    case 'scatter':
+      return 'Scatter';
+    case 'custom':
+      return 'Custom';
+  }
 }
 
 function normalizeViewport(viewport: LayoutPreviewViewport): LayoutPreviewViewport {

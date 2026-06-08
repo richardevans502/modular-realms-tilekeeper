@@ -9,28 +9,96 @@ declare module 'react-native' {
     accessibilityLabel?: string;
     accessibilityRole?: string;
     accessibilityState?: Record<string, unknown>;
+    activeOpacity?: number;
+    animationType?: string;
+    behavior?: string;
     children?: ReactNode;
     contentContainerStyle?: unknown;
+    data?: unknown[];
     disabled?: boolean;
     horizontal?: boolean;
+    keyboardType?: string;
     key?: string;
+    keyExtractor?: (item: any) => string;
+    ListEmptyComponent?: ReactNode;
+    multiline?: boolean;
+    numberOfLines?: number;
+    onChangeText?: (text: string) => void;
+    onLongPress?: () => void;
     onPress?: () => void;
+    onRequestClose?: () => void;
+    onResponderGrant?: unknown;
+    onResponderMove?: unknown;
+    onResponderRelease?: unknown;
+    onResponderTerminate?: unknown;
+    onStartShouldSetResponder?: unknown;
+    onMoveShouldSetResponder?: unknown;
+    onValueChange?: (value: boolean) => void;
     placeholder?: string;
     placeholderTextColor?: string;
+    renderItem?: (info: { item: any }) => ReactNode;
+    scrollEnabled?: boolean;
     showsHorizontalScrollIndicator?: boolean;
+    size?: string;
     style?: unknown;
-    value?: string;
+    thumbColor?: string;
+    trackColor?: { false?: string; true?: string };
+    transparent?: boolean;
+    value?: string | boolean;
+    visible?: boolean;
   }
 
   export interface TextInputProps extends BasicNativeProps {
-    multiline?: boolean;
-    onChangeText?: (text: string) => void;
+    textAlignVertical?: string;
+  }
+
+  export const KeyboardAvoidingView: (props: BasicNativeProps) => ReactElement;
+  export const Platform: { OS: string };
+  export const ActivityIndicator: (props: BasicNativeProps) => ReactElement;
+  export const Switch: (props: BasicNativeProps) => ReactElement;
+  export const Modal: (props: BasicNativeProps) => ReactElement;
+
+  export interface AlertButton {
+    text: string;
+    style?: 'default' | 'cancel' | 'destructive';
+    onPress?: () => void;
   }
 
   export const Text: (props: BasicNativeProps) => ReactElement;
   export const View: (props: BasicNativeProps) => ReactElement;
   export const ScrollView: (props: BasicNativeProps) => ReactElement;
+  export const FlatList: (props: BasicNativeProps) => ReactElement;
   export const TextInput: (props: TextInputProps) => ReactElement;
   export const Pressable: (props: BasicNativeProps & { style?: unknown | ((state: { pressed: boolean }) => unknown) }) => ReactElement;
   export const TouchableOpacity: (props: BasicNativeProps) => ReactElement;
+  export const Alert: {
+    alert(title: string, message?: string, buttons?: AlertButton[]): void;
+  };
+
+  export interface GestureTouch {
+    pageX: number;
+    pageY: number;
+  }
+
+  export interface GestureResponderEvent {
+    nativeEvent: {
+      touches: GestureTouch[];
+    };
+  }
+
+  export interface PanResponderGestureState {
+    dx: number;
+    dy: number;
+  }
+
+  export const PanResponder: {
+    create(config: {
+      onStartShouldSetPanResponder?: () => boolean;
+      onMoveShouldSetPanResponder?: () => boolean;
+      onPanResponderGrant?: (event: GestureResponderEvent, gestureState: PanResponderGestureState) => void;
+      onPanResponderMove?: (event: GestureResponderEvent, gestureState: PanResponderGestureState) => void;
+      onPanResponderRelease?: () => void;
+      onPanResponderTerminate?: () => void;
+    }): { panHandlers: Record<string, unknown> };
+  };
 }

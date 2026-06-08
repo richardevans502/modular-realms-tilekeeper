@@ -1,4 +1,4 @@
-import type { InventoryCondition } from '../shared/types';
+import type { InventoryCondition, TileType } from '../shared/types';
 import type { InventoryDetail } from '../db/inventoryRepository';
 
 export type InventoryConditionFilter = InventoryCondition | 'all';
@@ -12,6 +12,7 @@ export interface InventoryRow {
   available_quantity: number;
   condition: InventoryCondition;
   notes?: string;
+  storage_location?: string;
 }
 
 export interface InventoryFilterState {
@@ -40,6 +41,7 @@ export function toInventoryRows(details: InventoryDetail[]): InventoryRow[] {
       available_quantity,
       condition: item.condition,
       notes: item.notes,
+      storage_location: item.storage_location,
     };
   });
 }
@@ -57,10 +59,28 @@ export function filterInventoryRows(rows: InventoryRow[], filters: InventoryFilt
       return true;
     }
 
-    return [row.id, row.title, row.subtitle, row.condition, row.notes]
+    return [row.id, row.title, row.subtitle, row.condition, row.notes, row.storage_location]
       .filter((value): value is string => Boolean(value))
       .join(' ')
       .toLowerCase()
       .includes(normalizedSearch);
+  });
+}
+
+export function mergeCatalogWithInventory(catalog: TileType[], inventoryDetails: InventoryDetail[]): InventoryDetail[] {
+  const detailsMap = new Map(inventoryDetails.map((detail) => [detail.item.tile_type_id, detail]));
+  return catalog.map((tile) => {
+    const detail = detailsMap.get(tile.id);
+    if (detail) return detail;
+    return {
+      item: {
+        tile_type_id: tile.id,
+        owned_quantity: 0,
+        reserved: 0,
+        condition: 'unknown',
+      },
+      tile,
+      available_quantity: 0,
+    };
   });
 }

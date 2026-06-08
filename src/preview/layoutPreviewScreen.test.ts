@@ -93,7 +93,7 @@ const layout: Layout = {
 const catalog = [roomTile, stairTile];
 
 describe('layout preview screen model', () => {
-  test('builds schematic grid viewport state with pan and zoom transforms', () => {
+  test('builds schematic grid viewport state with category legend and socket compatibility', () => {
     const model = buildLayoutPreviewScreenModel(layout, catalog, {
       viewportWidth: 320,
       viewportHeight: 240,
@@ -106,6 +106,16 @@ describe('layout preview screen model', () => {
     expect(model.viewport).toEqual({ width: 320, height: 240, pan: { x: 24, y: -12 }, zoom: 1.5 });
     expect(model.contentTransform).toEqual({ translateX: 24, translateY: -12, scale: 1.5 });
     expect(model.schematic.tiles.map((tile) => tile.label)).toEqual(['Vault Room', 'Secret Stair']);
+    expect(model.schematic.tiles.map((tile) => tile.category)).toEqual(['floor', 'doorway']);
+    expect(model.legend).toEqual([
+      { category: 'floor', color: '#7dd3fc', label: 'Floor' },
+      { category: 'doorway', color: '#fde68a', label: 'Doorway' },
+    ]);
+    expect(model.schematic.tiles.flatMap((tile) => tile.sockets).map((socket) => socket.compatibility)).toEqual([
+      'compatible',
+      'incompatible',
+      'incompatible',
+    ]);
     expect(model.selectedTile).toBeNull();
   });
 

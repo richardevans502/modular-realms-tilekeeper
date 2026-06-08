@@ -115,7 +115,7 @@ describe('SQLite migration runner v0.1', () => {
       'tile_types',
       'user_inventory',
     ]);
-    expect(await getSchemaVersion(adapter)).toBe(2);
+    expect(await getSchemaVersion(adapter)).toBe(3);
     expect(db.prepare('SELECT COUNT(*) AS count FROM migration_log WHERE id = ?').get(INITIAL_MIGRATION.id)).toEqual({ count: 1 });
     expect(db.prepare('SELECT COUNT(*) AS count FROM migration_log WHERE id = ?').get(INVENTORY_MIGRATION.id)).toEqual({ count: 1 });
   });

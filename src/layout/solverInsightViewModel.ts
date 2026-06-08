@@ -19,6 +19,13 @@ export interface RejectionBreakdownRow {
   count: number;
 }
 
+export interface RejectedCandidateRowViewModel {
+  id: string;
+  title: string;
+  detail: string;
+  reason: string;
+}
+
 export interface MissingTileRowViewModel {
   id: string;
   title: string;
@@ -28,8 +35,10 @@ export interface MissingTileRowViewModel {
 
 export interface SolverInsightViewModel {
   statusBanner: SolverInsightBanner;
+  foundSummary: string;
   traceSummary: SolverInsightStat[];
   rejectionBreakdown: RejectionBreakdownRow[];
+  rejectedCandidateRows: RejectedCandidateRowViewModel[];
   missingTileRows: MissingTileRowViewModel[];
   emptySuggestionsMessage?: string;
 }
@@ -56,6 +65,7 @@ export function buildSolverInsightViewModel({
 
   return {
     statusBanner: buildStatusBanner(result, placedCount, requestedCount, missingCount),
+    foundSummary: `${placedCount} of ${requestedCount} placements found`,
     traceSummary: [
       { label: 'Requested', value: String(requestedCount), detail: 'target placements' },
       { label: 'Placed', value: String(placedCount), detail: 'tiles on grid' },
@@ -64,6 +74,7 @@ export function buildSolverInsightViewModel({
       { label: 'Consumed', value: `${consumedCount} / ${availableCount}`, detail: 'available inventory used' },
     ],
     rejectionBreakdown: buildRejectionBreakdown(trace.rejectedCandidates),
+    rejectedCandidateRows: trace.rejectedCandidates.map(toRejectedCandidateRow),
     missingTileRows,
     emptySuggestionsMessage:
       missingTileRows.length === 0
@@ -100,6 +111,16 @@ function buildStatusBanner(
     title: 'Layout generated successfully',
     tone: 'success',
     message: `Placed all ${requestedCount} requested tiles with the current inventory.`,
+  };
+}
+
+function toRejectedCandidateRow(candidate: RejectedCandidate, index: number): RejectedCandidateRowViewModel {
+  const reason = formatRejectedReason(candidate.reason);
+  return {
+    id: `${candidate.tile_type_id}-${candidate.face_id}-${candidate.x}-${candidate.y}-${candidate.rotation}-${index}`,
+    title: `${candidate.tile_type_id} · ${candidate.face_id}`,
+    detail: `Grid (${candidate.x}, ${candidate.y}) · ${candidate.rotation}° rotation`,
+    reason,
   };
 }
 
