@@ -1,0 +1,91 @@
+diff --git a/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/Promise.kt b/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/Promise.kt
+index 287735e..247ee80 100644
+--- a/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/Promise.kt
++++ b/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/Promise.kt
+@@ -45,15 +45,15 @@ fun Promise.toBridgePromise(): com.facebook.react.bridge.Promise {
+       resolveMethod(value)
+     }
+ 
+-    override fun reject(code: String?, message: String?) {
++    override fun reject(code: String, message: String?) {
+       expoPromise.reject(code, message, null)
+     }
+ 
+-    override fun reject(code: String?, throwable: Throwable?) {
++    override fun reject(code: String, throwable: Throwable?) {
+       expoPromise.reject(code, null, throwable)
+     }
+ 
+-    override fun reject(code: String?, message: String?, throwable: Throwable?) {
++    override fun reject(code: String, message: String?, throwable: Throwable?) {
+       expoPromise.reject(code, message, throwable)
+     }
+ 
+@@ -65,19 +65,19 @@ fun Promise.toBridgePromise(): com.facebook.react.bridge.Promise {
+       expoPromise.reject(unknownCode, null, throwable)
+     }
+ 
+-    override fun reject(code: String?, userInfo: WritableMap) {
++    override fun reject(code: String, userInfo: WritableMap) {
+       expoPromise.reject(code, null, null)
+     }
+ 
+-    override fun reject(code: String?, throwable: Throwable?, userInfo: WritableMap) {
++    override fun reject(code: String, throwable: Throwable?, userInfo: WritableMap) {
+       expoPromise.reject(code, null, throwable)
+     }
+ 
+-    override fun reject(code: String?, message: String?, userInfo: WritableMap) {
++    override fun reject(code: String, message: String?, userInfo: WritableMap) {
+       expoPromise.reject(code, message, null)
+     }
+ 
+-    override fun reject(code: String?, message: String?, throwable: Throwable?, userInfo: WritableMap?) {
++    override fun reject(code: String, message: String?, throwable: Throwable?, userInfo: WritableMap?) {
+       expoPromise.reject(code ?: unknownCode, message, throwable)
+     }
+ 
+diff --git a/node_modules/expo-modules-core/expo-module-gradle-plugin/build.gradle.kts b/node_modules/expo-modules-core/expo-module-gradle-plugin/build.gradle.kts
+new file mode 100644
+--- /dev/null
++++ b/node_modules/expo-modules-core/expo-module-gradle-plugin/build.gradle.kts
+@@ -0,0 +1,46 @@
++import org.jetbrains.kotlin.gradle.dsl.JvmTarget
++import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
++
++plugins {
++  kotlin("jvm")
++  id("java-gradle-plugin")
++}
++
++repositories {
++  google()
++  mavenCentral()
++}
++
++dependencies {
++  implementation(gradleApi())
++  compileOnly("com.android.tools.build:gradle:8.5.0")
++}
++
++java {
++  sourceCompatibility = JavaVersion.VERSION_11
++  targetCompatibility = JavaVersion.VERSION_11
++}
++
++tasks.withType<KotlinCompile> {
++  compilerOptions {
++    jvmTarget.set(JvmTarget.JVM_11)
++  }
++}
++
++group = "expo.modules"
++
++gradlePlugin {
++  plugins {
++    create("expoModuleGradlePlugin") {
++      id = "expo-module-gradle-plugin"
++      implementationClass = "expo.modules.plugin.ExpoModulesGradlePlugin"
++    }
++  }
++}
