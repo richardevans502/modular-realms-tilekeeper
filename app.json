@@ -5,8 +5,14 @@
     "version": "0.1.0",
     "scheme": "tilekeeper",
     "orientation": "portrait",
-    "platforms": ["android", "ios", "web"],
-    "assetBundlePatterns": ["**/*"],
+    "platforms": [
+      "android",
+      "ios",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "bundleIdentifier": "com.modularrealms.tilekeeper"
     },
@@ -25,6 +31,12 @@
         "image": "./assets/images/splash-dark.png",
         "resizeMode": "contain",
         "backgroundColor": "#0A0A0A"
+      }
+    },
+    "owner": "richardevans502",
+    "extra": {
+      "eas": {
+        "projectId": "6713aeae-2dd4-44bd-9a05-0a343b1cdad1"
       }
     }
   }
