@@ -1,16 +1,26 @@
 #!/usr/bin/env bash
 set -e
 
-# Fix expo-modules-core Promise.kt for React Native 0.81.5 compatibility
-# RN 0.81.5 uses non-nullable String for Promise reject code parameter
+# Fix expo-modules-core for React Native 0.81.5 compatibility
+# RN 0.81.5's Java Promise interface uses @Nullable String for 'code' parameter
+
 PROMISE_KT="node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/Promise.kt"
+KPROMISE_KT="node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/KPromiseWrapper.kt"
 
 if [ -f "$PROMISE_KT" ]; then
-  # Replace nullable String? with non-nullable String for all reject overrides
-  sed -i 's/override fun reject(code: String?,/override fun reject(code: String,/g' "$PROMISE_KT"
-  echo "[postinstall] Patched Promise.kt for RN 0.81.5 compat"
+  # The anonymous bridge Promise implementation must match RN 0.81.5's interface
+  # which has @Nullable String code (Kotlin sees as String?)
+  # But KPromiseWrapper.kt passes code: String? to bridgePromise.reject
+  # We need to ensure KPromiseWrapper handles null code
+  echo "[postinstall] Patching KPromiseWrapper.kt for RN 0.81.5 compat"
+fi
+
+if [ -f "$KPROMISE_KT" ]; then
+  # Replace bridgePromise.reject(code, message, cause) with null-safe version
+  sed -i 's/bridgePromise.reject(code, message, cause)/bridgePromise.reject(code ?: "UnknownCode", message, cause)/g' "$KPROMISE_KT"
+  echo "[postinstall] Patched KPromiseWrapper.kt"
 else
-  echo "[postinstall] Warning: Promise.kt not found"
+  echo "[postinstall] Warning: KPromiseWrapper.kt not found"
 fi
 
 # Ensure expo-module-gradle-plugin has build.gradle.kts
@@ -57,7 +67,7 @@ gradlePlugin {
   }
 }
 EOF
-  echo "[postinstall] Created build.gradle.kts for expo-module-gradle-plugin"
+  echo "[postinstall] Created build.gradle.kts"
 else
   echo "[postinstall] build.gradle.kts already exists"
 fi
