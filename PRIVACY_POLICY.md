@@ -3,24 +3,20 @@
 **Effective Date:** June 16, 2026
 
 ## Overview
-TileKeeper is an **offline‑first** mobile application designed to help you organize and layout your inventory without requiring constant internet access. The app stores all your data locally on your device. No personal information (PII) is collected, stored, or transmitted by default.
+TileKeeper is an **offline‑first** mobile application designed to help you organize and lay out your inventory without requiring constant internet access. The app stores your inventory, layout goals, previews, saved layouts, exports, settings, backups, and diagnostic logs locally on your device. TileKeeper does not collect, store, sell, share, or transmit personal information (PII), usage analytics, advertising identifiers, inventory contents, layout goals, or diagnostic logs by default.
 
 ## Data Collection
 | Data Type | Collected? | Purpose |
 |-----------|------------|---------|
-| Personal Identifiable Information (name, email, phone, location, etc.) | **No** | N/A |
+| Personally identifiable information (name, email, phone, location, etc.) | **No** | N/A |
 | Usage analytics / telemetry | **No** | N/A |
-| Crash logs (anonymous) | **No** (only when you explicitly share them via the **Diagnostics** screen) | N/A |
+| Crash logs or diagnostic logs | **No** (logs stay local unless you explicitly export and share them from the **Diagnostics** screen) | N/A |
 
 ## Optional Network Requests
-TileKeeper periodically checks for an updated **catalog manifest** to provide you with the latest item definitions. This request is **optional** and only occurs when you have an active internet connection. The request is a simple HTTPS `GET` to the public manifest URL and includes **no** user‑identifying data.
+TileKeeper can check for an updated **catalog manifest** to provide the latest item definitions. This request is optional and occurs only when you choose to refresh the catalog from the app. The request is a simple HTTPS `GET` to the configured public manifest URL and includes no user-identifying data, account data, inventory data, layout goals, saved layouts, backup files, exports, or diagnostic logs.
 
 ## Permissions
-The app requests the following permissions solely to enable its core functionality:
-- **Read/Write Storage** – to save your inventory data locally.
-- **Network Access** – to optionally fetch the catalog manifest when you choose to refresh it.
-
-No other permissions are requested.
+TileKeeper uses normal app storage to save your data locally on your device. Network access is used only for the optional catalog manifest refresh you start from the app. If you choose to export, back up, restore, or share files, your device or operating system may show the relevant file picker or share sheet.
 
 ## Third‑Party Services
 TileKeeper does **not** integrate any third‑party analytics, advertising, or tracking SDKs.
@@ -33,7 +29,7 @@ TileKeeper does **not** integrate any third‑party analytics, advertising, or t
 If you have any questions or concerns about this privacy policy, please contact us at:
 
 - **Email:** support@tilekeeper.app
-- **Web Form:** https://tilekeeper.app/support
+- **Project issues:** https://github.com/richardevans502/modular-realms-tilekeeper/issues
 
 ---
 *This privacy policy is hosted publicly at:* https://richardevans502.github.io/modular-realms-tilekeeper/PRIVACY_POLICY.md

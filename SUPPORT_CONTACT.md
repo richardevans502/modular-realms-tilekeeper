@@ -4,7 +4,7 @@
 If you have any questions, feedback, or need assistance with TileKeeper, please get in touch:
 
 - **Email:** support@tilekeeper.app
-- **Web Form:** https://tilekeeper.app/support
+- **Project Issues:** https://github.com/richardevans502/modular-realms-tilekeeper/issues
 
 We aim to respond to support requests within 48 hours.
 
