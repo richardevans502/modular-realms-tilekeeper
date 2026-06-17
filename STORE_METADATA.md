@@ -28,7 +28,9 @@ inventory, tabletop, board games, RPG, tiles, cards, miniatures, layout, offline
 Games
 
 ## Screenshot Set
-Draft device-framed screenshots have been generated under `screenshots/store/` from a local Expo web export using the current UI. Replace these with final real-device or production-emulator captures before store upload if platform review requires native chrome-free screenshots.
+Device-framed screenshots have been regenerated under `screenshots/store/` from the production Expo web build rendered at an iPhone-sized mobile viewport (`390×844` CSS, 3× DPR) and placed into a realistic modern phone frame. The same assets are also preserved under `screenshots/native-store/` for source tracking.
+
+These are web-captured screenshots with a synthetic phone frame; they replace the previous stylised gold-bordered placeholders. If platform review requires strictly native chrome-free captures from a physical device or production emulator, replace these before final upload.
 
 1. Inventory — `screenshots/store/inventory-framed.png`
 2. Layout Goal — `screenshots/store/layout-goal-framed.png`
@@ -36,3 +38,12 @@ Draft device-framed screenshots have been generated under `screenshots/store/` f
 4. Saved Layouts — `screenshots/store/saved-layouts-framed.png`
 5. Export — `screenshots/store/export-framed.png`
 6. Settings / Privacy — `screenshots/store/settings-privacy-framed.png`
+
+### Known issues visible in current captures
+The screenshots accurately reflect the current production UI; they are not retouched. Notable polish issues visible in the captures:
+- Inventory screen shows all-zero stats and an empty/default state.
+- Layout Goal screen has a `Height` input that visually overflows its card on narrow viewports.
+- Preview screen shows overlapping tile labels in the schematic grid and redundant "Layout Preview" header text (Stack header + screen header).
+- Saved Layouts screen is in empty state.
+
+These are app-level UI/UX bugs, not screenshot-generation defects. Address before final store submission if the review gate requires pixel-perfect marketing captures.
