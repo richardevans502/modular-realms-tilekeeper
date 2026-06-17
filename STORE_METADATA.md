@@ -28,10 +28,11 @@ inventory, tabletop, board games, RPG, tiles, cards, miniatures, layout, offline
 Games
 
 ## Screenshot Set
-Device-frame screenshots are tracked separately and should be added under `screenshots/` before final store submission. Planned store screenshots:
-1. Inventory
-2. Layout Goal
-3. Preview
-4. Saved Layouts
-5. Export
-6. Settings / Privacy
+Draft device-framed screenshots have been generated under `screenshots/store/` from a local Expo web export using the current UI. Replace these with final real-device or production-emulator captures before store upload if platform review requires native chrome-free screenshots.
+
+1. Inventory — `screenshots/store/inventory-framed.png`
+2. Layout Goal — `screenshots/store/layout-goal-framed.png`
+3. Preview — `screenshots/store/preview-framed.png`
+4. Saved Layouts — `screenshots/store/saved-layouts-framed.png`
+5. Export — `screenshots/store/export-framed.png`
+6. Settings / Privacy — `screenshots/store/settings-privacy-framed.png`
