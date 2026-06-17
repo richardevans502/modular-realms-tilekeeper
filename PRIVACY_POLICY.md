@@ -36,4 +36,4 @@ If you have any questions or concerns about this privacy policy, please contact 
 - **Web Form:** https://tilekeeper.app/support
 
 ---
-*This privacy policy is hosted publicly at:* https://tilekeeper.app/privacy.html (Please ensure this file is published to your chosen hosting platform, e.g., GitHub Pages, and the URL is updated in the app’s Settings > Privacy link.)
+*This privacy policy is hosted publicly at:* https://richardevans502.github.io/modular-realms-tilekeeper/PRIVACY_POLICY.md
