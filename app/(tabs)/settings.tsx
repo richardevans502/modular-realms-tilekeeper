@@ -1,4 +1,3 @@
-import { PlaceholderScreen } from '../../src/ui/PlaceholderScreen';
-export default function SettingsScreen() {
-  return <PlaceholderScreen routeId="settings" />;
-}
+import { SettingsScreen } from '../../src/settings/SettingsScreen';
+
+export default SettingsScreen;
