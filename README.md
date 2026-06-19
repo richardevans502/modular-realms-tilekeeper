@@ -91,7 +91,11 @@ Add `--show-done` to include archived/completed tasks.
 ## 🚦 Current milestone status
 
 - **Milestone 1:** Foundation documents delivered and reviewed (see `docs/M1_FOUNDATION_SIGNOFF_REPORT.md`).
-- **Milestone 2:** In progress — Sprint 1 focuses on schemas, SQLite migration, seed catalog, CI/CD, project scaffolding, and documentation (this README + artifact index).
+- **Milestone 2:** Complete — inventory CRUD, SQLite persistence, seed catalog, backup/import skeleton.
+- **Milestone 3:** Complete — deterministic layout solver, socket compatibility, dimension-aware placement, goal UI.
+- **Milestone 4:** Complete — schematic preview, saved layouts, JSON/PNG/PDF export, UI screens, beta distribution.
+- **Milestone 5:** In progress — catalog refresh, accessibility, privacy/store materials, release candidate.
+  - **M5-PRIV-1:** Store submission pack complete. Privacy policy live at GitHub Pages. Screenshots approved by Rich (2026-06-19). gh-pages pushed.
 
 ---
 

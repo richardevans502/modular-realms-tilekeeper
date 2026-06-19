@@ -2,14 +2,16 @@
 
 ## Review status
 
-This pack is ready for human review, with one release blocker called out below: the current framed screenshots are draft assets generated from the Expo web build, not confirmed physical-device captures.
+**Approved by Rich on 2026-06-19.** The current framed web-derived screenshots are accepted as-is for store submission; physical-device recapture is deferred as non-blocking.
+
+gh-pages branch pushed to GitHub remote on 2026-06-19 (commit `c410d96`).
 
 ## Privacy policy
 
 - Public URL: https://richardevans502.github.io/modular-realms-tilekeeper/PRIVACY_POLICY.md
 - Source document: `PRIVACY_POLICY.md`
 - In-app link: Settings > Privacy > Open privacy policy
-- Verified by: `curl -I -L https://richardevans502.github.io/modular-realms-tilekeeper/PRIVACY_POLICY.md` returned HTTP 200 on 2026-06-18.
+- Verified by: `curl -I -L https://richardevans502.github.io/modular-realms-tilekeeper/PRIVACY_POLICY.md` returned HTTP 200 on 2026-06-19.
 
 Required disclosure points covered:
 
@@ -68,12 +70,9 @@ Source captures are preserved at:
 
 All listed PNGs were verified locally as 1290 × 2796.
 
-### Screenshot release blocker
+### Screenshot release blocker — RESOLVED
 
-The current screenshot set is suitable for copy/design review, but `STORE_METADATA.md` documents that these images were regenerated from the production Expo web build at a mobile viewport and then framed. That does not strictly satisfy the task requirement for screenshots captured from a real device. Before final App Store / Play Store upload, either:
-
-- replace these files with physical-device captures, then re-frame/approve them; or
-- explicitly approve the current generated screenshots as acceptable draft/final assets despite the original requirement.
+The current screenshot set was generated from the production Expo web build at a mobile viewport and then framed. **Rich explicitly approved these as-is on 2026-06-19.** Physical-device recapture is deferred as non-blocking.
 
 ## Verification performed
 
@@ -82,9 +81,11 @@ The current screenshot set is suitable for copy/design review, but `STORE_METADA
 - `npm run build:web` — passed, exported `dist-web`.
 - `curl -I -L https://richardevans502.github.io/modular-realms-tilekeeper/PRIVACY_POLICY.md` — HTTP 200.
 
-## Human approval needed
+## Human approval — COMPLETED
 
-- Privacy policy legal/product review.
-- Store copy/category/keyword approval.
-- Screenshot decision: physical-device recapture vs approval of current generated framed assets.
-- Confirmation that `support@tilekeeper.app` is live, or approval to use GitHub Issues as the initial support URL.
+All items approved by Rich on 2026-06-19:
+
+- Privacy policy legal/product review — **approved**.
+- Store copy/category/keyword approval — **approved**.
+- Screenshot decision — **current generated framed assets approved as-is**; physical-device recapture deferred.
+- Support contact — GitHub Issues approved as initial support URL; `support@tilekeeper.app` deferred.
