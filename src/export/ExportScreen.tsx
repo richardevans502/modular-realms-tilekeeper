@@ -1,14 +1,19 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert, FlatList, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActivityIndicator, Switch, flatListProps, textProps, textInputProps } from '../ui/compat';
+import { EmptyState } from '../ui/EmptyState';
+import { ShimmerPlaceholder } from '../ui/ShimmerPlaceholder';
 import type { SavedLayoutRepository } from '../db/savedLayoutRepository';
 import type { CatalogRepository } from '../db/catalogRepository';
 import type { InventoryRepository } from '../db/inventoryRepository';
-import type { Layout, TileType } from '../shared/types';
+import type { InventoryItem, Layout, TileType } from '../shared/types';
 import { tileKeeperTheme } from '../ui/theme';
 import {
   buildExportableLayouts,
+  buildPrepSheetHtml,
+  buildPrepSheetModel,
   exportBackupJson,
   exportLayoutJson,
   generatePngDataUrl,
@@ -16,6 +21,7 @@ import {
   parseImportJson,
   type ExportableLayout,
 } from './exportViewModel';
+import { shareJsonExport, sharePdfExport, sharePngExport } from './shareExportFiles';
 
 export interface ExportScreenProps {
   catalogRepository?: CatalogRepository;
@@ -49,8 +55,10 @@ function triggerWebDownloadDataUrl(filename: string, dataUrl: string): void {
 }
 
 export function ExportScreen({ catalogRepository, inventoryRepository, savedLayoutRepository }: ExportScreenProps) {
+  const insets = useSafeAreaInsets();
   const [layouts, setLayouts] = useState<ExportableLayout[]>([]);
   const [catalogTiles, setCatalogTiles] = useState<TileType[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -59,6 +67,7 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
   const [importStatus, setImportStatus] = useState<'idle' | 'parsing' | 'success' | 'error'>('idle');
 
   const [pngGeneratingId, setPngGeneratingId] = useState<string | null>(null);
+  const [pdfGeneratingId, setPdfGeneratingId] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     if (!savedLayoutRepository || !catalogRepository || !inventoryRepository) {
@@ -68,12 +77,14 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      const [savedLayouts, tiles] = await Promise.all([
+      const [savedLayouts, tiles, inventory] = await Promise.all([
         savedLayoutRepository.listLayouts(),
         catalogRepository.listTileTypes(),
+        inventoryRepository.listInventoryItems(),
       ]);
       setLayouts(buildExportableLayouts(savedLayouts));
       setCatalogTiles(tiles);
+      setInventoryItems(inventory);
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : 'Failed to load export data.');
     } finally {
@@ -85,6 +96,19 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
     void loadData();
   }, [loadData]);
 
+  const shareOrDownloadJson = async (filename: string, json: string, dialogTitle = 'Export ready') => {
+    if (Platform.OS === 'web') {
+      triggerWebDownload(filename, json);
+      return;
+    }
+    const result = await shareJsonExport(filename, json);
+    if (!result.success) {
+      Alert.alert('Export failed', result.error);
+      return;
+    }
+    Alert.alert(dialogTitle, `${result.fileName} is ready to share.`);
+  };
+
   const handleExportBackup = async () => {
     if (!catalogRepository || !inventoryRepository || !savedLayoutRepository) return;
     try {
@@ -94,7 +118,7 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
         savedLayoutRepository,
       });
       const filename = `tilekeeper-backup-${new Date().toISOString().split('T')[0]}.json`;
-      triggerWebDownload(filename, json);
+      await shareOrDownloadJson(filename, json, 'Backup export ready');
     } catch (err) {
       Alert.alert('Export failed', err instanceof Error ? err.message : 'Could not create backup.');
     }
@@ -128,7 +152,7 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
   const handleExportLayoutJson = async (layout: Layout) => {
     try {
       const json = await exportLayoutJson(layout);
-      triggerWebDownload(`layout-${layout.id}.json`, json);
+      await shareOrDownloadJson(`layout-${layout.id}.json`, json, 'Layout JSON ready');
     } catch (err) {
       Alert.alert('Export failed', err instanceof Error ? err.message : 'Could not export layout JSON.');
     }
@@ -139,7 +163,14 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
     try {
       const result = await generatePngDataUrl(layout, catalogTiles, 2);
       if (result.dataUrl) {
-        triggerWebDownloadDataUrl(`layout-${layout.id}.png`, result.dataUrl);
+        if (Platform.OS === 'web') {
+          triggerWebDownloadDataUrl(`layout-${layout.id}.png`, result.dataUrl);
+        } else {
+          const shared = await sharePngExport(`layout-${layout.id}.png`, result.dataUrl);
+          if (!shared.success) {
+            Alert.alert('PNG export failed', shared.error);
+          }
+        }
       } else {
         Alert.alert('PNG export failed', result.error ?? 'Unknown error');
       }
@@ -147,6 +178,30 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
       Alert.alert('PNG export failed', err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setPngGeneratingId(null);
+    }
+  };
+
+  const handleExportLayoutPdf = async (item: ExportableLayout) => {
+    setPdfGeneratingId(item.id);
+    try {
+      const model = await buildPrepSheetModel({
+        exportableLayout: item,
+        catalog: catalogTiles,
+        inventory: inventoryItems,
+      });
+      const html = buildPrepSheetHtml(model);
+      if (Platform.OS === 'web') {
+        triggerWebDownload(`layout-${item.id}-prep-sheet.html`, html, 'text/html');
+        return;
+      }
+      const result = await sharePdfExport(`layout-${item.id}-prep-sheet.pdf`, html);
+      if (!result.success) {
+        Alert.alert('PDF export failed', result.error);
+      }
+    } catch (err) {
+      Alert.alert('PDF export failed', err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setPdfGeneratingId(null);
     }
   };
 
@@ -181,17 +236,30 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
             <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>PNG</Text>
           )}
         </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={`Export ${item.name} as PDF prep sheet`}
+          style={[styles.actionButton, styles.actionButtonSecondary]}
+          onPress={() => void handleExportLayoutPdf(item)}
+          disabled={pdfGeneratingId === item.id}
+        >
+          {pdfGeneratingId === item.id ? (
+            <ActivityIndicator size="small" color={tileKeeperTheme.colours.primary} />
+          ) : (
+            <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>PDF</Text>
+          )}
+        </TouchableOpacity>
       </View>
     </View>
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: tileKeeperTheme.spacing.lg + insets.top }]}>
       <View style={styles.heroCard}>
         <Text style={styles.eyebrow}>Backup & Share</Text>
-        <Text style={styles.title}>Export & Backup</Text>
-        <Text style={styles.subtitle}>
-          Export your catalog, inventory, and saved layouts as JSON backups, or download PNG schematics for any saved plan.
+        <Text style={styles.title} allowFontScaling>Export & Backup</Text>
+        <Text style={styles.subtitle} allowFontScaling>
+          Export your catalog, inventory, and saved layouts as JSON backups, share PNG schematics, or generate printable PDF prep sheets.
         </Text>
       </View>
 
@@ -266,11 +334,14 @@ export function ExportScreen({ catalogRepository, inventoryRepository, savedLayo
 
       <View style={styles.sectionCard}>
         <Text style={styles.sectionTitle}>Saved Layouts</Text>
-        <Text style={styles.sectionBody}>Export individual layouts as JSON or PNG schematics.</Text>
+        <Text style={styles.sectionBody}>Export individual layouts as JSON, PNG schematics, or printable PDF prep sheets.</Text>
         {isLoading ? (
-          <ActivityIndicator size="small" color={tileKeeperTheme.colours.primary} />
+          <View style={styles.shimmerStack} accessibilityLabel="Loading saved layouts" accessibilityRole="progressbar" accessibilityState={{ busy: true }}>
+            <ShimmerPlaceholder height={80} />
+            <ShimmerPlaceholder height={80} />
+          </View>
         ) : layouts.length === 0 ? (
-          <Text style={styles.emptyText}>No saved layouts yet. Go to Saved Layouts to create one.</Text>
+          <EmptyState icon="📤" title="No saved layouts yet" message="Go to Saved Layouts to create one, then return here to export it." />
         ) : (
           <FlatList
             {...flatListProps({
@@ -398,10 +469,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
   },
-  emptyText: {
-    color: tileKeeperTheme.colours.mutedText,
-    fontSize: 14,
-    fontStyle: 'italic',
+  shimmerStack: {
+    gap: 12,
+    paddingBottom: 32,
   },
   layoutCard: {
     backgroundColor: tileKeeperTheme.colours.raisedSurface,

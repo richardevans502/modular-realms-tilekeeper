@@ -1,5 +1,6 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getRouteById, type TileKeeperRouteId } from './navigation';
 import { tileKeeperTheme } from './theme';
@@ -8,11 +9,12 @@ interface PlaceholderScreenProps {
   routeId: Exclude<TileKeeperRouteId, 'home'>;
 }
 
-export function PlaceholderScreen({ routeId }: PlaceholderScreenProps) {
+export default function PlaceholderScreen({ routeId }: PlaceholderScreenProps) {
+  const insets = useSafeAreaInsets();
   const route = getRouteById(routeId);
-
+  const title = route?.label ?? routeId;
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: 40 + insets.top }]}>
       <Text style={styles.icon}>{route.icon}</Text>
       <Text style={styles.title}>{route.label}</Text>
       <Text style={styles.description}>{route.description}</Text>

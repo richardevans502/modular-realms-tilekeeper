@@ -5,6 +5,7 @@
     "version": "0.1.0",
     "scheme": "tilekeeper",
     "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
     "platforms": [
       "android",
       "ios",
@@ -13,25 +14,38 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#1A1A1A",
+          "dark": {
+            "image": "./assets/images/splash-dark.png",
+            "backgroundColor": "#0A0A0A"
+          }
+        }
+      ]
+    ],
     "ios": {
-      "bundleIdentifier": "com.modularrealms.tilekeeper"
+      "bundleIdentifier": "com.modularrealms.tilekeeper",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIFileSharingEnabled": true,
+        "LSSupportsOpeningDocumentsInPlace": true,
+        "UISupportsDocumentBrowser": true,
+        "NSPhotoLibraryUsageDescription": "TileKeeper uses the photo library to share exported layout images and PDF prep sheets.",
+        "NSCameraUsageDescription": "Camera access is not used by TileKeeper."
+      }
     },
     "android": {
       "package": "com.modularrealms.tilekeeper"
     },
     "web": {
       "bundler": "metro"
-    },
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#1A1A1A",
-      "imageWidth": 200,
-      "dark": {
-        "image": "./assets/images/splash-dark.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#0A0A0A"
-      }
     },
     "owner": "richardevans502",
     "extra": {

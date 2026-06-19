@@ -3,6 +3,7 @@ import type React from 'react';
 import Constants from 'expo-constants';
 import * as Linking from 'expo-linking';
 import { Alert, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { refreshCatalogFromManifest, type CatalogRefreshError } from '../catalog/catalogRefresh';
 import { initTileKeeperDatabase, type TileKeeperPersistence } from '../db/init';
@@ -89,6 +90,7 @@ async function listCatalogPacks(db: TileKeeperDatabase): Promise<CatalogPackSett
 }
 
 export function SettingsScreen({ persistence: injectedPersistence, manifestUrl = DEFAULT_MANIFEST_URL }: SettingsScreenProps) {
+  const insets = useSafeAreaInsets();
   const [persistence, setPersistence] = useState<TileKeeperPersistence | null>(injectedPersistence ?? null);
   const [catalogTiles, setCatalogTiles] = useState<TileType[]>([]);
   const [catalogPacks, setCatalogPacks] = useState<CatalogPackSettingsRow[]>([]);
@@ -258,7 +260,7 @@ export function SettingsScreen({ persistence: injectedPersistence, manifestUrl =
   const actionDisabled = Boolean(busyAction) || !persistence;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: tileKeeperTheme.spacing.lg + insets.top }]}>
       <View style={styles.heroCard}>
         <Text style={styles.eyebrow}>TileKeeper</Text>
         <Text style={styles.title} allowFontScaling>Settings</Text>
