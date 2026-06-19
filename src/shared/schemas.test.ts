@@ -72,7 +72,6 @@ describe('TileKeeper shared schemas', () => {
       condition: 'good',
       notes: 'Stored with starter box.',
       storage_location: 'Shelf A / starter tray',
-      reserved: 1,
     });
 
     expect(item.tile_type_id).toBe(doubleSidedTile.id);
@@ -82,7 +81,6 @@ describe('TileKeeper shared schemas', () => {
         face_id: 'corridor-a',
         owned_quantity: 1,
         condition: 'good',
-        reserved: 0,
       }),
     ).toThrow();
   });

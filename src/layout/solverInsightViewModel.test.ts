@@ -58,8 +58,8 @@ const suggestions: MissingTileSuggestion[] = [
 ];
 
 const inventory: InventoryItem[] = [
-  { tile_type_id: 'floor-stone', owned_quantity: 2, reserved: 0, condition: 'good' },
-  { tile_type_id: 'doorway-arch', owned_quantity: 1, reserved: 0, condition: 'worn' },
+  { tile_type_id: 'floor-stone', owned_quantity: 2, condition: 'good' },
+  { tile_type_id: 'doorway-arch', owned_quantity: 1, condition: 'worn' },
 ];
 
 describe('solver insight view model', () => {

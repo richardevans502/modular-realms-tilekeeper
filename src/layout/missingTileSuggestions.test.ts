@@ -38,10 +38,9 @@ function tile(
   };
 }
 
-const inventory = (tile_type_id: string, owned_quantity: number, reserved = 0): InventoryItem => ({
+const inventory = (tile_type_id: string, owned_quantity: number): InventoryItem => ({
   tile_type_id,
   owned_quantity,
-  reserved,
   condition: 'good',
 });
 
@@ -78,7 +77,7 @@ describe('missing tile suggestion engine', () => {
     expect(
       suggestMissingTiles({
         catalog,
-        inventory: [inventory('plain-floor', 1), inventory('crypt-door', 1, 1)],
+        inventory: [inventory('plain-floor', 1), inventory('crypt-door', 1)],
         requiredCategories: [{ category: 'floor', quantity: 3 }],
         themeTags: ['crypt'],
       }),

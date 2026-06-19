@@ -89,7 +89,7 @@ export function deriveThemeOptions(catalog: TileType[]): string[] {
 }
 
 export function hasAvailableInventory(inventory: InventoryItem[]): boolean {
-  return inventory.some((item) => Math.max(0, item.owned_quantity - item.reserved) > 0);
+  return inventory.some((item) => item.owned_quantity > 0);
 }
 
 function parsePositiveInteger(value: string): number | undefined {

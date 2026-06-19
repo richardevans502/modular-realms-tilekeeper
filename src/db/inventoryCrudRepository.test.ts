@@ -60,7 +60,6 @@ const inventoryLine: InventoryItem = {
   tile_type_id: tile.id,
   owned_quantity: 4,
   condition: 'good',
-  reserved: 1,
   storage_location: 'drawer-a',
 };
 
@@ -89,21 +88,19 @@ describe('inventory CRUD repositories', () => {
     expect(sqlite.prepare('SELECT tile_type_id, owned_quantity, reserved FROM user_inventory').get()).toEqual({
       tile_type_id: tile.id,
       owned_quantity: 4,
-      reserved: 1,
+      reserved: 0,
     });
     await expect(inventory.createInventoryItem(inventoryLine)).rejects.toThrow(/already exists/i);
     await expect(inventory.getInventoryItem(tile.id)).resolves.toEqual(inventoryLine);
 
     await inventory.updateInventoryItem(tile.id, {
       owned_quantity: 6,
-      reserved: 2,
       notes: 'counted during M2-SP2',
     });
 
     await expect(inventory.getInventoryItem(tile.id)).resolves.toEqual({
       ...inventoryLine,
       owned_quantity: 6,
-      reserved: 2,
       notes: 'counted during M2-SP2',
     });
     await expect(inventory.listInventoryDetails()).resolves.toEqual([
@@ -111,11 +108,9 @@ describe('inventory CRUD repositories', () => {
         item: {
           ...inventoryLine,
           owned_quantity: 6,
-          reserved: 2,
           notes: 'counted during M2-SP2',
         },
         tile,
-        available_quantity: 4,
       },
     ]);
 
@@ -124,12 +119,15 @@ describe('inventory CRUD repositories', () => {
     await expect(inventory.listInventoryItems()).resolves.toEqual([]);
   });
 
-  test('rejects updates that would reserve more tiles than are owned', async () => {
+  test('allows owned quantities to decrease without reservation checks', async () => {
     const { catalog, inventory } = await openRepositories();
     await catalog.upsertTileType(tile);
     await inventory.createInventoryItem(inventoryLine);
 
-    await expect(inventory.updateInventoryItem(tile.id, { reserved: 5 })).rejects.toThrow(/reserved cannot exceed owned_quantity/i);
+    await expect(inventory.updateInventoryItem(tile.id, { owned_quantity: 1 })).resolves.toMatchObject({
+      tile_type_id: tile.id,
+      owned_quantity: 1,
+    });
   });
 
   test('deletes catalog tile types only when inventory no longer references them', async () => {

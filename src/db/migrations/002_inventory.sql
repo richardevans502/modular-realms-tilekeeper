@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS user_inventory (
   reserved INTEGER NOT NULL DEFAULT 0 CHECK (reserved >= 0),
   item_json TEXT NOT NULL,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CHECK (reserved <= owned_quantity),
   FOREIGN KEY (tile_type_id) REFERENCES tile_types(id) ON DELETE RESTRICT
 );
 

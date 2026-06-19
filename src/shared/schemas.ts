@@ -101,13 +101,8 @@ export const inventoryItemSchema = z
     condition: inventoryConditionSchema,
     notes: z.string().optional(),
     storage_location: z.string().optional(),
-    reserved: z.number().int().nonnegative(),
   })
-  .strict()
-  .refine((item) => item.reserved <= item.owned_quantity, {
-    path: ['reserved'],
-    message: 'reserved cannot exceed owned_quantity',
-  });
+  .strict();
 
 export const layoutPlacementSchema = z
   .object({

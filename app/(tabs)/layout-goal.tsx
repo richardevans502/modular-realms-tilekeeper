@@ -39,14 +39,12 @@ const demoInventory: InventoryItem[] = [
   {
     tile_type_id: 'mr-seed-1x1-floor-wood-cracked',
     owned_quantity: 2,
-    reserved: 0,
     condition: 'good',
     storage_location: 'demo tray',
   },
   {
     tile_type_id: 'mr-seed-1x1-door-wooden',
     owned_quantity: 1,
-    reserved: 0,
     condition: 'good',
     storage_location: 'demo tray',
   },

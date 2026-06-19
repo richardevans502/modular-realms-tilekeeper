@@ -143,7 +143,6 @@ describe('exportViewModel', () => {
       tile_type_id: tile.id,
       owned_quantity: 3,
       condition: 'good',
-      reserved: 0,
     });
     await savedLayouts.createLayout(savedLayout);
 
@@ -183,7 +182,6 @@ describe('exportViewModel', () => {
       tile_type_id: tile.id,
       owned_quantity: 5,
       condition: 'new',
-      reserved: 0,
     });
     await savedLayouts.createLayout(savedLayout);
 
@@ -192,7 +190,7 @@ describe('exportViewModel', () => {
     const fresh = await openRepositories();
     const staleTile = { ...tile, id: 'mr-stale', name: 'Stale' };
     await fresh.catalog.upsertTileType(staleTile);
-    await fresh.inventory.createInventoryItem({ tile_type_id: staleTile.id, owned_quantity: 1, condition: 'good', reserved: 0 });
+    await fresh.inventory.createInventoryItem({ tile_type_id: staleTile.id, owned_quantity: 1, condition: 'good'});
     await fresh.savedLayouts.createLayout({ ...savedLayout, id: 'stale-layout', name: 'Stale layout' });
 
     const result = await importBackupJson(backupJson, {
@@ -216,7 +214,6 @@ describe('exportViewModel', () => {
       tile_type_id: tile.id,
       owned_quantity: 2,
       condition: 'worn',
-      reserved: 0,
     });
     await savedLayouts.createLayout(savedLayout);
 
@@ -225,7 +222,7 @@ describe('exportViewModel', () => {
     const fresh = await openRepositories();
     const extraTile = { ...tile, id: 'mr-extra', name: 'Extra' };
     await fresh.catalog.upsertTileType(extraTile);
-    await fresh.inventory.createInventoryItem({ tile_type_id: extraTile.id, owned_quantity: 1, condition: 'good', reserved: 0 });
+    await fresh.inventory.createInventoryItem({ tile_type_id: extraTile.id, owned_quantity: 1, condition: 'good'});
     await fresh.savedLayouts.createLayout({ ...savedLayout, id: 'extra-layout', name: 'Extra layout' });
 
     const result = await importBackupJson(backupJson, {

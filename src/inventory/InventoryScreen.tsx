@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import type { TileType, InventoryItem } from '../shared/types';
 import type { InventoryRepository, InventoryDetail } from '../db/inventoryRepository';
@@ -56,9 +56,8 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
   const stats = useMemo(() => {
     const allRows = toInventoryRows(details);
     const owned = allRows.reduce((sum, row) => sum + row.owned_quantity, 0);
-    const reserved = allRows.reduce((sum, row) => sum + row.reserved, 0);
     const cataloged = allRows.filter((row) => row.owned_quantity > 0).length;
-    return { totalOwned: owned, totalReserved: reserved, catalogedCount: cataloged, totalCatalog: catalog.length };
+    return { totalOwned: owned, catalogedCount: cataloged, totalCatalog: catalog.length };
   }, [details, catalog.length]);
 
   async function upsertItem(row: InventoryRow, patch: Partial<InventoryItem>) {
@@ -66,7 +65,6 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
       const nextItem: InventoryItem = {
         tile_type_id: row.id,
         owned_quantity: patch.owned_quantity ?? row.owned_quantity,
-        reserved: patch.reserved ?? row.reserved,
         condition: patch.condition ?? row.condition,
         notes: patch.notes ?? row.notes,
         storage_location: patch.storage_location ?? row.storage_location,
@@ -80,20 +78,7 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
 
   function adjustOwned(row: InventoryRow, delta: number) {
     const next = Math.max(0, row.owned_quantity + delta);
-    if (next < row.reserved) {
-      Alert.alert('Cannot reduce owned quantity below reserved count.', `Owned: ${row.owned_quantity}, Reserved: ${row.reserved}`);
-      return;
-    }
     void upsertItem(row, { owned_quantity: next });
-  }
-
-  function adjustReserved(row: InventoryRow, delta: number) {
-    const next = Math.max(0, row.reserved + delta);
-    if (next > row.owned_quantity) {
-      Alert.alert('Reserved cannot exceed owned quantity.', `Owned: ${row.owned_quantity}`);
-      return;
-    }
-    void upsertItem(row, { reserved: next });
   }
 
   function cycleCondition(row: InventoryRow) {
@@ -115,16 +100,11 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
     const parsed = Number(value);
     if (!Number.isFinite(parsed) || parsed < 0) return;
     const next = Math.floor(parsed);
-    if (next < row.reserved) {
-      Alert.alert('Cannot set owned quantity below reserved count.');
-      return;
-    }
     void upsertItem(row, { owned_quantity: next });
   }
 
   const renderTileCard = ({ item: row }: { item: InventoryRow }) => {
     const isExpanded = expandedTileId === row.id;
-    const available = row.owned_quantity - row.reserved;
     return (
       <View style={styles.tileCard}>
         <TouchableOpacity
@@ -171,36 +151,6 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
                   <Text style={styles.miniStepperText}>+</Text>
                 </TouchableOpacity>
               </View>
-            </View>
-
-            <View style={styles.quantityBlock}>
-              <Text style={styles.quantityLabel}>Reserved</Text>
-              <View style={styles.stepperRow}>
-                <TouchableOpacity
-                  accessibilityLabel={`Decrease reserved quantity for ${row.title}`}
-                  accessibilityRole="button"
-                  onPress={() => adjustReserved(row, -1)}
-                  style={styles.miniStepper}
-                >
-                  <Text style={styles.miniStepperText}>−</Text>
-                </TouchableOpacity>
-                <Text style={styles.quantityReadout}>{row.reserved}</Text>
-                <TouchableOpacity
-                  accessibilityLabel={`Increase reserved quantity for ${row.title}`}
-                  accessibilityRole="button"
-                  onPress={() => adjustReserved(row, 1)}
-                  style={styles.miniStepper}
-                >
-                  <Text style={styles.miniStepperText}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.quantityBlock}>
-              <Text style={styles.quantityLabel}>Available</Text>
-              <Text style={[styles.quantityReadout, available === 0 ? styles.quantityZero : styles.quantityPositive]}>
-                {available}
-              </Text>
             </View>
           </View>
 
@@ -270,11 +220,10 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
       <View style={styles.heroCard}>
         <Text style={styles.eyebrow}>Inventory</Text>
         <Text style={styles.title}>Your tile collection</Text>
-        <Text style={styles.subtitle}>Track owned quantities, reservations, condition, and storage for every catalog tile.</Text>
+        <Text style={styles.subtitle}>Track owned quantities, condition, and storage for every catalog tile.</Text>
         <View style={styles.statsRow}>
           <StatPill label="Owned" value={stats.totalOwned} />
-          <StatPill label="Reserved" value={stats.totalReserved} />
-          <StatPill label="Cataloged" value={`${stats.catalogedCount}/${stats.totalCatalog}`} />
+          <StatPill label="Catalog size" value={`${stats.catalogedCount}/${stats.totalCatalog}`} />
         </View>
       </View>
 
@@ -544,12 +493,6 @@ const styles = StyleSheet.create({
     minWidth: 36,
     textAlign: 'center',
     textAlignVertical: 'center',
-  },
-  quantityZero: {
-    color: tileKeeperTheme.colours.mutedText,
-  },
-  quantityPositive: {
-    color: tileKeeperTheme.colours.success,
   },
   notesPreview: {
     color: tileKeeperTheme.colours.mutedText,

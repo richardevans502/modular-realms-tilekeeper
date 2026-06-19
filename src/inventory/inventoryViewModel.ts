@@ -8,8 +8,6 @@ export interface InventoryRow {
   title: string;
   subtitle: string;
   owned_quantity: number;
-  reserved: number;
-  available_quantity: number;
   condition: InventoryCondition;
   notes?: string;
   storage_location?: string;
@@ -26,7 +24,7 @@ function joinSubtitle(parts: Array<string | undefined>): string {
 
 export function toInventoryRows(details: InventoryDetail[]): InventoryRow[] {
   return details.map((detail) => {
-    const { item, tile, available_quantity } = detail;
+    const { item, tile } = detail;
     const title = tile?.name ?? item.tile_type_id;
     const subtitle = tile
       ? joinSubtitle([tile.product_set, tile.category, item.storage_location])
@@ -37,8 +35,6 @@ export function toInventoryRows(details: InventoryDetail[]): InventoryRow[] {
       title,
       subtitle,
       owned_quantity: item.owned_quantity,
-      reserved: item.reserved,
-      available_quantity,
       condition: item.condition,
       notes: item.notes,
       storage_location: item.storage_location,
@@ -76,11 +72,9 @@ export function mergeCatalogWithInventory(catalog: TileType[], inventoryDetails:
       item: {
         tile_type_id: tile.id,
         owned_quantity: 0,
-        reserved: 0,
         condition: 'unknown',
       },
       tile,
-      available_quantity: 0,
     };
   });
 }

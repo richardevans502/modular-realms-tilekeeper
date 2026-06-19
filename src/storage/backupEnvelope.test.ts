@@ -78,7 +78,6 @@ const inventoryItem: InventoryItem = {
   tile_type_id: tile.id,
   owned_quantity: 7,
   condition: 'good',
-  reserved: 2,
   storage_location: 'backup crate',
   notes: 'round-trip me',
 };
@@ -146,7 +145,7 @@ describe('backup/restore JSON envelope', () => {
     const destination = await openRepositories();
     const staleTile = { ...tile, id: 'mr-stale-floor', name: 'Stale Floor' };
     await destination.catalog.upsertTileType(staleTile);
-    await destination.inventory.createInventoryItem({ ...inventoryItem, tile_type_id: staleTile.id, owned_quantity: 1, reserved: 0 });
+    await destination.inventory.createInventoryItem({ ...inventoryItem, tile_type_id: staleTile.id, owned_quantity: 1});
 
     await restoreBackupEnvelope(backupJson, {
       catalogRepository: destination.catalog,
@@ -167,7 +166,7 @@ describe('backup/restore JSON envelope', () => {
 
     const destination = await openRepositories();
     const originalTile = { ...tile, id: 'mr-original-floor', name: 'Original Floor' };
-    const originalItem = { ...inventoryItem, tile_type_id: originalTile.id, owned_quantity: 3, reserved: 1 };
+    const originalItem = { ...inventoryItem, tile_type_id: originalTile.id, owned_quantity: 3};
     await destination.catalog.upsertTileType(originalTile);
     await destination.inventory.createInventoryItem(originalItem);
 

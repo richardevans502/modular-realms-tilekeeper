@@ -30,7 +30,7 @@ const catalog: TileType[] = [
   },
 ];
 
-const inventory: InventoryItem[] = [{ tile_type_id: 'floor-1', owned_quantity: 3, reserved: 0, condition: 'good' }];
+const inventory: InventoryItem[] = [{ tile_type_id: 'floor-1', owned_quantity: 3, condition: 'good' }];
 
 const layout: Layout = {
   id: 'layout-one',

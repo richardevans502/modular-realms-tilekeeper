@@ -157,7 +157,7 @@ function buildMissingTileSubtitle(suggestion: MissingTileSuggestion): string {
 }
 
 function countAvailableInventory(inventory: InventoryItem[]): number {
-  return inventory.reduce((total, item) => total + Math.max(0, item.owned_quantity - item.reserved), 0);
+  return inventory.reduce((total, item) => total + item.owned_quantity, 0);
 }
 
 function countRecordValues(record: Record<string, number>): number {

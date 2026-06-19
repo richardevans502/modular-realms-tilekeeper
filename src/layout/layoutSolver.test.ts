@@ -40,11 +40,10 @@ function singleCellTile(
   };
 }
 
-function inventory(tile_type_id: string, owned_quantity: number, reserved = 0): InventoryItem {
+function inventory(tile_type_id: string, owned_quantity: number): InventoryItem {
   return {
     tile_type_id,
     owned_quantity,
-    reserved,
     condition: 'good',
   };
 }
@@ -101,7 +100,7 @@ describe('layout solver inventory constraints and face selection', () => {
   test('generates deterministic layouts without consuming more physical tiles than available inventory', () => {
     const first = solveLayoutFromInventory({
       catalog: [doorwayRun],
-      inventory: [inventory('doorway-run', 3, 1)],
+      inventory: [inventory('doorway-run', 2)],
       bounds: { width: 5, height: 1 },
       targetPlacements: 4,
       seed: 'inventory-limit-seed',
@@ -110,7 +109,7 @@ describe('layout solver inventory constraints and face selection', () => {
     });
     const second = solveLayoutFromInventory({
       catalog: [doorwayRun],
-      inventory: [inventory('doorway-run', 3, 1)],
+      inventory: [inventory('doorway-run', 2)],
       bounds: { width: 5, height: 1 },
       targetPlacements: 4,
       seed: 'inventory-limit-seed',

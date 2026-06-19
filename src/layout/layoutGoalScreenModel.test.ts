@@ -56,8 +56,8 @@ const catalogFixture: TileType[] = [
 ];
 
 const inventoryFixture: InventoryItem[] = [
-  { tile_type_id: 'floor-1', owned_quantity: 2, reserved: 0, condition: 'good' },
-  { tile_type_id: 'door-1', owned_quantity: 1, reserved: 1, condition: 'good' },
+  { tile_type_id: 'floor-1', owned_quantity: 2, condition: 'good' },
+  { tile_type_id: 'door-1', owned_quantity: 1, condition: 'good' },
 ];
 
 describe('layout goal screen model', () => {
@@ -130,7 +130,7 @@ describe('layout goal screen model', () => {
   test('derives unique sorted theme options and recognises available inventory after reservations', () => {
     expect(deriveThemeOptions(catalogFixture)).toEqual(['dungeon', 'stone', 'wood']);
     expect(hasAvailableInventory(inventoryFixture)).toBe(true);
-    expect(hasAvailableInventory([{ tile_type_id: 'door-1', owned_quantity: 1, reserved: 1, condition: 'good' }])).toBe(false);
+    expect(hasAvailableInventory([{ tile_type_id: 'door-1', owned_quantity: 0, condition: 'good' }])).toBe(false);
     expect(buildSeed()).not.toEqual(buildSeed());
   });
 });

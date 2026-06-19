@@ -32,12 +32,10 @@ const unknownTileDetail: InventoryDetail = {
   item: {
     tile_type_id: 'custom-missing-ref',
     owned_quantity: 2,
-    reserved: 0,
     condition: 'unknown',
     storage_location: 'loose tray',
   },
   tile: null,
-  available_quantity: 2,
 };
 
 const details: InventoryDetail[] = [
@@ -45,13 +43,11 @@ const details: InventoryDetail[] = [
     item: {
       tile_type_id: floorTile.id,
       owned_quantity: 5,
-      reserved: 1,
       condition: 'good',
       notes: 'demo count',
       storage_location: 'core box',
     },
     tile: floorTile,
-    available_quantity: 4,
   },
   unknownTileDetail,
 ];
@@ -64,8 +60,6 @@ describe('inventory UI view model', () => {
         title: '1x1 Stone Floor',
         subtitle: 'Core Set · floor · core box',
         owned_quantity: 5,
-        reserved: 1,
-        available_quantity: 4,
         condition: 'good',
         notes: 'demo count',
         storage_location: 'core box',
@@ -75,8 +69,6 @@ describe('inventory UI view model', () => {
         title: 'custom-missing-ref',
         subtitle: 'Unmatched catalog tile · loose tray',
         owned_quantity: 2,
-        reserved: 0,
-        available_quantity: 2,
         condition: 'unknown',
         notes: undefined,
         storage_location: 'loose tray',

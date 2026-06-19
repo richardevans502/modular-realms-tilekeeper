@@ -183,7 +183,7 @@ function buildAvailableInventoryMap(inventory: InventoryItem[]): Map<string, num
 }
 
 function availableQuantity(item: InventoryItem): number {
-  return Math.max(0, item.owned_quantity - item.reserved);
+  return item.owned_quantity;
 }
 
 function countBy(values: string[]): Map<string, number> {

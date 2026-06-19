@@ -108,8 +108,6 @@ export interface InventoryItem {
   notes?: string;
   /** Optional place where the physical tiles are stored. */
   storage_location?: string;
-  /** Quantity currently reserved for a layout or project. */
-  reserved: number;
 }
 
 /** A tile placement within a generated or saved layout. */

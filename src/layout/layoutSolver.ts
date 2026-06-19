@@ -408,7 +408,7 @@ function unrotateEdgeFace(worldFace: CardinalEdgeFace, rotation: Rotation): Card
 
 function buildAvailableInventory(inventory: InventoryItem[]): Record<string, number> {
   return inventory.reduce<Record<string, number>>((availableByTile, item) => {
-    availableByTile[item.tile_type_id] = (availableByTile[item.tile_type_id] ?? 0) + Math.max(0, item.owned_quantity - item.reserved);
+    availableByTile[item.tile_type_id] = (availableByTile[item.tile_type_id] ?? 0) + item.owned_quantity;
     return availableByTile;
   }, {});
 }

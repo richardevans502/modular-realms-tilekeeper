@@ -5,7 +5,6 @@ import type { TileKeeperDatabase } from './runMigrations';
 export interface InventoryDetail {
   item: InventoryItem;
   tile: TileType | null;
-  available_quantity: number;
 }
 
 export interface InventoryRepository {
@@ -28,7 +27,9 @@ interface InventoryDetailRow {
 }
 
 function parseInventoryJson(itemJson: string): InventoryItem {
-  return inventoryItemSchema.parse(JSON.parse(itemJson)) as InventoryItem;
+  const parsed = JSON.parse(itemJson) as Record<string, unknown>;
+  delete parsed.reserved;
+  return inventoryItemSchema.parse(parsed) as InventoryItem;
 }
 
 function parseTileJson(tileJson: string | null): TileType | null {
@@ -43,7 +44,6 @@ function toInventoryDetail(row: InventoryDetailRow): InventoryDetail {
   return {
     item,
     tile: parseTileJson(row.tile_json),
-    available_quantity: item.owned_quantity - item.reserved,
   };
 }
 
@@ -64,19 +64,13 @@ export function createInventoryRepository(db: TileKeeperDatabase): InventoryRepo
     const parsedItem = inventoryItemSchema.parse(item);
     await bindSql(
       db,
-      `INSERT INTO user_inventory (tile_type_id, owned_quantity, reserved, item_json, updated_at)
-       VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+      `INSERT INTO user_inventory (tile_type_id, owned_quantity, item_json, updated_at)
+       VALUES (?, ?, ?, CURRENT_TIMESTAMP)
        ON CONFLICT(tile_type_id) DO UPDATE SET
          owned_quantity = excluded.owned_quantity,
-         reserved = excluded.reserved,
          item_json = excluded.item_json,
          updated_at = CURRENT_TIMESTAMP`,
-      [
-        parsedItem.tile_type_id,
-        parsedItem.owned_quantity,
-        parsedItem.reserved,
-        JSON.stringify(parsedItem),
-      ],
+      [parsedItem.tile_type_id, parsedItem.owned_quantity, JSON.stringify(parsedItem)],
     );
   }
 
@@ -142,7 +136,7 @@ export function createInventoryRepository(db: TileKeeperDatabase): InventoryRepo
           const row = await db.getFirstAsync<{ tile_json: string | null }>('SELECT tile_json FROM tile_types WHERE id = ?', [
             item.tile_type_id,
           ]);
-          details.push({ item, tile: parseTileJson(row?.tile_json ?? null), available_quantity: item.owned_quantity - item.reserved });
+          details.push({ item, tile: parseTileJson(row?.tile_json ?? null) });
         }
         return details;
       }
