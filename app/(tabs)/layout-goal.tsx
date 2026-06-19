@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { ErrorBoundary } from '../../src/ui/ErrorBoundary';
 
 import { initTileKeeperDatabase } from '../../src/db/init';
 import type { SavedLayoutRepository } from '../../src/db/savedLayoutRepository';
@@ -52,6 +55,7 @@ const demoInventory: InventoryItem[] = [
 
 export default function LayoutGoalScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [form, setForm] = useState<LayoutGoalForm>(DEFAULT_LAYOUT_GOAL_FORM);
   const [generatedRequest, setGeneratedRequest] = useState<LayoutGoalRequest | null>(null);
   const [repository, setRepository] = useState<SavedLayoutRepository | null>(null);
@@ -176,17 +180,18 @@ export default function LayoutGoalScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ErrorBoundary onGoBack={() => router.back()}>
+      <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <Text style={styles.eyebrow}>Layout Goal</Text>
-        <Text style={styles.title}>Set bounds, constraints, seed, generate</Text>
-        <Text style={styles.subtitle}>
+        <Text style={styles.title} allowFontScaling>Set bounds, constraints, seed, generate</Text>
+        <Text style={styles.subtitle} allowFontScaling>
           Configure the solver request before handing it to the layout engine. Width and height are bounded at 2–20 cells, target count is 4–50 tiles, and theme/category constraints come from the catalog ritual.
         </Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Table bounds</Text>
+        <Text style={styles.sectionTitle} allowFontScaling>Table bounds</Text>
         <View style={styles.fieldRow}>
           <Stepper label="Width" value={form.width} suffix="cells" onChangeText={(value) => setField('width', value)} onDecrement={() => adjustNumber('width', -1)} onIncrement={() => adjustNumber('width', 1)} />
           <Stepper label="Height" value={form.height} suffix="cells" onChangeText={(value) => setField('height', value)} onDecrement={() => adjustNumber('height', -1)} onIncrement={() => adjustNumber('height', 1)} />
@@ -195,7 +200,7 @@ export default function LayoutGoalScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Target tile count</Text>
+        <Text style={styles.sectionTitle} allowFontScaling>Target tile count</Text>
         <Stepper label="Target tile count" value={form.targetPlacements} suffix="tiles" onChangeText={(value) => setField('targetPlacements', value)} onDecrement={() => adjustNumber('targetPlacements', -1)} onIncrement={() => adjustNumber('targetPlacements', 1)} />
         <View style={styles.sliderTrack} accessibilityLabel="Target tile count slider range 4 to 50">
           <View style={[styles.sliderFill, { width: `${targetFillPercent(form.targetPlacements)}%` }]} />
@@ -204,7 +209,7 @@ export default function LayoutGoalScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Theme selector</Text>
+        <Text style={styles.sectionTitle} allowFontScaling>Theme selector</Text>
         <View style={styles.chipWrap}>
           {themeOptions.map((themeTag) => (
             <Chip key={themeTag} label={themeTag} selected={form.themeTags.includes(themeTag)} onPress={() => toggleTheme(themeTag)} />
@@ -214,7 +219,7 @@ export default function LayoutGoalScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Required categories</Text>
+        <Text style={styles.sectionTitle} allowFontScaling>Required categories</Text>
         <View style={styles.chipWrap}>
           {LAYOUT_GOAL_REQUIRED_CATEGORIES.map((category) => (
             <CheckboxChip key={category} label={category} selected={form.requiredCategories.includes(category)} onPress={() => toggleCategory(category)} />
@@ -223,9 +228,9 @@ export default function LayoutGoalScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Seed</Text>
+        <Text style={styles.sectionTitle} allowFontScaling>Seed</Text>
         <View style={styles.seedRow}>
-          <Field label="Seed" value={form.seed} onChangeText={(value) => setField('seed', value)} />
+          <Field label="Seed" value={form.seed} onChangeText={(value) => setField('seed', value)} inputLabel="Seed" />
           <TouchableOpacity accessibilityLabel="Randomise seed" accessibilityRole="button" onPress={randomiseSeed} style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>Randomise</Text>
           </TouchableOpacity>
@@ -243,7 +248,7 @@ export default function LayoutGoalScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Constraint summary</Text>
+        <Text style={styles.sectionTitle} allowFontScaling>Constraint summary</Text>
         <View style={styles.summaryBox}>
           {getConstraintSummaries(form).map((summary) => (
             <Text key={summary} style={styles.summaryText}>• {summary}</Text>
@@ -253,7 +258,7 @@ export default function LayoutGoalScreen() {
 
       {errors.length > 0 ? (
         <View style={styles.errorCard}>
-          <Text style={styles.errorTitle}>{inventoryAvailable ? 'Fix before generate' : 'Inventory needed'}</Text>
+          <Text style={styles.errorTitle} allowFontScaling>{inventoryAvailable ? 'Fix before generate' : 'Inventory needed'}</Text>
           {errors.map((error) => (
             <Text key={error} style={styles.errorText}>• {error}</Text>
           ))}
@@ -262,7 +267,7 @@ export default function LayoutGoalScreen() {
 
       {solverError ? (
         <View style={styles.errorCard}>
-          <Text style={styles.errorTitle}>Solver failed</Text>
+          <Text style={styles.errorTitle} allowFontScaling>Solver failed</Text>
           <Text style={styles.errorText}>{solverError}</Text>
         </View>
       ) : null}
@@ -274,7 +279,7 @@ export default function LayoutGoalScreen() {
         onPress={errors.length > 0 || isGenerating ? undefined : generate}
         style={[styles.generateButton, errors.length > 0 || isGenerating ? styles.generateButtonDisabled : null]}
       >
-        <Text style={styles.generateText}>{isGenerating ? 'Generating layout…' : 'Generate'}</Text>
+        <Text style={styles.generateText} allowFontScaling>{isGenerating ? 'Generating layout…' : 'Generate'}</Text>
       </TouchableOpacity>
 
       {isGenerating ? (
@@ -283,10 +288,10 @@ export default function LayoutGoalScreen() {
         </TouchableOpacity>
       ) : null}
 
-      {isGenerating ? <Text style={styles.loadingText}>Summoning solver candidates from the tile vault…</Text> : null}
+      {isGenerating ? <Text style={styles.loadingText} allowFontScaling>Summoning solver candidates from the tile vault…</Text> : null}
 
       <View style={styles.generatedCard}>
-        <Text style={styles.sectionTitle}>Generated request</Text>
+        <Text style={styles.sectionTitle} allowFontScaling>Generated request</Text>
         {generatedRequest ? (
           <>
             <Text style={styles.generatedMetric}>{generatedRequest.bounds.width} × {generatedRequest.bounds.height} grid · {generatedRequest.targetPlacements} tiles</Text>
@@ -332,6 +337,7 @@ export default function LayoutGoalScreen() {
         }}
       />
     </ScrollView>
+    </ErrorBoundary>
   );
 }
 
@@ -340,15 +346,16 @@ interface FieldProps {
   value: string;
   suffix?: string;
   onChangeText: (value: string) => void;
+  inputLabel?: string;
 }
 
-function Field({ label, value, suffix, onChangeText }: FieldProps) {
+function Field({ label, value, suffix, onChangeText, inputLabel }: FieldProps) {
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
       <View style={styles.inputRow}>
         <TextInput
-          accessibilityLabel={label}
+          accessibilityLabel={inputLabel ?? label}
           onChangeText={onChangeText}
           placeholderTextColor={tileKeeperTheme.colours.mutedText}
           style={styles.input}

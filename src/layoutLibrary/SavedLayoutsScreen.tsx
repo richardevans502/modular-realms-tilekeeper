@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { SavedLayout, SavedLayoutRepository } from '../db/savedLayoutRepository';
+import { EmptyState } from '../ui/EmptyState';
+import { ShimmerPlaceholder } from '../ui/ShimmerPlaceholder';
 import { tileKeeperTheme } from '../ui/theme';
 import {
   buildSavedLayoutsViewModel,
@@ -20,6 +23,7 @@ export interface SavedLayoutsScreenProps {
 }
 
 export function SavedLayoutsScreen({ layouts = [], repository, onPreviewLayout, reloadTrigger }: SavedLayoutsScreenProps) {
+  const insets = useSafeAreaInsets();
   const [filters, setFilters] = useState<SavedLayoutsFilterState>({
     searchText: '',
     selectedTags: [],
@@ -165,11 +169,11 @@ export function SavedLayoutsScreen({ layouts = [], repository, onPreviewLayout, 
   );
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { paddingTop: insets.top }]}>
       <View style={styles.heroCard}>
         <Text style={styles.eyebrow}>Library</Text>
-        <Text style={styles.title}>Saved layouts</Text>
-        <Text style={styles.subtitle}>Find favourites, campaign maps, and quick rebuild plans before the tabletop goblins scatter your tiles.</Text>
+        <Text style={styles.title} allowFontScaling>Saved layouts</Text>
+        <Text style={styles.subtitle} allowFontScaling>Find favourites, campaign maps, and quick rebuild plans before the tabletop goblins scatter your tiles.</Text>
         <View style={styles.statsRow}>
           <StatPill label="Saved" value={viewModel.totalCount} />
           <StatPill label="Favourites" value={viewModel.favouriteCount} />
@@ -180,6 +184,7 @@ export function SavedLayoutsScreen({ layouts = [], repository, onPreviewLayout, 
       <View style={styles.searchCard}>
         <TextInput
           accessibilityLabel="Search saved layouts"
+          accessibilityRole="search"
           placeholder="Search by name"
           placeholderTextColor={tileKeeperTheme.colours.mutedText}
           value={filters.searchText}
@@ -222,10 +227,18 @@ export function SavedLayoutsScreen({ layouts = [], repository, onPreviewLayout, 
         data={viewModel.rows}
         keyExtractor={(layout) => layout.id}
         ListEmptyComponent={
-          <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>{isLoading ? 'Loading saved layouts' : (viewModel.emptyState?.title ?? 'No saved layouts yet')}</Text>
-            <Text style={styles.emptyMessage}>{isLoading ? 'Summoning local SQLite records…' : (viewModel.emptyState?.message ?? 'Save a generated layout and it will appear here.')}</Text>
-          </View>
+          isLoading ? (
+            <View style={styles.shimmerStack} accessibilityLabel="Loading saved layouts" accessibilityRole="progressbar" accessibilityState={{ busy: true }}>
+              <ShimmerPlaceholder height={96} />
+              <ShimmerPlaceholder height={96} />
+            </View>
+          ) : (
+            <EmptyState
+              icon="📜"
+              title={viewModel.emptyState?.title ?? 'No saved layouts yet'}
+              message={viewModel.emptyState?.message ?? 'Save a generated layout and it will appear here.'}
+            />
+          )
         }
         renderItem={renderLayoutCard}
       />
@@ -236,8 +249,8 @@ export function SavedLayoutsScreen({ layouts = [], repository, onPreviewLayout, 
 function StatPill({ label, value }: { label: string; value: number }) {
   return (
     <View style={styles.statPill}>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statValue} allowFontScaling>{value}</Text>
+      <Text style={styles.statLabel} allowFontScaling>{label}</Text>
     </View>
   );
 }
@@ -511,24 +524,8 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     padding: 12,
   },
-  emptyCard: {
-    alignItems: 'center',
-    backgroundColor: tileKeeperTheme.colours.surface,
-    borderColor: tileKeeperTheme.colours.border,
-    borderRadius: tileKeeperTheme.radius.sheet,
-    borderWidth: 1,
-    padding: 28,
-  },
-  emptyTitle: {
-    color: tileKeeperTheme.colours.text,
-    fontSize: 22,
-    fontWeight: '900',
-  },
-  emptyMessage: {
-    color: tileKeeperTheme.colours.mutedText,
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 8,
-    textAlign: 'center',
+  shimmerStack: {
+    gap: 12,
+    paddingBottom: 32,
   },
 });

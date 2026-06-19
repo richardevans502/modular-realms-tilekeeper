@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { PanResponder, Pressable, StyleSheet, Text, View, type GestureResponderEvent, type PanResponderGestureState } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { GridCell, Layout, LayoutPlacement, Rotation, TileType } from '../shared/types';
 import {
@@ -25,6 +26,7 @@ const VIEWPORT = { width: 340, height: 360 };
 const CONTROL_PAN_STEP = 48;
 
 export function LayoutPreviewScreen({ layout, catalog, onBackToLayoutGoal, onSaveLayout }: LayoutPreviewScreenProps) {
+  const insets = useSafeAreaInsets();
   const [viewport, setViewport] = useState<LayoutPreviewViewport>({
     width: VIEWPORT.width,
     height: VIEWPORT.height,
@@ -114,7 +116,7 @@ export function LayoutPreviewScreen({ layout, catalog, onBackToLayoutGoal, onSav
   }
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <View style={styles.headerCopy}>
@@ -179,6 +181,7 @@ export function LayoutPreviewScreen({ layout, catalog, onBackToLayoutGoal, onSav
                     onPress={() => selectPlacement(tile.placementIndex)}
                     style={[
                       styles.tileCell,
+                      tile.simplified ? styles.tileCellSimplified : null,
                       selectedPlacementIndex === tile.placementIndex ? styles.tileCellSelected : null,
                       {
                         backgroundColor: tile.color,
@@ -190,7 +193,7 @@ export function LayoutPreviewScreen({ layout, catalog, onBackToLayoutGoal, onSav
                     ]}
                   />
                 ))}
-                {tile.sockets.map((socket) => (
+                {!tile.simplified && tile.sockets.map((socket) => (
                   <View
                     key={`${tile.key}:${socket.face}:${socket.socketType}`}
                     accessibilityLabel={`${socket.compatibility} ${socket.socketType} socket on ${socket.face}`}
@@ -201,53 +204,60 @@ export function LayoutPreviewScreen({ layout, catalog, onBackToLayoutGoal, onSav
                     ]}
                   />
                 ))}
-                <Text style={[styles.rotationMarker, { left: tile.labelAnchor.x - 8, top: tile.labelAnchor.y + 12 }]}>
-                  {rotationArrow(tile.rotation)}
-                </Text>
-                <Text style={[styles.tileLabel, { left: tile.labelAnchor.x - 46, top: tile.labelAnchor.y - 9 }]}>
-                  {tile.label}
-                </Text>
+                {!tile.simplified && (
+                  <Text style={[styles.rotationMarker, { left: tile.labelAnchor.x - 8, top: tile.labelAnchor.y + 12 }]}>
+                    {rotationArrow(tile.rotation)}
+                  </Text>
+                )}
+                {!tile.simplified && (
+                  <Text style={[styles.tileLabel, { left: tile.labelAnchor.x - 46, top: tile.labelAnchor.y - 9 }]}>
+                    {tile.label}
+                  </Text>
+                )}
               </View>
             ))}
           </View>
         </View>
 
         <View style={styles.controls}>
-          <Pressable style={styles.controlButton} onPress={() => setViewport((value) => panLayoutPreview(value, { x: -CONTROL_PAN_STEP, y: 0 }))}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Pan left" style={styles.controlButton} onPress={() => setViewport((value) => panLayoutPreview(value, { x: -CONTROL_PAN_STEP, y: 0 }))}>
             <Text style={styles.controlText}>←</Text>
           </Pressable>
-          <Pressable style={styles.controlButton} onPress={() => setViewport((value) => panLayoutPreview(value, { x: 0, y: -CONTROL_PAN_STEP }))}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Pan up" style={styles.controlButton} onPress={() => setViewport((value) => panLayoutPreview(value, { x: 0, y: -CONTROL_PAN_STEP }))}>
             <Text style={styles.controlText}>↑</Text>
           </Pressable>
-          <Pressable style={styles.controlButton} onPress={() => setViewport((value) => panLayoutPreview(value, { x: 0, y: CONTROL_PAN_STEP }))}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Pan down" style={styles.controlButton} onPress={() => setViewport((value) => panLayoutPreview(value, { x: 0, y: CONTROL_PAN_STEP }))}>
             <Text style={styles.controlText}>↓</Text>
           </Pressable>
-          <Pressable style={styles.controlButton} onPress={() => setViewport((value) => panLayoutPreview(value, { x: CONTROL_PAN_STEP, y: 0 }))}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Pan right" style={styles.controlButton} onPress={() => setViewport((value) => panLayoutPreview(value, { x: CONTROL_PAN_STEP, y: 0 }))}>
             <Text style={styles.controlText}>→</Text>
           </Pressable>
-          <Pressable style={styles.controlButton} onPress={() => setViewport((value) => zoomLayoutPreview(value, 1.2))}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Zoom in" style={styles.controlButton} onPress={() => setViewport((value) => zoomLayoutPreview(value, 1.2))}>
             <Text style={styles.controlText}>＋</Text>
           </Pressable>
-          <Pressable style={styles.controlButton} onPress={() => setViewport((value) => zoomLayoutPreview(value, 0.8))}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Zoom out" style={styles.controlButton} onPress={() => setViewport((value) => zoomLayoutPreview(value, 0.8))}>
             <Text style={styles.controlText}>－</Text>
           </Pressable>
         </View>
 
         <View style={styles.legend}>
           {model.legend.map((item) => (
-            <View key={item.category} style={styles.legendItem}>
+            <View key={item.category} style={styles.legendItem} accessibilityLabel={`${item.label} legend`}>
               <View style={[styles.legendSwatch, { backgroundColor: item.color }]} />
-              <Text style={styles.legendText}>{item.label}</Text>
+              <Text style={styles.legendText} allowFontScaling>{item.label}</Text>
             </View>
           ))}
-          <View style={styles.legendItem}>
+          <View style={styles.legendItem} accessibilityLabel="Compatible socket legend">
             <View style={[styles.socketLegendLine, styles.socketCompatible]} />
-            <Text style={styles.legendText}>Compatible socket</Text>
+            <Text style={styles.legendText} allowFontScaling>Compatible socket</Text>
           </View>
-          <View style={styles.legendItem}>
+          <View style={styles.legendItem} accessibilityLabel="Mismatch or open socket legend">
             <View style={[styles.socketLegendLine, styles.socketIncompatible]} />
-            <Text style={styles.legendText}>Mismatch / open socket</Text>
+            <Text style={styles.legendText} allowFontScaling>Mismatch / open socket</Text>
           </View>
+          {model.schematic.deferredTileCount > 0 && (
+            <Text style={styles.legendText}>{model.schematic.deferredTileCount} off-screen tiles deferred for smooth pan/zoom</Text>
+          )}
         </View>
       </View>
 
@@ -307,23 +317,23 @@ function TileInspectionPanel({ tile }: { tile: LayoutPreviewTileInspection | nul
   if (!tile) {
     return (
       <View style={styles.inspectionPanel}>
-        <Text style={styles.panelTitle}>Tile inspection</Text>
-        <Text style={styles.panelBody}>Tap any tile in the schematic grid to inspect face, sockets, rotation, and occupied cells.</Text>
+        <Text style={styles.panelTitle} allowFontScaling>Tile inspection</Text>
+        <Text style={styles.panelBody} allowFontScaling>Tap any tile in the schematic grid to inspect face, sockets, rotation, and occupied cells.</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.inspectionPanel}>
-      <Text style={styles.panelTitle}>{tile.tileName}</Text>
-      <Text style={styles.panelBody}>
+      <Text style={styles.panelTitle} allowFontScaling>{tile.tileName}</Text>
+      <Text style={styles.panelBody} allowFontScaling>
         {tile.faceName} · {tile.category} · rotation {tile.rotation}°
       </Text>
-      <Text style={styles.panelBody}>tile_type_id: {tile.tileTypeId}</Text>
-      <Text style={styles.panelBody}>face_id: {tile.faceId}</Text>
-      <Text style={styles.panelBody}>Set: {tile.productSet}</Text>
-      <Text style={styles.panelBody}>Cells: {tile.occupiedCells.map((cell) => `(${cell.x},${cell.y})`).join(', ')}</Text>
-      <Text style={styles.panelBody}>Sockets: {tile.sockets.map((socket) => `${socket.face}:${socket.socketType}`).join(', ')}</Text>
+      <Text style={styles.panelBody} allowFontScaling>tile_type_id: {tile.tileTypeId}</Text>
+      <Text style={styles.panelBody} allowFontScaling>face_id: {tile.faceId}</Text>
+      <Text style={styles.panelBody} allowFontScaling>Set: {tile.productSet}</Text>
+      <Text style={styles.panelBody} allowFontScaling>Cells: {tile.occupiedCells.map((cell) => `(${cell.x},${cell.y})`).join(', ')}</Text>
+      <Text style={styles.panelBody} allowFontScaling>Sockets: {tile.sockets.map((socket) => `${socket.face}:${socket.socketType}`).join(', ')}</Text>
     </View>
   );
 }
@@ -450,6 +460,9 @@ const styles = StyleSheet.create({
     borderColor: '#0f172a',
     borderRadius: 8,
     borderWidth: 2,
+  },
+  tileCellSimplified: {
+    opacity: 0.72,
   },
   tileCellSelected: {
     borderColor: '#fbbf24',

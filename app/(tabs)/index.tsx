@@ -1,21 +1,29 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { tileKeeperRoutes } from '../../src/ui/navigation';
 import { tileKeeperTheme } from '../../src/ui/theme';
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top }]}>
       <Text style={styles.eyebrow}>Modular Realms</Text>
       <Text style={styles.title}>TileKeeper</Text>
       <View style={styles.grid}>
         {tileKeeperRoutes.filter((route) => route.path !== '/').map((route) => (
-          <Link key={route.path} href={route.path} style={styles.card}>
+          <Link
+            key={route.path}
+            href={route.path}
+            style={styles.card}
+            accessibilityLabel={`${route.label} — ${route.description}`}
+            accessibilityRole="link"
+          >
             <View>
-              <Text style={styles.cardIcon}>{route.icon}</Text>
-              <Text style={styles.cardTitle}>{route.label}</Text>
-              <Text style={styles.cardDescription}>{route.description}</Text>
+              <Text style={styles.cardIcon} allowFontScaling>{route.icon}</Text>
+              <Text style={styles.cardTitle} allowFontScaling>{route.label}</Text>
+              <Text style={styles.cardDescription} allowFontScaling>{route.description}</Text>
             </View>
           </Link>
         ))}
