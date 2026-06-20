@@ -27,7 +27,8 @@
             "backgroundColor": "#0A0A0A"
           }
         }
-      ]
+      ],
+      "./plugins/withHermesCli"
     ],
     "ios": {
       "bundleIdentifier": "com.modularrealms.tilekeeper",
