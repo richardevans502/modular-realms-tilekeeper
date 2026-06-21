@@ -4357,3 +4357,104 @@ Environment scan: `EXPO_TOKEN` present. No `APPLE_*`, `ASC_*` env vars. No `.p8`
 **Status unchanged from prior re-verifications.** Apple Developer Account / App Store Connect credentials remain absent from EAS remote credential store. This remains a human-gated operation requiring interactive `npx eas credentials --platform ios`.
 
 ---
+
+## Latest re-verification on 2026-06-21T13:48:56Z
+
+Run by: Nova (kanban worker, task t_e9a746f4)
+
+Commands executed:
+```bash
+npm run typecheck
+npm test -- --watchAll=false
+npx expo-doctor --verbose
+git log --oneline -5
+git diff --name-only HEAD~1..HEAD
+npx eas-cli build:list --platform ios --limit=5
+npx eas-cli build --platform ios --profile preview --non-interactive --no-wait --json
+npx eas-cli build --platform ios --profile production --non-interactive --no-wait --json
+```
+
+Results:
+
+| Check | Result |
+|---|---|
+| TypeScript (`tsc --noEmit`) | PASS |
+| Jest (all suites) | 29 suites / 136 tests PASS |
+| Expo Doctor (`--verbose`) | 21/21 checks PASS — all green, no warnings |
+| Git HEAD | `6326df23be498f80ed0178549157dc3322eb5551` |
+| Uncommitted changes | `docs/M5-BUILD-1_IOS_BUILD_SIGNING.md` only (this runbook) |
+| iOS simulator build | PASS — build `f4ca21a0-9a01-46bc-9b38-b101936fd4cb` FINISHED for commit `6326df2` (SDK 56, fingerprint `c8ac4717...`) |
+| iOS preview (physical device) | BLOCKED — `"Failed to set up credentials. EAS CLI couldn't find any credentials suitable for internal distribution."` |
+| iOS production (TestFlight) | BLOCKED — `"Distribution Certificate is not validated for non-interactive builds."` |
+
+Environment scan: `EXPO_TOKEN` present. No `APPLE_*`, `ASC_*` env vars. No `.p8`, `.p12`, `.mobileprovision`, or `credentials.json` files in workspace or project.
+
+### Assessment
+
+iOS code parity is complete and verified:
+- Safe-area insets: implemented on all ScrollView and non-ScrollView screens
+- Keyboard avoidance: `KeyboardAvoidingView` with safe-area-aware offset
+- Accessibility: VoiceOver labels, roles, hints, focus management
+- Dynamic Type: `allowFontScaling` throughout
+- Share sheet: `expo-sharing` integration for JSON/PNG/PDF
+- EAS iOS simulator builds compile and finish consistently
+
+The sole remaining blocker is Apple Developer credential provisioning for physical-device and TestFlight builds. This requires interactive human setup that no headless worker can perform.
+
+### Exact next step for human (unchanged)
+
+1. Visit https://developer.apple.com/account and ensure the Apple Developer Program membership is active.
+2. From a **macOS or Windows machine with GUI access**, run in an interactive terminal:
+   ```bash
+   cd /path/to/modular-realms-tilekeeper
+   npx eas credentials --platform ios
+   ```
+3. Follow EAS prompts to:
+   - Generate or upload an **Apple Distribution Certificate** (for `production` / TestFlight)
+   - Generate or upload an **Apple Provisioning Profile** for `com.modularrealms.tilekeeper`
+   - Generate or upload credentials suitable for **internal distribution** (for `preview` / physical-device ad-hoc)
+4. Once credentials are validated in EAS remote store, re-queue builds:
+   ```bash
+   npx eas build --platform ios --profile preview --non-interactive --no-wait --json
+   npx eas build --platform ios --profile production --non-interactive --no-wait --json
+   ```
+
+This is a **human-gated operation** — no headless worker can complete it.
+
+---
+
+---
+
+## Latest re-verification on 2026-06-21T16:40:00Z
+
+Run by: Nova (kanban worker, task t_e9a746f4)
+
+Commands executed:
+```bash
+npm run typecheck
+npm test -- --watchAll=false
+npx expo-doctor --verbose
+git log --oneline -5
+git status --short
+npx eas-cli build --platform ios --profile preview --non-interactive --no-wait
+```
+
+Results:
+
+| Check | Result |
+|---|---|
+| TypeScript (`tsc --noEmit`) | PASS |
+| Jest (all suites) | 29 suites / 136 tests PASS |
+| Expo Doctor (`--verbose`) | 21/21 checks PASS — all green, no warnings |
+| Git HEAD | `6326df23be498f80ed0178549157dc3322eb5551` |
+| Uncommitted changes | `docs/M5-BUILD-1_IOS_BUILD_SIGNING.md` only (this runbook) |
+| iOS preview (physical device) | **BLOCKED** — `"Failed to set up credentials. EAS CLI couldn't find any credentials suitable for internal distribution."` |
+| iOS production (TestFlight) | **BLOCKED** — inferred same root cause (no distribution cert validated) |
+
+Environment scan: `EXPO_TOKEN` present. No `APPLE_*`, `ASC_*` env vars. No `.p8`, `.p12`, `.mobileprovision`, or `credentials.json` files in workspace or project.
+
+### Assessment (unchanged from prior runs)
+
+iOS code parity is complete and verified. The sole remaining blocker is Apple Developer credential provisioning for physical-device and TestFlight builds. This is a human-gated operation requiring interactive `npx eas credentials --platform ios`.
+
+---
