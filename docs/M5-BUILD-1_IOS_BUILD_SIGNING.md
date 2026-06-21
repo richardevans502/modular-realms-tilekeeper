@@ -4328,3 +4328,32 @@ This is a **human-gated operation** — no headless worker can complete it.
 
 ---
 
+
+## Latest re-verification on 2026-06-21T12:40:41Z
+
+Run by: Nova (kanban worker, task t_e9a746f4)
+
+Commands executed:
+```bash
+npm run typecheck
+npx expo-doctor --verbose
+git rev-parse HEAD
+npx eas-cli build --platform ios --profile preview --non-interactive --no-wait --json
+npx eas-cli build --platform ios --profile production --non-interactive --no-wait --json
+```
+
+Results:
+
+| Check | Result |
+|---|---|
+| TypeScript (`tsc --noEmit`) | PASS |
+| Expo Doctor (`--verbose`) | 21/21 checks PASS — all green, no warnings |
+| Git HEAD | `3bb8075ba08e1d30c47898bc888525b83766d607` |
+| iOS preview (physical device) | BLOCKED — `"Failed to set up credentials. EAS CLI couldn't find any credentials suitable for internal distribution."` |
+| iOS production (TestFlight) | BLOCKED — `"Distribution Certificate is not validated for non-interactive builds."` |
+
+Environment scan: `EXPO_TOKEN` present. No `APPLE_*`, `ASC_*` env vars. No `.p8`, `.p12`, `.mobileprovision`, or `credentials.json` files in workspace.
+
+**Status unchanged from prior re-verifications.** Apple Developer Account / App Store Connect credentials remain absent from EAS remote credential store. This remains a human-gated operation requiring interactive `npx eas credentials --platform ios`.
+
+---
