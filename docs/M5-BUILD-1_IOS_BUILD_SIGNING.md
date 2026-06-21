@@ -4188,3 +4188,60 @@ Evidence files:
 - `/tmp/ios-preview.err`
 - `/tmp/ios-prod-out.json`
 - `/tmp/ios-prod.err`
+## Latest re-verification on 2026-06-21T04:41:14Z
+
+Run by: Nova (kanban worker, task t_e9a746f4)
+
+Commands executed:
+```bash
+npm run typecheck
+npx expo-doctor
+npx jest --runInBand --watchAll=false --testPathPattern="shareExportFiles"
+npx eas-cli build --platform ios --profile preview --non-interactive --no-wait --json
+npx eas-cli build --platform ios --profile production --non-interactive --no-wait --json
+```
+
+Results:
+
+| Check | Result |
+|---|---|
+| TypeScript (`tsc --noEmit`) | PASS |
+| Expo Doctor | 21/21 checks pass |
+| Jest (shareExportFiles suite) | 4/4 PASS — JSON, PNG, PDF share flows verified |
+| iOS simulator build | PASS — latest build `4562f37c-0ee3-4419-8fd8-9386772a1275` FINISHED for commit `1dec44e` |
+| iOS preview (physical device) | BLOCKED — `"no credentials suitable for internal distribution configured for non-interactive builds"` |
+| iOS production (TestFlight) | BLOCKED — `"Distribution Certificate is not validated for non-interactive builds"` |
+
+### iOS-specific code fixes already shipped
+
+All code-parity items from acceptance criteria have been addressed in prior commits:
+- **b672f42**: safe-area insets on ScrollView screens + InfoPlist file-sharing permissions
+- **8a66bcc**: safe-area insets on remaining non-inset screens (Home, LayoutGoal, SavedLayouts, Preview)
+- **1dec44e**: ErrorBoundary wrapping all route screens, accessibility labels/roles/states, KeyboardAvoidingView safe-area-aware offset, Dynamic Type (`allowFontScaling`), ShimmerPlaceholder loading states, diagnostic nav recording, postinstall cross-platform compat
+
+### Remaining blocker (unchanged since 2026-06-19)
+
+Apple Developer Account / App Store Connect credentials are **not configured** for EAS non-interactive builds. No `.p8`, `.p12`, `.mobileprovision`, `credentials.json`, or Apple-specific env vars (`APPLE_ID`, `APPLE_TEAM_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `ASC_API_KEY_ID`, `ASC_API_ISSUER_ID`) were found in the project workspace or environment.
+
+#### Exact next step for human
+1. Visit https://developer.apple.com/account and ensure the Apple Developer Program membership is active.
+2. From a **macOS or Windows machine with GUI access**, run in an interactive terminal:
+   ```bash
+   cd /path/to/modular-realms-tilekeeper
+   npx eas credentials --platform ios
+   ```
+3. Follow EAS prompts to:
+   - Generate or upload an **Apple Distribution Certificate** (for `production` / TestFlight)
+   - Generate or upload an **Apple Provisioning Profile** for `com.modularrealms.tilekeeper`
+   - Generate or upload credentials suitable for **internal distribution** (for `preview` / physical-device ad-hoc)
+4. Once credentials are validated in EAS remote store, remove the `--non-interactive` flag from CI scripts (or keep `--non-interactive` — EAS will pull validated remote credentials automatically).
+5. Re-queue builds:
+   ```bash
+   npx eas build --platform ios --profile preview --non-interactive --no-wait --json
+   npx eas build --platform ios --profile production --non-interactive --no-wait --json
+   ```
+
+This is a **human-gated operation** — no headless worker can complete it.
+
+---
+
