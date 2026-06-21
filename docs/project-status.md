@@ -49,15 +49,15 @@
 ## Test Results
 
 - **TypeScript:** `npx tsc --noEmit` — pass
-- **Jest:** 27 suites / 130 tests — all passing
-- **Web export:** `npm run build:web` — pass
-- **Expo Doctor:** 20/21 checks pass (non-CNG native-folder warning only)
+|- **Jest:** 29 suites / 136 tests — all passing
+|- **Web export:** `npm run build:web` — pass
+|- **Expo Doctor:** 21/21 checks pass (no warnings)
 
 ---
 
 ## Known Issues
 
-1. **Expo Doctor warning:** Non-CNG native-folder/app-config sync warning. Does not block builds.
+1. **Expo Doctor warning:** None. Previously a non-CNG native-folder warning; now resolved at 21/21 checks pass.
 2. **npm audit:** 18 moderate vulnerabilities in Expo transitive deps. Zero credible runtime attack surface on offline-first app. Tracked for SDK 56 migration.
 3. **Uncommitted changes:** Working tree has unstaged changes from M5 development. Master branch is behind gh-pages. Merge needed before v1.0 RC build.
 4. **iOS signing:** Blocked on Apple Developer credentials (Rich to obtain). Android-first v1.0 RC accepted.

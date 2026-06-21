@@ -4243,5 +4243,88 @@ Apple Developer Account / App Store Connect credentials are **not configured** f
 
 This is a **human-gated operation** — no headless worker can complete it.
 
+## Latest re-verification on 2026-06-21T08:06:57Z
+
+Run by: Nova (kanban worker, task t_e9a746f4)
+
+Commands executed:
+```bash
+npx expo-doctor
+npx eas-cli build --platform ios --profile preview --non-interactive --no-wait --json
+npx eas-cli build --platform ios --profile production --non-interactive --no-wait --json
+```
+
+Results:
+
+| Check | Result |
+|---|---|
+| Expo Doctor | 21/21 PASS |
+| iOS simulator build | PASS — build `4562f37c-0ee3-4419-8fd8-9386772a1275` FINISHED for commit `1dec44e` |
+| iOS preview (physical device) | BLOCKED — no credentials suitable for internal distribution configured for non-interactive builds |
+| iOS production (TestFlight) | BLOCKED — Distribution Certificate not validated for non-interactive builds |
+
+**Status unchanged.** Apple Developer Account / App Store Connect credentials remain absent from EAS remote credential store. No `.p8`, `.p12`, `.mobileprovision`, `credentials.json`, or Apple-specific env vars found in workspace or environment. This remains a human-gated operation requiring interactive `npx eas credentials --platform ios`.
+
+---
+
+## Latest re-verification on 2026-06-21T11:41:21Z
+
+Run by: Nova (kanban worker, task t_e9a746f4)
+
+Commands executed:
+
+```bash
+npm run typecheck
+npm test -- --watchAll=false
+npm run build:web
+npx expo-doctor --verbose
+npx eas-cli build:list --platform ios --limit 5
+npx eas-cli build --platform ios --profile preview --non-interactive --no-wait --json
+npx eas-cli build --platform ios --profile production --non-interactive --no-wait --json
+```
+
+Results:
+
+| Check | Result |
+|---|---|
+| TypeScript (`tsc --noEmit`) | PASS |
+| Jest (all suites) | 29 suites / 136 tests PASS |
+| Web export (`npm run build:web`) | PASS |
+| Expo Doctor (`--verbose`) | 21/21 checks PASS — all green, no warnings |
+| iOS simulator build | PASS — builds `4562f37c-0ee3-4419-8fd8-9386772a1275` (commit `1dec44e`) and `f4ca21a0-9a01-46bc-9b38-b101936fd4cb` (commit `215b8d9`) both FINISHED |
+| iOS preview (physical device) | BLOCKED — `"Failed to set up credentials. EAS CLI couldn't find any credentials suitable for internal distribution."` |
+| iOS production (TestFlight) | BLOCKED — `"Distribution Certificate is not validated for non-interactive builds."` |
+
+### Notable changes since last re-verification
+
+- **Expo Doctor is now 21/21** (previously 20/21 with a non-CNG native-folder warning). The previous warning was resolved — likely because the project has remained CNG-managed and the `android/` folder no longer triggers a mismatch.
+- **Test count increased** from 130 to 136 tests across 29 suites (was 27 suites / 130 tests), reflecting continued test coverage growth.
+- **Two simulator builds now FINISHED** on the current Expo/EAS fingerprint (`c8ac4717…`), confirming reproducible iOS compilation.
+
+### Remaining blocker (unchanged)
+
+Apple Developer Account / App Store Connect credentials are **not configured** for EAS non-interactive builds. No `.p8`, `.p12`, `.mobileprovision`, `credentials.json`, or Apple-specific env vars were found in the project workspace or environment.
+
+#### Exact next step for human
+
+1. Visit https://developer.apple.com/account and ensure the Apple Developer Program membership is active.
+2. From a **macOS or Windows machine with GUI access**, run in an interactive terminal:
+   ```bash
+   cd /path/to/modular-realms-tilekeeper
+   npx eas credentials --platform ios
+   ```
+3. Follow EAS prompts to:
+   - Generate or upload an **Apple Distribution Certificate** (for `production` / TestFlight)
+   - Generate or upload an **Apple Provisioning Profile** for `com.modularrealms.tilekeeper`
+   - Generate or upload credentials suitable for **internal distribution** (for `preview` / physical-device ad-hoc)
+4. Once credentials are validated in EAS remote store, remove the `--non-interactive` flag from CI scripts (or keep `--non-interactive` — EAS will pull validated remote credentials automatically).
+5. Re-queue builds:
+   ```bash
+   npx eas build --platform ios --profile preview --non-interactive --no-wait --json
+   npx eas build --platform ios --profile production --non-interactive --no-wait --json
+   ```
+
+This is a **human-gated operation** — no headless worker can complete it.
+
 ---
 
