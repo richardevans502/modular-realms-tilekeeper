@@ -17,6 +17,7 @@ const trace: LayoutSolverTrace = {
   exploredStates: 8,
   depthLimitHit: false,
   timeoutHit: false,
+  cancelled: false,
 };
 
 const result: SolveLayoutResult = {

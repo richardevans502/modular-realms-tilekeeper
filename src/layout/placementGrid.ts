@@ -121,11 +121,20 @@ export function removeFromGrid(grid: PlacementGrid, placementIndex: number): Pla
   return createPlacementGrid(grid.bounds, nextPlacements);
 }
 
+export interface SocketCompatibilityCache {
+  socketsByPlacementSignature: Map<string, Map<CardinalEdgeFace, SocketType>>;
+}
+
+export function createSocketCompatibilityCache(): SocketCompatibilityCache {
+  return { socketsByPlacementSignature: new Map() };
+}
+
 export function validateSocketCompatibility(
   grid: PlacementGrid,
   catalog: TileType[],
+  cache: SocketCompatibilityCache = createSocketCompatibilityCache(),
 ): SocketCompatibilityResult {
-  const issues = getAdjacentSocketPairs(grid, catalog)
+  const issues = getAdjacentSocketPairs(grid, catalog, cache)
     .filter((pair) => pair.fromSocket !== pair.toSocket)
     .map(({ fromPlacementIndex, toPlacementIndex, fromCell, toCell, fromFace, toFace, fromSocket, toSocket }) => ({
       fromPlacementIndex,
@@ -141,7 +150,7 @@ export function validateSocketCompatibility(
   return issues.length > 0 ? { ok: false, reason: 'socket-incompatibility', issues } : { ok: true };
 }
 
-export function isLayoutConnected(grid: PlacementGrid, catalog: TileType[]): boolean {
+export function isLayoutConnected(grid: PlacementGrid, catalog: TileType[], cache: SocketCompatibilityCache = createSocketCompatibilityCache()): boolean {
   if (grid.placements.length <= 1) {
     return true;
   }
@@ -150,7 +159,7 @@ export function isLayoutConnected(grid: PlacementGrid, catalog: TileType[]): boo
     grid.placements.map((_, placementIndex) => [placementIndex, new Set<number>()]),
   );
 
-  for (const pair of getAdjacentSocketPairs(grid, catalog)) {
+  for (const pair of getAdjacentSocketPairs(grid, catalog, cache)) {
     if (pair.fromSocket !== pair.toSocket || pair.fromSocket === 'wall') {
       continue;
     }
@@ -181,7 +190,7 @@ export function isLayoutConnected(grid: PlacementGrid, catalog: TileType[]): boo
 
 interface AdjacentSocketPair extends SocketCompatibilityIssue {}
 
-function getAdjacentSocketPairs(grid: PlacementGrid, catalog: TileType[]): AdjacentSocketPair[] {
+function getAdjacentSocketPairs(grid: PlacementGrid, catalog: TileType[], cache: SocketCompatibilityCache): AdjacentSocketPair[] {
   const cellsByKey = new Map<string, { cell: GridCell; placementIndex: number }>();
   grid.placements.forEach((placement, placementIndex) => {
     placement.grid_cells.forEach((cell) => cellsByKey.set(cellKey(cell), { cell, placementIndex }));
@@ -215,8 +224,8 @@ function getAdjacentSocketPairs(grid: PlacementGrid, catalog: TileType[]): Adjac
           toCell: neighbor.cell,
           fromFace,
           toFace,
-          fromSocket: getPlacementSocket(placement, catalog, fromFace),
-          toSocket: getPlacementSocket(grid.placements[neighbor.placementIndex], catalog, toFace),
+          fromSocket: getCachedPlacementSocket(placement, catalog, fromFace, cache),
+          toSocket: getCachedPlacementSocket(grid.placements[neighbor.placementIndex], catalog, toFace, cache),
         });
       }
     });
@@ -259,7 +268,21 @@ function oppositeFace(face: CardinalEdgeFace): CardinalEdgeFace {
   }
 }
 
-function getPlacementSocket(placement: LayoutPlacement, catalog: TileType[], worldFace: CardinalEdgeFace): SocketType {
+export function getCachedPlacementSocket(placement: LayoutPlacement, catalog: TileType[], worldFace: CardinalEdgeFace, cache: SocketCompatibilityCache): SocketType {
+  const signature = placementSocketSignature(placement);
+  let socketsByFace = cache.socketsByPlacementSignature.get(signature);
+  if (!socketsByFace) {
+    socketsByFace = buildPlacementSocketTransform(placement, catalog);
+    cache.socketsByPlacementSignature.set(signature, socketsByFace);
+  }
+  const socket = socketsByFace.get(worldFace);
+  if (!socket) {
+    throw new Error(`Socket '${worldFace}' not found for placement '${placement.tile_type_id}:${placement.face_id}'`);
+  }
+  return socket;
+}
+
+function buildPlacementSocketTransform(placement: LayoutPlacement, catalog: TileType[]): Map<CardinalEdgeFace, SocketType> {
   const tile = catalog.find((candidate) => candidate.id === placement.tile_type_id);
   if (!tile) {
     throw new Error(`Tile '${placement.tile_type_id}' not found in catalog`);
@@ -270,23 +293,28 @@ function getPlacementSocket(placement: LayoutPlacement, catalog: TileType[], wor
     throw new Error(`Face '${placement.face_id}' not found on tile '${tile.id}'`);
   }
 
-  const localFace = unrotateEdgeFace(worldFace, placement.rotation);
-  const socket = face.edge_sockets.find((candidate) => isCardinalEdgeFace(candidate.face) && candidate.face === localFace);
-  if (!socket) {
-    throw new Error(`Socket '${localFace}' not found on face '${placement.face_id}' for tile '${tile.id}'`);
+  const socketsByFace = new Map<CardinalEdgeFace, SocketType>();
+  for (const socket of face.edge_sockets) {
+    if (isCardinalEdgeFace(socket.face)) {
+      socketsByFace.set(rotateEdgeFace(socket.face, placement.rotation), socket.socket_type);
+    }
   }
 
-  return socket.socket_type;
+  return socketsByFace;
+}
+
+function placementSocketSignature(placement: LayoutPlacement): string {
+  return `${placement.tile_type_id}|${placement.face_id}|${placement.rotation}`;
 }
 
 function isCardinalEdgeFace(face: EdgeFace): face is CardinalEdgeFace {
   return CARDINAL_EDGE_FACES.includes(face as CardinalEdgeFace);
 }
 
-function unrotateEdgeFace(worldFace: CardinalEdgeFace, rotation: Rotation): CardinalEdgeFace {
+function rotateEdgeFace(localFace: CardinalEdgeFace, rotation: Rotation): CardinalEdgeFace {
   const rotationSteps = rotation / 90;
-  const worldIndex = CARDINAL_EDGE_FACES.indexOf(worldFace);
-  return CARDINAL_EDGE_FACES[(worldIndex - rotationSteps + CARDINAL_EDGE_FACES.length) % CARDINAL_EDGE_FACES.length];
+  const localIndex = CARDINAL_EDGE_FACES.indexOf(localFace);
+  return CARDINAL_EDGE_FACES[(localIndex + rotationSteps) % CARDINAL_EDGE_FACES.length];
 }
 
 function rotateLocalCell(cell: GridCell, dimensions: TileDimensions, rotation: Rotation): GridCell {

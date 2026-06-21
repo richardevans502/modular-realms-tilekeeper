@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { solveTopRankedLayouts, type RankedLayoutResult, type SolveTopRankedLayoutsOptions, type SolveTopRankedLayoutsResult } from '../layout/layoutSolver';
+import { recordDiagnosticError, recordDiagnosticSolverRun } from '../diagnostics/localDiagnostics';
+import { SOLVER_VERSION, solveTopRankedLayouts, type RankedLayoutResult, type SolveTopRankedLayoutsOptions, type SolveTopRankedLayoutsResult } from '../layout/layoutSolver';
 import type { LayoutGoalRequiredCategory } from '../layout/layoutGoalScreenModel';
 import type { InventoryItem, Layout, TileType } from '../shared/types';
 
@@ -33,6 +34,17 @@ export interface RunLayoutSolverSuccess {
   fromCache: boolean;
 }
 
+export interface SolverPerformanceTelemetryEntry {
+  createdAt: string;
+  solverVersion: string;
+  cacheKey: string;
+  solveTimeMs: number;
+  nodesExplored: number;
+  resultCount: number;
+  fromCache: boolean;
+  cancelled: boolean;
+}
+
 export interface UseLayoutSolverInput {
   catalog: TileType[];
   inventory: InventoryItem[];
@@ -56,6 +68,8 @@ interface CachedSolverResult {
 
 const solverResultCache = new Map<string, CachedSolverResult>();
 const generatedLayoutsById = new Map<string, Layout>();
+const solverPerformanceTelemetry: SolverPerformanceTelemetryEntry[] = [];
+const MAX_SOLVER_TELEMETRY_ENTRIES = 50;
 
 export class LayoutSolveCancelledError extends Error {
   constructor() {
@@ -70,6 +84,28 @@ export async function runLayoutSolver(input: RunLayoutSolverInput): Promise<RunL
   const cacheKey = buildLayoutSolverCacheKey(input.goal);
   const cached = solverResultCache.get(cacheKey);
   if (cached) {
+    const cachedAt = new Date().toISOString();
+    const cachedSolverVersion = cached.layouts[0]?.layout.solver_version ?? SOLVER_VERSION;
+    const cachedExploredStates = cached.layouts[0]?.trace.exploredStates ?? 0;
+    recordSolverPerformanceTelemetry({
+      createdAt: cachedAt,
+      solverVersion: cachedSolverVersion,
+      cacheKey,
+      solveTimeMs: 0,
+      nodesExplored: cachedExploredStates,
+      resultCount: cached.layouts.length,
+      fromCache: true,
+      cancelled: false,
+    });
+    recordDiagnosticSolverRun({
+      timestamp: cachedAt,
+      solverVersion: cachedSolverVersion,
+      durationMs: 0,
+      exploredStates: cachedExploredStates,
+      resultCount: cached.layouts.length,
+      fromCache: true,
+      cancelled: false,
+    });
     return { layouts: cached.layouts, cacheKey, fromCache: true };
   }
 
@@ -77,6 +113,7 @@ export async function runLayoutSolver(input: RunLayoutSolverInput): Promise<RunL
   throwIfCancelled(input.signal);
 
   const createdAt = input.createdAt ?? new Date().toISOString();
+  const solveStartedAt = Date.now();
   const result = input.solver
     ? input.solver({ createdAt })
     : solveTopRankedLayouts(
@@ -89,8 +126,33 @@ export async function runLayoutSolver(input: RunLayoutSolverInput): Promise<RunL
           goal: input.goal.goal,
           createdAt,
         },
-        { topN: input.options?.topN ?? 3, maxSearchNodes: input.options?.maxSearchNodes, maxExploredStates: input.options?.maxExploredStates, timeoutMs: input.options?.timeoutMs, maxBacktrackDepth: input.options?.maxBacktrackDepth },
+        { topN: input.options?.topN ?? 3, maxSearchNodes: input.options?.maxSearchNodes, maxExploredStates: input.options?.maxExploredStates, timeoutMs: input.options?.timeoutMs, maxBacktrackDepth: input.options?.maxBacktrackDepth, signal: input.signal },
       );
+
+  const solveTimeMs = Date.now() - solveStartedAt;
+  if (result.ok) {
+    const solverVersion = result.layouts[0]?.layout.solver_version ?? SOLVER_VERSION;
+    const durationMs = result.trace.elapsedMs ?? solveTimeMs;
+    recordSolverPerformanceTelemetry({
+      createdAt,
+      solverVersion,
+      cacheKey,
+      solveTimeMs: durationMs,
+      nodesExplored: result.trace.exploredStates,
+      resultCount: result.layouts.length,
+      fromCache: false,
+      cancelled: result.trace.cancelled,
+    });
+    recordDiagnosticSolverRun({
+      timestamp: createdAt,
+      solverVersion,
+      durationMs,
+      exploredStates: result.trace.exploredStates,
+      resultCount: result.layouts.length,
+      fromCache: false,
+      cancelled: result.trace.cancelled,
+    });
+  }
 
   throwIfCancelled(input.signal);
 
@@ -157,6 +219,7 @@ export function useLayoutSolver({ catalog, inventory, goal, options, onSolved }:
         return null;
       }
       const message = caught instanceof Error ? caught.message : 'Solver failed for an unknown reason.';
+      recordDiagnosticError(caught, { handled: true, context: 'layout-solver-generate' });
       setError(message);
       setLayouts([]);
       return null;
@@ -188,9 +251,25 @@ export function getCachedSolvedLayout(layoutId: string | string[] | undefined): 
   return generatedLayoutsById.get(id) ?? null;
 }
 
+export function getSolverPerformanceTelemetry(): SolverPerformanceTelemetryEntry[] {
+  return solverPerformanceTelemetry.map((entry) => ({ ...entry }));
+}
+
+export function clearSolverPerformanceTelemetry(): void {
+  solverPerformanceTelemetry.length = 0;
+}
+
 export function clearLayoutSolverCache(): void {
   solverResultCache.clear();
   generatedLayoutsById.clear();
+  clearSolverPerformanceTelemetry();
+}
+
+function recordSolverPerformanceTelemetry(entry: SolverPerformanceTelemetryEntry): void {
+  solverPerformanceTelemetry.push(entry);
+  if (solverPerformanceTelemetry.length > MAX_SOLVER_TELEMETRY_ENTRIES) {
+    solverPerformanceTelemetry.splice(0, solverPerformanceTelemetry.length - MAX_SOLVER_TELEMETRY_ENTRIES);
+  }
 }
 
 function nextTick(): Promise<void> {

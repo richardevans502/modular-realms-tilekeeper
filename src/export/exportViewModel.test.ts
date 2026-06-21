@@ -7,7 +7,11 @@ import { runMigrations, type TileKeeperDatabase } from '../db/runMigrations';
 import type { Layout, TileType } from '../shared/types';
 import {
   buildExportableLayouts,
+  buildPrepSheetHtml,
+  buildPrepSheetModel,
+  buildTileChecklist,
   exportBackupJson,
+  exportDiagnosticsJson,
   exportLayoutJson,
   generatePngDataUrl,
   importBackupJson,
@@ -245,9 +249,66 @@ describe('exportViewModel', () => {
     expect(JSON.stringify(parsed, null, 2)).toBe(json);
   });
 
-  test('generatePngDataUrl returns error in non-browser environment', async () => {
+  test('generatePngDataUrl renders a portable PNG data URL in non-browser environments', async () => {
     const result = await generatePngDataUrl(layout, [tile]);
-    expect(result.dataUrl).toBeNull();
-    expect(result.error).toMatch(/browser environment/);
+    expect(result.error).toBeNull();
+    expect(result.dataUrl).toMatch(/^data:image\/png;base64,/);
+  });
+
+  test('buildTileChecklist reports required, owned, and missing tile counts', () => {
+    const checklist = buildTileChecklist(
+      [
+        ...layout.placements,
+        { ...layout.placements[0], x: 1, grid_cells: [{ x: 1, y: 0 }] },
+      ],
+      [tile],
+      [{ tile_type_id: tile.id, owned_quantity: 1, condition: 'good' }],
+    );
+
+    expect(checklist).toEqual([
+      {
+        tileTypeId: tile.id,
+        tileName: 'Export Floor Tile',
+        productSet: 'Export Test Pack',
+        required: 2,
+        owned: 1,
+        missing: 1,
+      },
+    ]);
+  });
+
+  test('buildPrepSheetHtml includes schematic, checklist, missing tiles, notes, catalog version, and solver version', async () => {
+    const model = await buildPrepSheetModel({
+      exportableLayout: {
+        id: savedLayout.id,
+        name: savedLayout.name,
+        goal: layout.goal,
+        placementCount: layout.placements.length,
+        updatedAt: savedLayout.updated_at,
+        notes: 'Pack the boss room last.',
+        layout,
+      },
+      catalog: [tile],
+      inventory: [],
+      generatedAt: '2026-06-13T08:00:00.000Z',
+    });
+    const html = buildPrepSheetHtml(model);
+
+    expect(html).toContain('Schematic map');
+    expect(html).toContain('data:image/png;base64,');
+    expect(html).toContain('Tile checklist');
+    expect(html).toContain('Missing tiles');
+    expect(html).toContain('Pack the boss room last.');
+    expect(html).toContain('Catalog version 2026.06.08');
+    expect(html).toContain('Solver version export-solver');
+  });
+
+  test('exportDiagnosticsJson exposes local solver performance telemetry without layout payloads', () => {
+    const parsed = JSON.parse(exportDiagnosticsJson());
+
+    expect(parsed.format).toBe('tilekeeper.diagnostics.v1');
+    expect(parsed.solver_performance).toEqual(expect.any(Array));
+    expect(JSON.stringify(parsed)).not.toContain('placements');
+    expect(JSON.stringify(parsed)).not.toContain('inventory');
   });
 });

@@ -5,12 +5,16 @@ npm-debug.log*
 # Build outputs
 dist/
 dist-web/
+artifacts/
 android/build/
 ios/build/
 web-build/
 .expo/
 *.apk
 *.aab
+*.ipa
+*.app
+*.tar.gz
 
 # Native
 *.orig
@@ -19,6 +23,8 @@ web-build/
 *.p12
 *.key
 *.mobileprovision
+android/
+ios/
 
 # IDE
 .idea/

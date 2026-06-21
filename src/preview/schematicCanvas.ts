@@ -214,6 +214,164 @@ export function renderSchematicPreviewPngDataUrl(
   return htmlCanvas.toDataURL('image/png');
 }
 
+
+/** Platform-neutral: renders a schematic preview to a PNG data URL without DOM/canvas APIs. */
+export function renderSchematicPreviewPngDataUrlPortable(
+  placements: LayoutPlacement[],
+  catalog: TileType[],
+  options: SchematicCanvasRenderOptions = {},
+): string {
+  const bytes = renderSchematicPreviewPngBytes(placements, catalog, options);
+  return `data:image/png;base64,${bytesToBase64(bytes)}`;
+}
+
+/** Platform-neutral: renders a schematic preview to encoded PNG bytes without native dependencies. */
+export function renderSchematicPreviewPngBytes(
+  placements: LayoutPlacement[],
+  catalog: TileType[],
+  options: SchematicCanvasRenderOptions = {},
+): Uint8Array {
+  const scale = Math.max(1, Math.round(options.scale ?? 1));
+  const baseOpts: SchematicPreviewOptions = {
+    cellSize: (options.cellSize ?? 32) * scale,
+    padding: (options.padding ?? 12) * scale,
+    showGrid: options.showGrid,
+  };
+  const model = buildSchematicPreviewModel(placements, catalog, baseOpts);
+  const canvas = new SoftCanvas(model.width, model.height);
+  const bg = hexToRgba(options.backgroundColor ?? '#ffffff');
+  for (let i = 0; i < canvas.data.length; i += 4) {
+    canvas.data[i] = bg.r;
+    canvas.data[i + 1] = bg.g;
+    canvas.data[i + 2] = bg.b;
+    canvas.data[i + 3] = bg.a;
+  }
+
+  if (options.showGrid ?? false) {
+    for (const cell of model.gridCells) {
+      canvas.strokeRect(cell.x, cell.y, model.cellSize, model.cellSize, '#cbd5e1', 1 * scale);
+    }
+  }
+
+  for (const tile of model.tiles) {
+    for (const cell of tile.cells) {
+      canvas.fillRect(cell.x, cell.y, model.cellSize, model.cellSize, tile.color);
+      canvas.strokeRect(cell.x, cell.y, model.cellSize, model.cellSize, '#0f172a', 1 * scale);
+    }
+    for (const socket of tile.sockets) {
+      const strokeColor =
+        socket.socketType === 'wall'
+          ? '#334155'
+          : socket.socketType === 'doorway'
+            ? '#f59e0b'
+            : '#22c55e';
+      canvas.line(socket.x1, socket.y1, socket.x2, socket.y2, strokeColor, 4 * scale);
+    }
+    const marker = rotationMarkerPoints(tile.labelAnchor, tile.rotation, scale);
+    canvas.line(marker[0].x, marker[0].y, marker[1].x, marker[1].y, '#0f172a', 2 * scale);
+    canvas.line(marker[1].x, marker[1].y, marker[2].x, marker[2].y, '#0f172a', 2 * scale);
+  }
+
+  return encodePngRgba(canvas.width, canvas.height, canvas.data);
+}
+
+function encodePngRgba(width: number, height: number, rgba: Uint8ClampedArray): Uint8Array {
+  const scanlineLength = width * 4 + 1;
+  const raw = new Uint8Array(scanlineLength * height);
+  for (let y = 0; y < height; y++) {
+    raw[y * scanlineLength] = 0; // PNG filter type: none
+    raw.set(rgba.subarray(y * width * 4, (y + 1) * width * 4), y * scanlineLength + 1);
+  }
+
+  const chunks = [
+    pngChunk('IHDR', concatBytes(uint32be(width), uint32be(height), new Uint8Array([8, 6, 0, 0, 0]))),
+    pngChunk('IDAT', zlibStore(raw)),
+    pngChunk('IEND', new Uint8Array()),
+  ];
+  return concatBytes(new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]), ...chunks);
+}
+
+function zlibStore(data: Uint8Array): Uint8Array {
+  const blocks: Uint8Array[] = [new Uint8Array([0x78, 0x01])];
+  for (let offset = 0; offset < data.length; offset += 0xffff) {
+    const chunk = data.subarray(offset, Math.min(offset + 0xffff, data.length));
+    const final = offset + chunk.length >= data.length ? 1 : 0;
+    const header = new Uint8Array(5);
+    header[0] = final;
+    header[1] = chunk.length & 0xff;
+    header[2] = (chunk.length >> 8) & 0xff;
+    const nlen = (~chunk.length) & 0xffff;
+    header[3] = nlen & 0xff;
+    header[4] = (nlen >> 8) & 0xff;
+    blocks.push(header, chunk);
+  }
+  blocks.push(uint32be(adler32(data)));
+  return concatBytes(...blocks);
+}
+
+function pngChunk(type: string, data: Uint8Array): Uint8Array {
+  const typeBytes = asciiBytes(type);
+  const crcInput = concatBytes(typeBytes, data);
+  return concatBytes(uint32be(data.length), typeBytes, data, uint32be(crc32(crcInput)));
+}
+
+function asciiBytes(value: string): Uint8Array {
+  const bytes = new Uint8Array(value.length);
+  for (let i = 0; i < value.length; i++) bytes[i] = value.charCodeAt(i);
+  return bytes;
+}
+
+function uint32be(value: number): Uint8Array {
+  return new Uint8Array([(value >>> 24) & 0xff, (value >>> 16) & 0xff, (value >>> 8) & 0xff, value & 0xff]);
+}
+
+function concatBytes(...parts: Uint8Array[]): Uint8Array {
+  const total = parts.reduce((sum, part) => sum + part.length, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const part of parts) {
+    out.set(part, offset);
+    offset += part.length;
+  }
+  return out;
+}
+
+function adler32(data: Uint8Array): number {
+  let a = 1;
+  let b = 0;
+  for (const byte of data) {
+    a = (a + byte) % 65521;
+    b = (b + a) % 65521;
+  }
+  return ((b << 16) | a) >>> 0;
+}
+
+function crc32(data: Uint8Array): number {
+  let crc = 0xffffffff;
+  for (const byte of data) {
+    crc ^= byte;
+    for (let i = 0; i < 8; i++) {
+      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function bytesToBase64(bytes: Uint8Array): string {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  let output = '';
+  for (let i = 0; i < bytes.length; i += 3) {
+    const a = bytes[i];
+    const b = i + 1 < bytes.length ? bytes[i + 1] : 0;
+    const c = i + 2 < bytes.length ? bytes[i + 2] : 0;
+    output += alphabet[a >> 2];
+    output += alphabet[((a & 3) << 4) | (b >> 4)];
+    output += i + 1 < bytes.length ? alphabet[((b & 15) << 2) | (c >> 6)] : '=';
+    output += i + 2 < bytes.length ? alphabet[c & 63] : '=';
+  }
+  return output;
+}
+
 function rotationMarkerPoints(
   anchor: { x: number; y: number },
   rotation: 0 | 90 | 180 | 270,

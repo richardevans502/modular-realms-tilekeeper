@@ -153,4 +153,39 @@ describe('layout preview screen model', () => {
     expect(inspectTileAtGridCell(layout, catalog, { x: 9, y: 9 })).toBeNull();
     expect(selectTileByPlacementIndex(layout, catalog, 99)).toBeNull();
   });
+
+  test('progressively renders visible tiles first and simplifies oversized tile details', () => {
+    const largeTile: TileType = {
+      ...roomTile,
+      id: 'large-4x4',
+      name: 'Large Chamber',
+      dimensions: {
+        unit: 'grid-cell',
+        width: 4,
+        height: 4,
+        grid_cells: Array.from({ length: 16 }, (_, index) => ({ x: index % 4, y: Math.floor(index / 4) })),
+      },
+    };
+    const progressiveLayout: Layout = {
+      ...layout,
+      placements: [
+        { tile_type_id: 'large-4x4', face_id: 'front', x: 0, y: 0, rotation: 0, grid_cells: largeTile.dimensions.grid_cells },
+        { tile_type_id: 'stair-1x1', face_id: 'top', x: 50, y: 50, rotation: 90, grid_cells: [{ x: 50, y: 50 }] },
+      ],
+    };
+
+    const model = buildLayoutPreviewScreenModel(progressiveLayout, [largeTile, stairTile], {
+      viewportWidth: 120,
+      viewportHeight: 120,
+      cellSize: 20,
+      detailCellThreshold: 4,
+    });
+
+    expect(model.schematic.tiles.map((tile) => tile.tileTypeId)).toEqual(['large-4x4']);
+    expect(model.schematic.deferredTileCount).toBe(1);
+    expect(model.schematic.simplifiedTileCount).toBe(1);
+    expect(model.schematic.tiles[0].simplified).toBe(true);
+    expect(model.schematic.tiles[0].sockets).toEqual([]);
+  });
+
 });

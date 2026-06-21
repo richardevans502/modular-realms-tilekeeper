@@ -25,8 +25,9 @@ This index lists every document in the `docs/` directory, its current authority 
 | `art-bible-ui-style-guide.md` | Active | Art Bible & UI Style Guide v0.1 pre-production — mood, palette, typography, biome boards. | ↔ `GDD.md` (design intent), ↔ `TECHNICAL_ARCHITECTURE_v2.0.md` (Expo/React Native stack) |
 | `steering-committee-minutes-template.md` | Active | Template for steering committee review minutes and risk status updates. | — |
 | `M5-PRIV-1_STORE_SUBMISSION_PACK.md` | Active | Store submission pack: privacy policy, metadata, screenshots, data safety, support contact. Approved by Rich 2026-06-19. | ↔ `PRIVACY_POLICY.md` (source), ↔ `STORE_METADATA.md`, ↔ `DATA_SAFETY.md`, ↔ `SUPPORT_CONTACT.md` |
-| `M5-BUILD-1_IOS_BUILD_SIGNING.md` | Active | iOS build signing and provisioning profile setup for store submission. | ↔ `milestone_plan.md` (M5 exit gate) |
+| `M5-BUILD-1_IOS_BUILD_SIGNING.md` | Deferred / Active Reference | iOS build signing and provisioning profile setup. Deferred from M5 until Rich completes Apple Developer/App Store Connect credentials; retain as M6+ parity runbook/evidence. | ↔ `milestone_plan.md` (M6+ deferred iOS gate) |
 | `M5-MON-1_DIAGNOSTICS_DECISION.md` | Active | Crash/error monitoring decision: local-only opt-in diagnostics export, no Sentry. | ↔ `milestone_plan.md` (M5 deliverable) |
+| `CATALOG_PUBLISHING_WORKFLOW.md` | Active | M6 catalog maintenance workflow: versioned pack format, builder command, source/asset/checksum rules, migration and rollback procedure. | ↔ `milestone_plan.md` (M6 deliverable), ↔ `TECHNICAL_ARCHITECTURE_v2.0.md` (catalog refresh baseline) |
 
 ---
 

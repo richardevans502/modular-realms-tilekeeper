@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { TileType, InventoryItem } from '../shared/types';
 import type { InventoryRepository, InventoryDetail } from '../db/inventoryRepository';
 import type { CatalogRepository } from '../db/catalogRepository';
+import { EmptyState } from '../ui/EmptyState';
+import { ShimmerPlaceholder } from '../ui/ShimmerPlaceholder';
 import { tileKeeperTheme } from '../ui/theme';
 import {
   filterInventoryRows,
@@ -21,6 +24,7 @@ export interface InventoryScreenProps {
 
 export function InventoryScreen({ catalog, inventoryRepository, catalogRepository }: InventoryScreenProps) {
   const [filters, setFilters] = useState<InventoryFilterState>({ searchText: '', condition: 'all' });
+  const insets = useSafeAreaInsets();
   const [details, setDetails] = useState<InventoryDetail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -215,12 +219,13 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 56 : 0}
       style={styles.screen}
     >
       <View style={styles.heroCard}>
         <Text style={styles.eyebrow}>Inventory</Text>
-        <Text style={styles.title}>Your tile collection</Text>
-        <Text style={styles.subtitle}>Track owned quantities, condition, and storage for every catalog tile.</Text>
+        <Text style={styles.title} allowFontScaling>Your tile collection</Text>
+        <Text style={styles.subtitle} allowFontScaling>Track owned quantities, condition, and storage for every catalog tile.</Text>
         <View style={styles.statsRow}>
           <StatPill label="Owned" value={stats.totalOwned} />
           <StatPill label="Catalog size" value={`${stats.catalogedCount}/${stats.totalCatalog}`} />
@@ -230,6 +235,7 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
       <View style={styles.searchCard}>
         <TextInput
           accessibilityLabel="Search inventory"
+          accessibilityRole="search"
           placeholder="Search by name, set, category, notes, location..."
           placeholderTextColor={tileKeeperTheme.colours.mutedText}
           value={filters.searchText}
@@ -241,11 +247,12 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
             <TouchableOpacity
               key={condition}
               accessibilityRole="button"
+              accessibilityLabel={condition === 'all' ? 'All conditions' : condition}
               accessibilityState={{ selected: filters.condition === condition }}
               onPress={() => setFilters((current) => ({ ...current, condition }))}
               style={[styles.filterChip, filters.condition === condition && styles.filterChipSelected]}
             >
-              <Text style={[styles.filterChipText, filters.condition === condition && styles.filterChipTextSelected]}>
+              <Text style={[styles.filterChipText, filters.condition === condition && styles.filterChipTextSelected]} allowFontScaling>
                 {condition === 'all' ? 'All conditions' : condition}
               </Text>
             </TouchableOpacity>
@@ -260,14 +267,19 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
         data={rows}
         keyExtractor={(row) => row.id}
         ListEmptyComponent={
-          <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>{isLoading ? 'Loading inventory' : 'No tiles match your filters'}</Text>
-            <Text style={styles.emptyMessage}>
-              {isLoading
-                ? 'Summoning catalog and inventory records from SQLite…'
-                : 'Try clearing filters or search terms. All catalog tiles are shown even if you own zero copies.'}
-            </Text>
-          </View>
+          isLoading ? (
+            <View style={styles.shimmerStack} accessibilityLabel="Loading inventory" accessibilityRole="progressbar" accessibilityState={{ busy: true }}>
+              <ShimmerPlaceholder height={72} />
+              <ShimmerPlaceholder height={72} />
+              <ShimmerPlaceholder height={72} />
+            </View>
+          ) : (
+            <EmptyState
+              icon="📦"
+              title="No tiles match your filters"
+              message="Try clearing filters or search terms. All catalog tiles are shown even if you own zero copies."
+            />
+          )
         }
         renderItem={renderTileCard}
       />
@@ -278,8 +290,8 @@ export function InventoryScreen({ catalog, inventoryRepository, catalogRepositor
 function StatPill({ label, value }: { label: string; value: number | string }) {
   return (
     <View style={styles.statPill}>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statValue} allowFontScaling>{value}</Text>
+      <Text style={styles.statLabel} allowFontScaling>{label}</Text>
     </View>
   );
 }
@@ -570,25 +582,8 @@ const styles = StyleSheet.create({
     color: tileKeeperTheme.colours.onFrame,
     fontWeight: '800',
   },
-  emptyCard: {
-    backgroundColor: tileKeeperTheme.colours.surface,
-    borderColor: tileKeeperTheme.colours.border,
-    borderRadius: tileKeeperTheme.radius.card,
-    borderWidth: 1,
-    padding: 24,
-    alignItems: 'center',
-    gap: 8,
-  },
-  emptyTitle: {
-    color: tileKeeperTheme.colours.text,
-    fontSize: 18,
-    fontWeight: '900',
-    textAlign: 'center',
-  },
-  emptyMessage: {
-    color: tileKeeperTheme.colours.mutedText,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: 'center',
+  shimmerStack: {
+    gap: 12,
+    paddingBottom: 32,
   },
 });

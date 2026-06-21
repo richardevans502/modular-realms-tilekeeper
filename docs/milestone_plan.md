@@ -41,7 +41,7 @@ This plan aligns to `docs/TECHNICAL_ARCHITECTURE_v2.0.md`:
 
 ### 2.1 In Scope
 
-- Android and iOS mobile utility app.
+- Android mobile utility app for the v1.0 release candidate; iOS remains a target platform but signed physical-device/TestFlight parity is deferred until Apple Developer credentials are available.
 - Official and custom Modular Realms tile catalog records.
 - Physical inventory tracking with owned quantities, condition, notes, and storage location.
 - Face-aware tile data model for double-sided tiles.
@@ -199,7 +199,7 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
      - Settings (theme toggle, backup, catalog refresh, about)
    - **Local-First Architecture:** All generation engine, layout storage, and theming is local to the device. No hosted server holds user data.
    - **Optional Cloud Backup:** Integrate OAuth-based links to Google Drive, OneDrive, or Dropbox for encrypted backup/restore of inventory and layouts. Cloud is opt-in, additive only — app remains fully functional offline.
-8. **Internal Beta Distribution** — TestFlight/Play internal track or Expo/EAS equivalent for controlled testing.
+8. **Internal Beta Distribution** — Android Play internal track or Expo/EAS equivalent for controlled testing. TestFlight remains non-gating until Apple Developer account access and signing credentials are configured.
 
 **Acceptance Criteria:**
 
@@ -211,7 +211,7 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 - [ ] UI screens are navigable, touch targets meet 44 px minimum, and colour-blind-safe states use icon + label + shape (never colour alone).
 - [ ] App operates fully offline for inventory, layout generation, and theming.
 - [ ] Optional cloud backup exports/imports an encrypted backup envelope without exposing raw user data to the app server.
-- [ ] Beta build can be installed by internal stakeholders.
+- [ ] Android beta build can be installed by internal stakeholders; iOS simulator build evidence may be retained, but signed iOS/TestFlight is not an M4 exit gate.
 
 **Critical Path:** Preview model → saved layout storage → export adapters → M4-UI screens → beta build.
 
@@ -229,7 +229,7 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 4. **Performance Optimisation** — solver budgets, cancellation, cached compatibility transforms, responsive preview rendering.
 5. **Privacy & Store Materials** — privacy policy, app metadata, screenshots, support text, and data safety answers.
 6. **Crash/Error Monitoring Decision** — opt-in, non-PII monitoring only if approved; otherwise local diagnostic export path.
-7. **Public v1.0 Release Candidate** — signed Android/iOS builds ready for store submission.
+7. **Public v1.0 Release Candidate** — signed Android build ready for store submission, with iOS simulator-build evidence retained for compatibility tracking. Signed iOS physical-device builds and TestFlight distribution are deferred to M6 or later and depend on Rich completing Apple Developer/App Store Connect credential setup.
 
 **Acceptance Criteria:**
 
@@ -238,9 +238,10 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 - [ ] Common layout generation completes within target budget or offers cancellation/refinement.
 - [ ] No normal UI interaction is blocked longer than 50 ms by solver or export work.
 - [ ] Accessibility audit passes critical navigation, labels, touch targets, and colour/state requirements.
-- [ ] Store submission checklist is complete.
+- [ ] Android store submission checklist is complete.
+- [ ] iOS/TestFlight readiness is documented as deferred and no longer blocks the v1.0 release candidate.
 
-**Critical Path:** Catalog refresh → conflict handling → performance/accessibility → release candidate → store submission.
+**Critical Path:** Catalog refresh → conflict handling → performance/accessibility → Android release candidate → store submission. iOS/TestFlight resumes only after Apple Developer credentials are available.
 
 ---
 
@@ -255,12 +256,15 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 3. **User Feedback Review** — evaluate whether users need better layout constraints, manual editing, printable sheets, or catalog coverage.
 4. **v1.1 Feature Update** — priority fixes and small improvements based on real utility usage.
 5. **Roadmap v2.1** — decide among tablet optimisation, web companion, cloud sync, advanced solver constraints, or official catalog partnership.
+6. **Deferred iOS Build Parity** — configure Apple Developer/App Store Connect credentials, produce signed physical-device and TestFlight builds, then run iOS smoke tests once the account dependency is resolved.
 
 **Acceptance Criteria:**
 
-- [ ] Catalog update process can publish a new pack without app code changes.
+- [x] Catalog update process can publish a new pack without app code changes via the versioned pack builder (`npm run catalog:build`) and static manifest workflow in `docs/CATALOG_PUBLISHING_WORKFLOW.md`.
+- [x] Catalog pack format records source references, checksummed assets, pack/catalog versions, and schema migration notes for repeatable maintenance.
 - [ ] Support can reproduce layout/import issues from user-provided non-sensitive exports.
 - [ ] v1.1 scope is based on beta/public feedback, not historical game-pivot assumptions.
+- [ ] If Apple Developer credentials are available, iOS/TestFlight parity is re-activated as an M6+ build task; otherwise it remains explicitly deferred and non-blocking for Android maintenance releases.
 - [ ] Any proposed game direction is handled as a separate product/change-control decision.
 
 **Critical Path:** Launch feedback → catalog maintenance → support tooling → v1.1 → roadmap.
@@ -276,7 +280,7 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 | R3 | Solver search space becomes too slow on device | Medium | High | Deterministic heuristics, budgets, pruning, memoization, cancellation, top-N limits | Tech Lead |
 | R4 | Manual catalog curation takes longer than planned | High | Medium | Start with seed catalog; separate catalog completeness from core tool acceptance; allow custom entries | PM |
 | R5 | Import/export corruption loses user data | Low | High | Zod validation, transaction rollback, versioned backups, round-trip tests | Tech Lead |
-| R6 | iOS/Android build parity slips | Medium | Medium | Expo/EAS smoke builds early; avoid native modules unless justified | DevOps |
+| R6 | iOS signed build/TestFlight parity blocked by Apple Developer credentials | Medium | Medium | Treat Android as v1.0 RC gate; retain iOS simulator evidence; defer physical-device/TestFlight builds until Apple Developer/App Store Connect credentials are configured | DevOps |
 | R7 | Schematic preview becomes unreadable for large layouts | Medium | Medium | Progressive detail, pan/zoom, print-scale export, simplification above threshold | Design |
 | R8 | Users expect automated scraping or live catalog sync | Medium | Medium | Clear copy: manual/curated catalog baseline; optional signed packs only | PM |
 | R9 | Historical game scope re-enters implementation backlog | Medium | High | Active-doc index, change-control rule, sprint acceptance checks against this plan | Project Lead |
@@ -294,7 +298,7 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 6. The app must be useful offline after catalog data is cached or manually entered.
 7. Cloud catalog hosting is optional and additive, not required for local inventory/layout use.
 8. Cloud backup (Google Drive, OneDrive, Dropbox) is opt-in only; all core functionality remains offline.
-9. Android and iOS are both target platforms, but implementation may validate one platform first before parity.
+9. Android is the v1.0 release-candidate platform. iOS remains a target platform, but signed physical-device/TestFlight parity is formally deferred to M6 or later until Apple Developer account, certificates, provisioning profiles, and App Store Connect submission credentials are available.
 
 ---
 
@@ -306,7 +310,7 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 | **M2 Exit** | Inventory CRUD, schema validation, SQLite persistence, backup/import skeleton pass tests | PM, Tech Lead |
 | **M3 Exit** | Deterministic solver generates valid inventory-constrained layouts with trace evidence | PM, Tech Lead |
 | **M4 Exit** | Saved layout library plus JSON/PNG/PDF exports work from placement graph | PM, Tech Lead, Design |
-| **M5 Exit** | Accessible, performant, store-ready v1.0 release candidate | Product, PM, Tech Lead |
+| **M5 Exit** | Accessible, performant, Android store-ready v1.0 release candidate; iOS/TestFlight explicitly deferred and documented | Product, PM, Tech Lead |
 | **M6 Exit** | Post-launch update workflow and roadmap v2.1 approved from real usage data | Product, PM |
 
 ---
@@ -328,6 +332,7 @@ Game-pivot documents (`GDD.md`, `VS_SCOPE.md`, `VS_SCOPE_SIGNOFF.md`, and relate
 |---|---|---|---|
 | 1.0 | 2026-06-02 | Auto-generated from PRD | Initial utility-app milestone plan |
 | 2.0 | 2026-06-03 | Nova | Re-scoped phases for utility tool; removed game/vertical-slice gates; aligned to Technical Architecture v2.0 |
+| 2.1 | 2026-06-19 | Nova | Deferred signed iOS/TestFlight parity from M5 to M6+ pending Apple Developer credentials; made Android the v1.0 release-candidate gate |
 
 ---
 

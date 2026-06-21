@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { loadSeedCatalog } from '../src/catalog/loadSeedCatalog';
 import { initTileKeeperDatabase } from '../src/db/init';
@@ -7,6 +7,7 @@ import type { SavedLayoutRepository } from '../src/db/savedLayoutRepository';
 import { getCachedSolvedLayout } from '../src/hooks/useLayoutSolver';
 import { buildDemoLayout, LayoutPreviewScreen } from '../src/preview/LayoutPreviewScreen';
 import type { SaveLayoutFormData } from '../src/preview/SaveLayoutModal';
+import { ErrorBoundary } from '../src/ui/ErrorBoundary';
 
 const catalog = loadSeedCatalog();
 
@@ -46,12 +47,15 @@ export default function PreviewRoute() {
     await repository.createLayout(savedLayout);
   }
 
+  const expoRouter = useRouter();
   return (
-    <LayoutPreviewScreen
-      layout={layout}
-      catalog={catalog}
-      onBackToLayoutGoal={() => router.push('/layout-goal')}
-      onSaveLayout={repository ? handleSaveLayout : undefined}
-    />
+    <ErrorBoundary onGoBack={() => expoRouter.back()}>
+      <LayoutPreviewScreen
+        layout={layout}
+        catalog={catalog}
+        onBackToLayoutGoal={() => router.push('/layout-goal')}
+        onSaveLayout={repository ? handleSaveLayout : undefined}
+      />
+    </ErrorBoundary>
   );
 }

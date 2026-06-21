@@ -92,6 +92,8 @@ export function buildLayoutPreviewScreenModel(
     cellSize: options.cellSize,
     padding: options.padding,
     showGrid: options.showGrid ?? true,
+    visibleGridBounds: calculateVisibleGridBounds(viewport, options.cellSize),
+    detailCellThreshold: options.detailCellThreshold,
   });
 
   return {
@@ -154,6 +156,14 @@ export function selectTileByPlacementIndex(
   }
 
   return buildLayoutPreviewScreenModel(layout, catalog, { ...options, selectedPlacementIndex: placementIndex });
+}
+
+function calculateVisibleGridBounds(viewport: LayoutPreviewViewport, cellSize = 32) {
+  const minX = Math.floor((-viewport.pan.x / viewport.zoom) / cellSize) - 1;
+  const minY = Math.floor((-viewport.pan.y / viewport.zoom) / cellSize) - 1;
+  const maxX = Math.ceil(((viewport.width - viewport.pan.x) / viewport.zoom) / cellSize) + 1;
+  const maxY = Math.ceil(((viewport.height - viewport.pan.y) / viewport.zoom) / cellSize) + 1;
+  return { minX, minY, maxX, maxY };
 }
 
 function buildLegend(categories: TileCategory[]): LayoutPreviewLegendItem[] {

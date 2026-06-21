@@ -16,8 +16,9 @@ if [ -f "$PROMISE_KT" ]; then
 fi
 
 if [ -f "$KPROMISE_KT" ]; then
-  # Replace bridgePromise.reject(code, message, cause) with null-safe version
-  sed -i 's/bridgePromise.reject(code, message, cause)/bridgePromise.reject(code ?: "UnknownCode", message, cause)/g' "$KPROMISE_KT"
+  # Replace bridgePromise.reject(code, message, cause) with null-safe version.
+  # Use Perl instead of sed -i so the script works on both GNU/Linux and macOS EAS builders.
+  perl -0pi -e 's/bridgePromise\.reject\(code, message, cause\)/bridgePromise.reject(code ?: "UnknownCode", message, cause)/g' "$KPROMISE_KT"
   echo "[postinstall] Patched KPromiseWrapper.kt"
 else
   echo "[postinstall] Warning: KPromiseWrapper.kt not found"

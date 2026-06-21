@@ -3,6 +3,8 @@ import {
   buildPlacement,
   canPlaceOnGrid,
   createPlacementGrid,
+  createSocketCompatibilityCache,
+  getCachedPlacementSocket,
   isLayoutConnected,
   placeOnGrid,
   validateSocketCompatibility,
@@ -29,6 +31,7 @@ export interface SolveTopRankedLayoutsOptions {
   maxExploredStates?: number;
   timeoutMs?: number;
   maxBacktrackDepth?: number;
+  signal?: AbortSignal;
 }
 
 export interface RankedLayoutTraceSummary {
@@ -53,6 +56,8 @@ export interface LayoutSolverTrace {
   exploredStates: number;
   depthLimitHit: boolean;
   timeoutHit: boolean;
+  cancelled: boolean;
+  elapsedMs?: number;
 }
 
 export interface RankedLayoutResult {
@@ -79,7 +84,7 @@ export type SolveTopRankedLayoutsResult =
   | { ok: true; layouts: RankedLayoutResult[]; trace: LayoutSolverTrace }
   | { ok: false; reason: 'no-available-inventory' | 'invalid-bounds'; trace: LayoutSolverTrace };
 
-const SOLVER_VERSION = 'layout-solver-v0.3-backtracking';
+export const SOLVER_VERSION = 'layout-solver-v0.3-backtracking';
 const ROTATION_ORDER: Rotation[] = [0, 90, 180, 270];
 const DEFAULT_TOP_N = 3;
 const DEFAULT_MAX_SEARCH_NODES = 5000;
@@ -112,6 +117,7 @@ export function solveTopRankedLayouts(
     exploredStates: 0,
     depthLimitHit: false,
     timeoutHit: false,
+    cancelled: false,
   };
 
   if (input.bounds.width <= 0 || input.bounds.height <= 0) {
@@ -128,6 +134,7 @@ export function solveTopRankedLayouts(
   const startedAt = Date.now();
   const anchors = enumerateAnchors(input.bounds);
   const catalogById = new Map(input.catalog.map((tile) => [tile.id, tile]));
+  const socketCompatibilityCache = createSocketCompatibilityCache();
   const candidatesByAnchor = new Map<string, LayoutPlacement[]>();
   const foundLayouts = new Map<string, SearchLayoutCandidate>();
   let candidateOrder = 0;
@@ -149,8 +156,8 @@ export function solveTopRankedLayouts(
     const key = JSON.stringify(grid.placements);
     if (foundLayouts.has(key)) return;
 
-    const connected = isLayoutConnected(grid, input.catalog);
-    const connectedSocketPairs = countCompatibleNonWallAdjacencies(grid, input.catalog);
+    const connected = isLayoutConnected(grid, input.catalog, socketCompatibilityCache);
+    const connectedSocketPairs = countCompatibleNonWallAdjacencies(grid, input.catalog, socketCompatibilityCache);
     foundLayouts.set(key, {
       layout: buildLayout(grid.placements),
       score: scoreLayout(grid, input.targetPlacements, connected, connectedSocketPairs),
@@ -181,6 +188,11 @@ export function solveTopRankedLayouts(
   }
 
   function search(anchorIndex: number, grid: PlacementGrid, inventoryConsumed: Record<string, number>): void {
+    if (options.signal?.aborted) {
+      trace.cancelled = true;
+      trace.prunedBranches = (trace.prunedBranches ?? 0) + 1;
+      return;
+    }
     if ((trace.searchNodes ?? 0) >= maxSearchNodes) {
       trace.prunedBranches = (trace.prunedBranches ?? 0) + 1;
       return;
@@ -218,7 +230,7 @@ export function solveTopRankedLayouts(
       }
 
       const nextGrid = placeOnGrid(grid, placement);
-      const socketCheck = validateSocketCompatibility(nextGrid, [...catalogById.values()]);
+      const socketCheck = validateSocketCompatibility(nextGrid, [...catalogById.values()], socketCompatibilityCache);
       if (!socketCheck.ok) {
         trace.rejectedCandidates.push({ tile_type_id: placement.tile_type_id, face_id: placement.face_id, x: anchor.x, y: anchor.y, rotation: placement.rotation, reason: socketCheck.reason });
         continue;
@@ -352,23 +364,23 @@ function stableTieBreaker(seed: string, placements: LayoutPlacement[]): number {
   return hashString(`${seed}:${JSON.stringify(normalized)}`);
 }
 
-function countCompatibleNonWallAdjacencies(grid: PlacementGrid, catalog: TileType[]): number {
+function countCompatibleNonWallAdjacencies(grid: PlacementGrid, catalog: TileType[], socketCompatibilityCache: ReturnType<typeof createSocketCompatibilityCache>): number {
   let count = 0;
   for (let leftIndex = 0; leftIndex < grid.placements.length; leftIndex += 1) {
     for (let rightIndex = leftIndex + 1; rightIndex < grid.placements.length; rightIndex += 1) {
-      if (placementsShareCompatibleNonWallEdge(grid.placements[leftIndex], grid.placements[rightIndex], catalog)) count += 1;
+      if (placementsShareCompatibleNonWallEdge(grid.placements[leftIndex], grid.placements[rightIndex], catalog, socketCompatibilityCache)) count += 1;
     }
   }
   return count;
 }
 
-function placementsShareCompatibleNonWallEdge(left: LayoutPlacement, right: LayoutPlacement, catalog: TileType[]): boolean {
+function placementsShareCompatibleNonWallEdge(left: LayoutPlacement, right: LayoutPlacement, catalog: TileType[], socketCompatibilityCache: ReturnType<typeof createSocketCompatibilityCache>): boolean {
   for (const leftCell of left.grid_cells) {
     for (const rightCell of right.grid_cells) {
       const adjacency = getAdjacentFaces(leftCell, rightCell);
       if (!adjacency) continue;
-      const leftSocket = getPlacementSocket(left, catalog, adjacency.leftFace);
-      const rightSocket = getPlacementSocket(right, catalog, adjacency.rightFace);
+      const leftSocket = getCachedPlacementSocket(left, catalog, adjacency.leftFace, socketCompatibilityCache);
+      const rightSocket = getCachedPlacementSocket(right, catalog, adjacency.rightFace, socketCompatibilityCache);
       if (leftSocket === rightSocket && leftSocket !== 'wall') return true;
     }
   }
@@ -388,23 +400,6 @@ function getAdjacentFaces(
   return null;
 }
 
-function getPlacementSocket(placement: LayoutPlacement, catalog: TileType[], worldFace: CardinalEdgeFace): string {
-  const tile = catalog.find((candidate) => candidate.id === placement.tile_type_id);
-  if (!tile) throw new Error(`Tile '${placement.tile_type_id}' not found in catalog`);
-  const face = tile.faces.find((candidate) => candidate.face_id === placement.face_id);
-  if (!face) throw new Error(`Face '${placement.face_id}' not found on tile '${tile.id}'`);
-  const localFace = unrotateEdgeFace(worldFace, placement.rotation);
-  const socket = face.edge_sockets.find((candidate) => candidate.face === localFace);
-  if (!socket) throw new Error(`Socket '${localFace}' not found on face '${placement.face_id}' for tile '${tile.id}'`);
-  return socket.socket_type;
-}
-
-function unrotateEdgeFace(worldFace: CardinalEdgeFace, rotation: Rotation): CardinalEdgeFace {
-  const edgeFaces: CardinalEdgeFace[] = ['north', 'east', 'south', 'west'];
-  const rotationSteps = rotation / 90;
-  const worldIndex = edgeFaces.indexOf(worldFace);
-  return edgeFaces[(worldIndex - rotationSteps + edgeFaces.length) % edgeFaces.length];
-}
 
 function buildAvailableInventory(inventory: InventoryItem[]): Record<string, number> {
   return inventory.reduce<Record<string, number>>((availableByTile, item) => {

@@ -4,6 +4,8 @@ export interface SchematicPreviewOptions {
   cellSize?: number;
   padding?: number;
   showGrid?: boolean;
+  visibleGridBounds?: Pick<SchematicPreviewBounds, 'minX' | 'minY' | 'maxX' | 'maxY'>;
+  detailCellThreshold?: number;
 }
 
 export interface SchematicPreviewBounds {
@@ -44,7 +46,9 @@ export interface SchematicPreviewTile {
   cells: SchematicPreviewGridCell[];
   sockets: SchematicPreviewSocketSegment[];
   labelAnchor: { x: number; y: number };
+  simplified: boolean;
 }
+
 
 export interface SchematicPreviewModel {
   width: number;
@@ -55,7 +59,10 @@ export interface SchematicPreviewModel {
   bounds: SchematicPreviewBounds;
   gridCells: SchematicPreviewGridCell[];
   tiles: SchematicPreviewTile[];
+  deferredTileCount: number;
+  simplifiedTileCount: number;
 }
+
 
 type CardinalFace = 'north' | 'east' | 'south' | 'west';
 export type SocketCompatibility = 'compatible' | 'incompatible';
@@ -79,6 +86,7 @@ const SOCKET_COMPATIBILITY_STROKES: Record<SocketCompatibility, string> = {
   incompatible: '#ef4444',
 };
 const CARDINAL_FACES: CardinalFace[] = ['north', 'east', 'south', 'west'];
+const DEFAULT_DETAIL_CELL_THRESHOLD = 12;
 
 export function buildSchematicPreviewModel(
   placements: LayoutPlacement[],
@@ -94,6 +102,10 @@ export function buildSchematicPreviewModel(
   const gridCellByKey = new Map(gridCells.map((cell) => [cell.key, cell]));
   const placementContexts = buildPlacementSocketContexts(placements, catalogById);
   const cellOwners = buildCellOwners(placements);
+  const visiblePlacements = placements
+    .map((placement, placementIndex) => ({ placement, placementIndex }))
+    .filter(({ placement }) => placementIntersectsBounds(placement, options.visibleGridBounds));
+  const detailCellThreshold = options.detailCellThreshold ?? DEFAULT_DETAIL_CELL_THRESHOLD;
 
   return {
     width: bounds.width * cellSize,
@@ -103,7 +115,9 @@ export function buildSchematicPreviewModel(
     padding,
     bounds,
     gridCells,
-    tiles: placements.map((placement, placementIndex) => {
+    deferredTileCount: placements.length - visiblePlacements.length,
+    simplifiedTileCount: visiblePlacements.filter(({ placement }) => placement.grid_cells.length > detailCellThreshold).length,
+    tiles: visiblePlacements.map(({ placement, placementIndex }) => {
       const tile = catalogById.get(placement.tile_type_id);
       if (!tile) {
         throw new Error(`Tile '${placement.tile_type_id}' not found in catalog`);
@@ -132,8 +146,9 @@ export function buildSchematicPreviewModel(
         rotation: placement.rotation,
         color: CATEGORY_COLORS[tile.category],
         cells,
-        sockets: buildSocketSegments(face, placement.rotation, cells, cellSize, placementIndex, placement, placementContexts, cellOwners),
+        sockets: placement.grid_cells.length > detailCellThreshold ? [] : buildSocketSegments(face, placement.rotation, cells, cellSize, placementIndex, placement, placementContexts, cellOwners),
         labelAnchor: calculateLabelAnchor(cells, cellSize),
+        simplified: placement.grid_cells.length > detailCellThreshold,
       };
     }),
   };
@@ -147,7 +162,7 @@ export function renderSchematicPreviewSvg(
   const model = buildSchematicPreviewModel(placements, catalog, options);
   const parts: string[] = [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${model.width}" height="${model.height}" viewBox="0 0 ${model.width} ${model.height}" role="img" aria-label="TileKeeper schematic preview: ${model.tiles.length} placements">`,
-    '<style>.grid-cell{fill:none;stroke:#cbd5e1;stroke-width:1}.tile-cell{stroke:#0f172a;stroke-width:1}.tile-label{font:600 10px sans-serif;fill:#0f172a;pointer-events:none}.socket-wall{stroke:#334155}.socket-doorway{stroke:#f59e0b}.socket-open-floor{stroke:#22c55e}</style>',
+    '<style>.grid-cell{fill:none;stroke:#cbd5e1;stroke-width:1}.tile-cell{stroke:#0f172a;stroke-width:1}.tile-cell-simplified{opacity:.75}.tile-label{font:600 10px sans-serif;fill:#0f172a;pointer-events:none}.socket-wall{stroke:#334155}.socket-doorway{stroke:#f59e0b}.socket-open-floor{stroke:#22c55e}</style>',
   ];
 
   if (options.showGrid ?? false) {
@@ -163,7 +178,7 @@ export function renderSchematicPreviewSvg(
     parts.push(
       ...tile.cells.map(
         (cell) =>
-          `<rect class="tile-cell" data-placement-index="${tile.placementIndex}" data-tile-type-id="${escapeAttribute(tile.tileTypeId)}" data-face-id="${escapeAttribute(tile.faceId)}" x="${cell.x}" y="${cell.y}" width="${model.cellSize}" height="${model.cellSize}" rx="3" fill="${tile.color}"/>`,
+          `<rect class="tile-cell${tile.simplified ? ' tile-cell-simplified' : ''}" data-placement-index="${tile.placementIndex}" data-tile-type-id="${escapeAttribute(tile.tileTypeId)}" data-face-id="${escapeAttribute(tile.faceId)}" x="${cell.x}" y="${cell.y}" width="${model.cellSize}" height="${model.cellSize}" rx="3" fill="${tile.color}"/>`,
       ),
     );
     parts.push(
@@ -180,6 +195,17 @@ export function renderSchematicPreviewSvg(
 
   parts.push('</svg>');
   return parts.join('');
+}
+
+
+function placementIntersectsBounds(
+  placement: LayoutPlacement,
+  visibleBounds: Pick<SchematicPreviewBounds, 'minX' | 'minY' | 'maxX' | 'maxY'> | undefined,
+): boolean {
+  if (!visibleBounds) return true;
+  return placement.grid_cells.some(
+    (cell) => cell.x >= visibleBounds.minX && cell.x <= visibleBounds.maxX && cell.y >= visibleBounds.minY && cell.y <= visibleBounds.maxY,
+  );
 }
 
 function calculateBounds(placements: LayoutPlacement[]): SchematicPreviewBounds {

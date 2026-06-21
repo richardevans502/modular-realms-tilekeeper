@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
+
+import { ErrorBoundary } from '../src/ui/ErrorBoundary';
 
 import { initTileKeeperDatabase } from '../src/db/init';
 import type { CatalogRepository } from '../src/db/catalogRepository';
@@ -25,11 +28,14 @@ export default function ExportRoute() {
     };
   }, []);
 
+  const router = useRouter();
   return (
-    <ExportScreen
-      catalogRepository={catalogRepository}
-      inventoryRepository={inventoryRepository}
-      savedLayoutRepository={savedLayoutRepository}
-    />
+    <ErrorBoundary onGoBack={() => router.back()}>
+      <ExportScreen
+        catalogRepository={catalogRepository}
+        inventoryRepository={inventoryRepository}
+        savedLayoutRepository={savedLayoutRepository}
+      />
+    </ErrorBoundary>
   );
 }

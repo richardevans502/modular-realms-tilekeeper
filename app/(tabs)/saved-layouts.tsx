@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 
+import { ErrorBoundary } from '../../src/ui/ErrorBoundary';
+
 import { initTileKeeperDatabase } from '../../src/db/init';
 import type { SavedLayoutRepository } from '../../src/db/savedLayoutRepository';
 import { SavedLayoutsScreen } from '../../src/layoutLibrary/SavedLayoutsScreen';
@@ -29,10 +31,12 @@ export default function SavedLayoutsRoute() {
   );
 
   return (
-    <SavedLayoutsScreen
-      repository={repository}
-      reloadTrigger={reloadTrigger}
-      onPreviewLayout={(layoutId) => router.push({ pathname: '/preview', params: { layoutId } })}
-    />
+    <ErrorBoundary onGoBack={() => router.back()}>
+      <SavedLayoutsScreen
+        repository={repository}
+        reloadTrigger={reloadTrigger}
+        onPreviewLayout={(layoutId) => router.push({ pathname: '/preview', params: { layoutId } })}
+      />
+    </ErrorBoundary>
   );
 }

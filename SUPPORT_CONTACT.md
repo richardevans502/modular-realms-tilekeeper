@@ -21,6 +21,29 @@ TileKeeper stores inventory, layouts, backups, exports, settings, and diagnostic
 
 Do not send private inventory data unless you intentionally choose to export and share it.
 
+## Diagnostics replay workflow
+
+Use this flow when a layout-generation or import issue needs support reproduction:
+
+1. Ask the user to open **Settings > Diagnostics** and export a diagnostics file only if they are comfortable sharing it.
+2. Confirm the export says it is local-only, opt-in, and includes an anonymized layout fixture. Do not request screenshots or raw exports containing inventory names, saved layout names, goal text, seeds, device identifiers, account identifiers, or network identifiers.
+3. Save the file outside the repo or in an ignored support scratch folder, then run:
+
+   ```bash
+   npm run diagnostics:replay -- /path/to/tilekeeper-diagnostics.json
+   ```
+
+4. Copy the sanitized replay summary into a GitHub issue using **Known layout/import issue**. Include app version, solver version, catalog version, expected behavior, actual behavior, and reproduction command.
+5. Delete the local diagnostics file when the support case is resolved unless it must be retained for an active bug investigation.
+
+The replay script prints only solver/catalog metadata and aggregate layout counts. It should not print raw tile names, inventory notes, custom tile IDs, user seed values, or goal text.
+
+## Known issues tracker
+
+- Use GitHub Issues for known support-reproducible problems: https://github.com/richardevans502/modular-realms-tilekeeper/issues
+- Use the `.github/ISSUE_TEMPLATE/known_layout_issue.yml` template for layout/import issues reproduced from diagnostics exports.
+- Label reproduced support cases with `support`, `diagnostics`, and `layout`.
+
 ## Public links
 
 - **Project:** https://github.com/richardevans502/modular-realms-tilekeeper

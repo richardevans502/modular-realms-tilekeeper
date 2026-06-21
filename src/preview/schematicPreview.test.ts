@@ -88,6 +88,8 @@ describe('schematic preview renderer', () => {
       cellSize: 24,
       padding: 8,
       bounds: { minX: -1, minY: 0, maxX: 3, maxY: 1, width: 5, height: 2 },
+      deferredTileCount: 0,
+      simplifiedTileCount: 0,
       gridCells: [
         { key: '-1,0', grid: { x: -1, y: 0 }, x: 8, y: 8 },
         { key: '0,0', grid: { x: 0, y: 0 }, x: 32, y: 8 },
@@ -109,6 +111,7 @@ describe('schematic preview renderer', () => {
           label: 'Room 2x1',
           category: 'floor',
           rotation: 0,
+          simplified: false,
           color: '#7dd3fc',
           cells: [
             { key: '2,1', grid: { x: 2, y: 1 }, x: 80, y: 32 },
@@ -130,6 +133,7 @@ describe('schematic preview renderer', () => {
           label: 'Pillar',
           category: 'floor',
           rotation: 90,
+          simplified: false,
           color: '#7dd3fc',
           cells: [{ key: '-1,0', grid: { x: -1, y: 0 }, x: 8, y: 8 }],
           sockets: [

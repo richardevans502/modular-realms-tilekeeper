@@ -4,6 +4,7 @@ import {
   buildLayoutSolverCacheKey,
   clearLayoutSolverCache,
   getCachedSolvedLayout,
+  getSolverPerformanceTelemetry,
   runLayoutSolver,
 } from './useLayoutSolver';
 
@@ -137,6 +138,35 @@ describe('useLayoutSolver utilities', () => {
 
     expect(getCachedSolvedLayout('layout-one')).toBeNull();
   });
+
+  test('records local non-PII solver performance telemetry for diagnostics export', async () => {
+    await runLayoutSolver({
+      catalog,
+      inventory,
+      goal: {
+        bounds: { width: 4, height: 4 },
+        targetPlacements: 2,
+        seed: 'telemetry-seed',
+        goal: 'telemetry room',
+        themeTags: [],
+        requiredCategories: ['floor'],
+      },
+      createdAt: '2026-06-07T20:02:00.000Z',
+      solver: () => ({ ok: true, layout, layouts: [{ rank: 1, score: 5, layout, trace: { ...emptyTrace(), exploredStates: 12, elapsedMs: 34 } }], trace: { ...emptyTrace(), exploredStates: 12, elapsedMs: 34 } }),
+    });
+
+    expect(getSolverPerformanceTelemetry()).toEqual([
+      expect.objectContaining({
+        cacheKey: expect.stringMatching(/^telemetry-seed:/),
+        solveTimeMs: 34,
+        nodesExplored: 12,
+        resultCount: 1,
+        fromCache: false,
+        cancelled: false,
+      }),
+    ]);
+  });
+
 });
 
 function emptyTrace() {
@@ -150,5 +180,6 @@ function emptyTrace() {
     exploredStates: 0,
     depthLimitHit: false,
     timeoutHit: false,
+    cancelled: false,
   };
 }

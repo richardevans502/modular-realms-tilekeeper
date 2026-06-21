@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import { loadSeedCatalog } from '../../src/catalog/loadSeedCatalog';
+import { ErrorBoundary } from '../../src/ui/ErrorBoundary';
 import { initTileKeeperDatabase } from '../../src/db/init';
 import type { InventoryRepository } from '../../src/db/inventoryRepository';
 import type { CatalogRepository } from '../../src/db/catalogRepository';
@@ -34,18 +36,21 @@ export default function InventoryRoute() {
 
   if (!isReady || !inventoryRepository || !catalogRepository) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Summoning inventory from the tile vault…</Text>
+      <View style={styles.loadingContainer} accessibilityLabel="Loading inventory" accessibilityRole="progressbar" accessibilityState={{ busy: true }}>
+        <Text style={styles.loadingText} allowFontScaling>Summoning inventory from the tile vault…</Text>
       </View>
     );
   }
 
+  const router = useRouter();
   return (
-    <InventoryScreen
-      catalog={seedCatalog}
-      inventoryRepository={inventoryRepository}
-      catalogRepository={catalogRepository}
-    />
+    <ErrorBoundary onGoBack={() => router.back()}>
+      <InventoryScreen
+        catalog={seedCatalog}
+        inventoryRepository={inventoryRepository}
+        catalogRepository={catalogRepository}
+      />
+    </ErrorBoundary>
   );
 }
 
@@ -62,5 +67,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '900',
     textAlign: 'center',
+    allowFontScaling: true,
   },
 });

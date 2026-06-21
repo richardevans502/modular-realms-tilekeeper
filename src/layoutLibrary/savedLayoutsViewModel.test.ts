@@ -6,7 +6,7 @@ import {
 } from './savedLayoutsViewModel';
 
 import type { SavedLayout } from '../db/savedLayoutRepository';
-import type { Layout } from '../shared/types';
+import type { Layout, TileType } from '../shared/types';
 
 const layouts: SavedLayoutLibraryItem[] = [
   {
@@ -75,6 +75,27 @@ const repositoryRecord: SavedLayout = {
   updated_at: '2026-06-07T09:00:00.000Z',
 };
 
+const catalogTile: TileType = {
+  id: 'bridge',
+  name: 'Bridge Span',
+  product_set: 'Starter Pack',
+  dimensions: { unit: 'grid-cell', width: 1, height: 1, grid_cells: [{ x: 0, y: 0 }] },
+  faces: [
+    {
+      face_id: 'span',
+      face_name: 'Span',
+      role_tags: ['doorway'],
+      edge_sockets: [{ face: 'north', socket_type: 'doorway', bidirectional: true, reason: 'bridge connector' }],
+      rotation_rules: { allowed_rotations: [0, 90, 180, 270], flip_allowed: true },
+      theme_tags: ['wood'],
+    },
+  ],
+  catalog_status: 'official',
+  category: 'doorway',
+  tags: ['bridge'],
+  catalog_version: '2026.06',
+};
+
 describe('saved layouts library view model', () => {
   test('maps SQLite repository saved-layout records into library cards', () => {
     expect(toSavedLayoutLibraryItem(repositoryRecord)).toEqual({
@@ -89,6 +110,7 @@ describe('saved layouts library view model', () => {
       placement_count: 3,
       catalog_version: '2026.06',
       solver_version: 'solver-0.5',
+      referencedTileIds: ['bridge', 'stone-floor'],
       thumbnailCells: [
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -110,6 +132,7 @@ describe('saved layouts library view model', () => {
       placement_count: 3,
       catalog_version: '2026.06',
       solver_version: 'solver-0.5',
+      referencedTileIds: ['bridge', 'stone-floor'],
       thumbnailCells: [
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -158,6 +181,24 @@ describe('saved layouts library view model', () => {
       isFavourite: true,
     });
     expect(viewModel.emptyState).toBeUndefined();
+  });
+
+  test('marks saved layouts that reference discontinued or missing catalog tiles without dropping them', () => {
+    const item = toSavedLayoutLibraryItem(repositoryLayout);
+    const viewModel = buildSavedLayoutsViewModel(
+      [item],
+      { searchText: '', selectedTags: [], favouritesOnly: false },
+      { catalogTiles: [{ ...catalogTile, catalog_status: 'deprecated' }] },
+    );
+
+    expect(viewModel.rows).toHaveLength(1);
+    expect(viewModel.rows[0]).toMatchObject({
+      warningBadge: 'Catalog warning',
+      catalogWarnings: [
+        { tile_type_id: 'bridge', kind: 'discontinued', message: 'Bridge Span has been discontinued in the current catalog.' },
+        { tile_type_id: 'stone-floor', kind: 'missing', message: 'stone-floor is no longer in the current catalog.' },
+      ],
+    });
   });
 
   test('returns helpful empty-state copy when filters hide every layout', () => {

@@ -1,5 +1,5 @@
 import type { SavedLayout } from '../db/savedLayoutRepository';
-import type { GridCell, Layout } from '../shared/types';
+import type { GridCell, Layout, TileType } from '../shared/types';
 
 export interface SavedLayoutLibraryItem {
   id: string;
@@ -13,7 +13,16 @@ export interface SavedLayoutLibraryItem {
   placement_count: number;
   catalog_version: string;
   solver_version: string;
+  referencedTileIds?: string[];
   thumbnailCells?: GridCell[];
+}
+
+export type SavedLayoutCatalogWarningKind = 'missing' | 'discontinued';
+
+export interface SavedLayoutCatalogWarning {
+  tile_type_id: string;
+  kind: SavedLayoutCatalogWarningKind;
+  message: string;
 }
 
 export interface SavedLayoutFilters {
@@ -29,6 +38,8 @@ export interface SavedLayoutRow extends SavedLayoutLibraryItem {
   subtitle: string;
   tagLabels: string[];
   isFavourite: boolean;
+  catalogWarnings: SavedLayoutCatalogWarning[];
+  warningBadge?: 'Catalog warning';
 }
 
 export interface SavedLayoutTagChip {
@@ -44,6 +55,10 @@ export interface SavedLayoutsViewModel {
   filteredCount: number;
   favouriteCount: number;
   emptyState?: { title: string; message: string };
+}
+
+export interface SavedLayoutsBuildOptions {
+  catalogTiles?: TileType[];
 }
 
 function includesSearchText(layout: SavedLayoutLibraryItem, searchText: string): boolean {
@@ -79,6 +94,10 @@ function isSavedLayoutRecord(layout: Layout | SavedLayout): layout is SavedLayou
   return 'layout' in layout;
 }
 
+function uniqueTileIds(layout: Layout): string[] {
+  return Array.from(new Set(layout.placements.map((placement) => placement.tile_type_id))).sort((left, right) => left.localeCompare(right));
+}
+
 export function toSavedLayoutLibraryItem(layoutRecord: Layout | SavedLayout, favouriteIds?: ReadonlySet<string>): SavedLayoutLibraryItem {
   if (isSavedLayoutRecord(layoutRecord)) {
     const layout = layoutRecord.layout;
@@ -94,6 +113,7 @@ export function toSavedLayoutLibraryItem(layoutRecord: Layout | SavedLayout, fav
       placement_count: layout.placements.length,
       catalog_version: layout.catalog_version,
       solver_version: layout.solver_version,
+      referencedTileIds: uniqueTileIds(layout),
       thumbnailCells: layout.placements.flatMap((placement) => placement.grid_cells),
     };
   }
@@ -110,6 +130,7 @@ export function toSavedLayoutLibraryItem(layoutRecord: Layout | SavedLayout, fav
     placement_count: layoutRecord.placements.length,
     catalog_version: layoutRecord.catalog_version,
     solver_version: layoutRecord.solver_version,
+    referencedTileIds: uniqueTileIds(layoutRecord),
     thumbnailCells: layoutRecord.placements.flatMap((placement) => placement.grid_cells),
   };
 }
@@ -129,21 +150,42 @@ function formatUpdatedDate(isoDate: string): string {
   return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(isoDate));
 }
 
-function toRow(layout: SavedLayoutLibraryItem): SavedLayoutRow {
+function toRow(layout: SavedLayoutLibraryItem, catalogWarnings: SavedLayoutCatalogWarning[] = []): SavedLayoutRow {
   return {
     ...layout,
     title: layout.name,
     subtitle: `${layout.placement_count} tiles • updated ${formatUpdatedDate(layout.updated_at)} • ${layout.solver_version}`,
     tagLabels: layout.tags,
     isFavourite: layout.favourite,
+    catalogWarnings,
+    warningBadge: catalogWarnings.length > 0 ? 'Catalog warning' : undefined,
   };
 }
 
-export function buildSavedLayoutsViewModel(layouts: SavedLayoutLibraryItem[], filters: SavedLayoutFilters): SavedLayoutsViewModel {
+function buildCatalogWarnings(layout: SavedLayoutLibraryItem, catalogTiles?: TileType[]): SavedLayoutCatalogWarning[] {
+  if (!catalogTiles) {
+    return [];
+  }
+
+  const catalogById = new Map(catalogTiles.map((tile) => [tile.id, tile]));
+  return (layout.referencedTileIds ?? []).reduce<SavedLayoutCatalogWarning[]>((warnings, tileId) => {
+    const tile = catalogById.get(tileId);
+    if (!tile) {
+      warnings.push({ tile_type_id: tileId, kind: 'missing', message: `${tileId} is no longer in the current catalog.` });
+      return warnings;
+    }
+    if (tile.catalog_status === 'deprecated') {
+      warnings.push({ tile_type_id: tileId, kind: 'discontinued', message: `${tile.name} has been discontinued in the current catalog.` });
+    }
+    return warnings;
+  }, []);
+}
+
+export function buildSavedLayoutsViewModel(layouts: SavedLayoutLibraryItem[], filters: SavedLayoutFilters, options: SavedLayoutsBuildOptions = {}): SavedLayoutsViewModel {
   const rows = filterSavedLayouts(layouts, filters)
     .slice()
     .sort((left, right) => Date.parse(right.updated_at) - Date.parse(left.updated_at))
-    .map(toRow);
+    .map((layout) => toRow(layout, buildCatalogWarnings(layout, options.catalogTiles)));
   const tagCounts = layouts.reduce((counts, layout) => {
     for (const tag of layout.tags) {
       const normalizedTag = normalizeTag(tag);

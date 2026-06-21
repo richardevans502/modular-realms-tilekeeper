@@ -1,5 +1,5 @@
 import type { InventoryItem, Rotation, SocketType, TileType } from '../shared/types';
-import { validateSocketCompatibility } from './placementGrid';
+import { createSocketCompatibilityCache, validateSocketCompatibility } from './placementGrid';
 import { solveLayoutFromInventory, solveTopRankedLayouts } from './layoutSolver';
 
 function singleCellTile(
@@ -496,6 +496,43 @@ describe('layout solver inventory constraints and face selection', () => {
     }
     const signatures = result.layouts.map((ranked) => JSON.stringify(ranked.layout.placements));
     expect(new Set(signatures).size).toBe(signatures.length);
+  });
+
+
+  test('socket compatibility transform cache reuses rotated socket lookups across placements', () => {
+    const cache = createSocketCompatibilityCache();
+    const placementA = { tile_type_id: 'doorway-run', face_id: 'front', x: 0, y: 0, rotation: 0 as Rotation, grid_cells: [{ x: 0, y: 0 }] };
+    const placementB = { tile_type_id: 'doorway-run', face_id: 'front', x: 1, y: 0, rotation: 0 as Rotation, grid_cells: [{ x: 1, y: 0 }] };
+
+    expect(validateSocketCompatibility({ bounds: { width: 2, height: 1 }, placements: [placementA, placementB], occupiedCells: [] }, [doorwayRun], cache)).toEqual({ ok: true });
+    expect(cache.socketsByPlacementSignature.size).toBe(1);
+
+    expect(validateSocketCompatibility({ bounds: { width: 2, height: 1 }, placements: [placementA, placementB], occupiedCells: [] }, [doorwayRun], cache)).toEqual({ ok: true });
+    expect(cache.socketsByPlacementSignature.size).toBe(1);
+  });
+
+  test('solver honours an aborted signal promptly while returning partial telemetry trace', () => {
+    const controller = new AbortController();
+    controller.abort();
+    const result = solveTopRankedLayouts(
+      {
+        catalog: [doorwayRun],
+        inventory: [inventory('doorway-run', 20)],
+        bounds: { width: 20, height: 1 },
+        targetPlacements: 20,
+        seed: 'cancelled-solve-seed',
+        goal: 'cancelled solve',
+        createdAt: '2026-06-12T12:00:00.000Z',
+      },
+      { signal: controller.signal, maxSearchNodes: 5000 },
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      throw new Error('expected solver success');
+    }
+    expect(result.trace.cancelled).toBe(true);
+    expect(result.trace.exploredStates).toBe(0);
   });
 
   test('empty inventory returns ok false with an explicit reason', () => {

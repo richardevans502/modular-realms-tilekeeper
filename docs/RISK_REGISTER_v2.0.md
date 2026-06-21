@@ -223,16 +223,16 @@ Related documents:
 
 | Field | Value |
 |---|---|
-| **Description** | Expo React Native is suitable for the app baseline, but platform APIs for SQLite migrations, document sharing, PDF generation, file permissions, and background/resume behaviour can behave differently across Android and iOS. Late discovery could force native-module work or EAS configuration changes. |
+| **Description** | Expo React Native is suitable for the app baseline, but platform APIs for SQLite migrations, document sharing, PDF generation, file permissions, signing, and background/resume behaviour can behave differently across Android and iOS. Signed iOS physical-device/TestFlight validation is now explicitly deferred until Apple Developer credentials exist, so Android is the v1.0 RC platform gate while iOS remains a tracked post-M5 parity risk. |
 | **Category** | Technical / Platform |
 | **Probability** | **Medium (M)** |
 | **Impact** | **Medium (M)** |
 | **Severity** | **Moderate** |
 | **Triggers** | PDF renderer incompatible with managed Expo; Android file sharing fails; iOS document picker/export requires entitlement changes; SQLite migration behaves differently on device; EAS build fails after adding native dependency. |
-| **Current Status** | Open — architecture names export targets but renderer choice remains an open technical question. |
+| **Current Status** | Mitigating — architecture names export targets but renderer choice remains open; iOS simulator builds have succeeded, while signed iOS/TestFlight builds are deferred pending Apple Developer/App Store Connect credential setup. |
 | **Mitigation Owner** | Tech Lead |
-| **Mitigation Actions** | 1. Spike SQLite migration, JSON export, PNG export, and PDF generation on device/emulator early. 2. Prefer Expo-compatible libraries; record native-module requirements before dependency lock. 3. Keep JSON export as first-class fallback even if PDF slips. 4. Add Android and iOS smoke tests once credentials/runners exist. |
-| **Contingency** | Ship JSON + PNG export first; defer PDF to v1.1 or require EAS dev client/custom native module. |
+| **Mitigation Actions** | 1. Spike SQLite migration, JSON export, PNG export, and PDF generation on Android device/emulator early. 2. Prefer Expo-compatible libraries; record native-module requirements before dependency lock. 3. Keep JSON export as first-class fallback even if PDF slips. 4. Keep Android build/release checks as the M5 gate. 5. Add signed iOS physical-device/TestFlight smoke tests only after Apple Developer credentials/runners exist. |
+| **Contingency** | Ship JSON + PNG export first; defer PDF to v1.1 or require EAS dev client/custom native module. If Apple credentials remain unavailable, release Android v1.0 and track iOS/TestFlight parity in M6+. |
 | **Deadline** | Export spike by M2.4 |
 | **Review Frequency** | Weekly during export implementation |
 
@@ -280,16 +280,16 @@ Related documents:
 
 | Field | Value |
 |---|---|
-| **Description** | The project assumes lean engineering/design capacity and a working Expo/TypeScript toolchain. Missing Jest/test scripts, unresolved npm audit findings, absent iOS credentials, or single-person knowledge concentration can delay otherwise straightforward app work. |
+| **Description** | The project assumes lean engineering/design capacity and a working Expo/TypeScript toolchain. Missing Jest/test scripts, unresolved npm audit findings, absent iOS credentials, or single-person knowledge concentration can delay otherwise straightforward app work. The repeated iOS signing blocker is now a known external account dependency rather than an M5 release-candidate gate. |
 | **Category** | Resource / Delivery |
 | **Probability** | **Medium (M)** |
 | **Impact** | **Medium (M)** |
 | **Severity** | **Moderate** |
 | **Triggers** | Only one engineer can run builds; test script absent when implementation starts; CI not green; illness/unavailability > 2 weeks; Apple/Google account setup delayed. |
-| **Current Status** | Open — sign-off report noted test-script and tooling gaps. |
+| **Current Status** | Mitigating — core TypeScript/Jest/web checks are established; signed iOS/TestFlight work is deferred pending Apple Developer credentials. |
 | **Mitigation Owner** | PM / Tech Lead |
-| **Mitigation Actions** | 1. Establish `npm run typecheck`, `npm run test`, `npm run build:web`, and `npm run ci` before feature work scales. 2. Document setup and release commands. 3. Keep M2 Android-first; defer iOS signing until needed. 4. Maintain one-week milestone buffer and deferrable feature list. |
-| **Contingency** | Narrow M2 to schema + inventory + solver MVP; defer remote catalog and PDF export. Budget £500 contractor burst only if schedule-critical capacity drops. |
+| **Mitigation Actions** | 1. Maintain `npm run typecheck`, `npm run test`, `npm run build:web`, and `npm run ci` before feature work scales. 2. Document setup and release commands. 3. Keep M5 Android-first for the v1.0 RC; defer iOS signing/TestFlight until Rich completes Apple Developer/App Store Connect setup. 4. Maintain one-week milestone buffer and deferrable feature list. |
+| **Contingency** | Narrow release scope to Android store readiness plus documented iOS simulator evidence; defer signed iOS/TestFlight to M6+. Budget £500 contractor burst only if schedule-critical capacity drops. |
 | **Deadline** | Tooling baseline by M2 Week 1 |
 | **Review Frequency** | Weekly during M2; bi-weekly after CI stabilises |
 
@@ -307,7 +307,7 @@ Related documents:
 
 Steering attention:
 
-- **Immediate:** R1 scope baseline, R3 data model fixture proof, R12 tooling baseline.
+- **Immediate:** R1 scope baseline, R3 data model fixture proof, R12 tooling baseline, and explicit iOS/TestFlight deferral communications.
 - **M2:** R4 solver performance, R5 minimum viable catalog, R8 inventory-entry UX, R9 export/platform spike.
 - **M3–M4:** R2 permissions, R6 import/export safety, R7 catalog refresh trust, R10 privacy/store compliance, R11 large-preview readability.
 
@@ -357,7 +357,7 @@ Budget governance:
 | **M2 — Schema / inventory / solver MVP** | Weekly | Scope baseline, fixture validation, solver benchmark, tooling, MVC catalog |
 | **M3 — Exports / catalog refresh / cross-platform hardening** | Weekly | Import/export round-trip, platform file/PDF behaviour, catalog trust, permissions |
 | **M4 — Beta / store readiness** | Weekly | UX friction, privacy policy, crash reports, data-loss prevention, store metadata |
-| **M5 — Launch / post-launch** | Bi-weekly | Support burden, catalog-update health, solver performance reports, roadmap v1.1 |
+| **M5 — Launch / post-launch** | Bi-weekly | Android release readiness, support burden, catalog-update health, solver performance reports, iOS/TestFlight deferral status, roadmap v1.1 |
 | **Post-M5** | Monthly | Register archival, live-ops issues, source-data changes, lessons learned |
 
 Review format:
@@ -427,6 +427,7 @@ Each risk owner is accountable for:
 | Date | Reviewer | Risks Reviewed | Key Decisions / Actions Taken |
 |---|---|---|---|
 | 2026-06-03 | Nova (proxy PM) | R1–R12 | Created v2.0 register; classified game-development risks as retired unless steering reactivates game baseline. |
+| 2026-06-19 | Nova | R9, R12 | Formally deferred signed iOS physical-device/TestFlight parity from M5 to M6+ pending Apple Developer/App Store Connect credentials; Android remains the v1.0 release-candidate gate. |
 
 ---
 
@@ -442,10 +443,10 @@ Each risk owner is accountable for:
 | R6 | Import/export data loss | M | H | High | Tech Lead | Open | Public beta | Export-only until tests green |
 | R7 | Catalog refresh integrity | M | M | Moderate | Tech Lead / DevOps | Open | Remote refresh UI | Bundled catalog only |
 | R8 | Inventory-entry UX friction | M | M | Moderate | Product / UX | Open | M2 UX gate | Bulk import/table mode |
-| R9 | Expo platform/export constraints | M | M | Moderate | Tech Lead | Open | M2.4 | JSON+PNG first; defer PDF |
+| R9 | Expo platform/export constraints and deferred iOS signing | M | M | Moderate | Tech Lead | Mitigating | M2.4 / M6+ iOS parity | JSON+PNG first; defer PDF; Android v1.0 first |
 | R10 | Privacy/store compliance | L | H | Moderate | PM / Tech Lead | Open | M4 store gate | Disable analytics |
 | R11 | Preview/export readability | M | M | Moderate | Tech Lead / UX | Open | M2.4 | Detail cap; export-oriented layouts |
-| R12 | Team capacity/tooling gaps | M | M | Moderate | PM / Tech Lead | Open | M2 Week 1 | Narrow M2; £500 contractor burst |
+| R12 | Team capacity/tooling gaps | M | M | Moderate | PM / Tech Lead | Mitigating | M5 RC / M6+ iOS parity | Android RC first; defer signed iOS/TestFlight; £500 contractor burst |
 
 ---
 

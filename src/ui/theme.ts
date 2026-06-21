@@ -21,11 +21,11 @@ export const tileKeeperTheme = {
   radius: { button: 8, input: 8, card: 12, sheet: 16 },
   touch: { minimum: 44, preferredButtonHeight: 48 },
   typography: {
-    title: { fontFamily: 'System', fontSize: 34, fontWeight: '900' as const },
-    sectionHeader: { fontFamily: 'System', fontSize: 22, fontWeight: '800' as const },
-    body: { fontFamily: 'System', fontSize: 16, fontWeight: '400' as const },
-    label: { fontFamily: 'System', fontSize: 15, fontWeight: '700' as const },
-    data: { fontFamily: 'monospace', fontSize: 13, fontWeight: '600' as const },
+    title: { fontFamily: 'System', fontSize: 34, fontWeight: '900' as const, allowFontScaling: true },
+    sectionHeader: { fontFamily: 'System', fontSize: 22, fontWeight: '800' as const, allowFontScaling: true },
+    body: { fontFamily: 'System', fontSize: 16, fontWeight: '400' as const, allowFontScaling: true },
+    label: { fontFamily: 'System', fontSize: 15, fontWeight: '700' as const, allowFontScaling: true },
+    data: { fontFamily: 'monospace', fontSize: 13, fontWeight: '600' as const, allowFontScaling: true },
   },
 } as const;
 

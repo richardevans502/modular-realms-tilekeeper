@@ -1,0 +1,4 @@
+# TileKeeper is built with Expo prebuild/CNG on EAS.
+# Ignore checked-in local native artifacts so app.json remains the source of native config.
+android/
+ios/

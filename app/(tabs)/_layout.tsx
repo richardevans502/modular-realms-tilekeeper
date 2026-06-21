@@ -1,12 +1,21 @@
-import { Tabs } from 'expo-router';
+import { useEffect } from 'react';
+import { Tabs, usePathname } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { recordDiagnosticNavigation } from '../../src/diagnostics/localDiagnostics';
 import { ArchwayIcon, ChestIcon, FloorTileIcon, KeepIcon, TorchIcon } from '../../src/ui/DungeonTileIcons';
 import { tileKeeperTheme } from '../../src/ui/theme';
 
 export default function TabLayout() {
+  const pathname = usePathname();
+  const insets = useSafeAreaInsets();
   const theme = tileKeeperTheme;
   const styles = createStyles(theme);
+
+  useEffect(() => {
+    recordDiagnosticNavigation(pathname);
+  }, [pathname]);
 
   return (
     <View style={styles.shell}>
@@ -19,8 +28,8 @@ export default function TabLayout() {
             backgroundColor: theme.colours.frame,
             borderTopColor: theme.colours.border,
             borderTopWidth: 1,
-            height: 64,
-            paddingBottom: 8,
+            height: 56 + insets.bottom,
+            paddingBottom: Math.max(insets.bottom, 8),
             paddingTop: 8,
           },
           tabBarActiveTintColor: theme.colours.primary,

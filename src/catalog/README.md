@@ -61,3 +61,15 @@ Doorway and stair tiles in the seed pack include explicit transition rules so ea
    ```
 
 6. If a new category or socket type is needed, update `src/shared/schemas.ts` first and add schema tests.
+
+## Publishing an online catalog pack
+
+Use the M6 pack builder instead of changing app code for every catalog update:
+
+```sh
+npm run catalog:build -- --input catalog-publication.json --output-dir dist/catalog
+```
+
+The input file describes `catalogVersion`, `baseUrl`, and one or more packs containing canonical `TileType` records plus optional `sources`, `assets`, and `migrations`. The builder writes `manifest.json` and `packs/<pack-id>.json` envelopes with canonical sha256 checksums and optional HMAC signatures via `CATALOG_HMAC_SECRET`.
+
+See `docs/CATALOG_PUBLISHING_WORKFLOW.md` for the complete versioning, migration, upload, smoke-test, and rollback workflow.

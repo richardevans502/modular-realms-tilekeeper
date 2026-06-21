@@ -3,6 +3,7 @@ declare module 'react-native' {
 
   export const StyleSheet: {
     create<T extends Record<string, unknown>>(styles: T): T;
+    absoluteFill: object;
   };
 
   export interface BasicNativeProps {
@@ -10,6 +11,8 @@ declare module 'react-native' {
     accessibilityRole?: string;
     accessibilityState?: Record<string, unknown>;
     activeOpacity?: number;
+    allowFontScaling?: boolean;
+    maxFontSizeMultiplier?: number;
     animationType?: string;
     behavior?: string;
     children?: ReactNode;
@@ -20,6 +23,7 @@ declare module 'react-native' {
     keyboardType?: string;
     key?: string;
     keyExtractor?: (item: any) => string;
+    keyboardVerticalOffset?: number;
     ListEmptyComponent?: ReactNode;
     multiline?: boolean;
     numberOfLines?: number;
@@ -52,6 +56,13 @@ declare module 'react-native' {
     textAlignVertical?: string;
   }
 
+  export const Animated: {
+    View: (props: BasicNativeProps) => ReactElement;
+    Value: new (value: number) => { setValue: (v: number) => void };
+    loop: (animation: { start: () => void; stop: () => void }) => { start: () => void; stop: () => void };
+    timing: (value: Animated.Value, config: { toValue: number; duration?: number; useNativeDriver?: boolean }) => { start: () => void; stop: () => void };
+  };
+  export const useWindowDimensions: () => { width: number; height: number; fontScale: number; scale: number };
   export const KeyboardAvoidingView: (props: BasicNativeProps) => ReactElement;
   export const Platform: { OS: string };
   export const ActivityIndicator: (props: BasicNativeProps) => ReactElement;

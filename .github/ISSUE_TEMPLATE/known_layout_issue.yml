@@ -1,0 +1,59 @@
+name: Known layout/import issue
+about: Track support-reproducible layout solver or import problems
+labels: [support, diagnostics, layout]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for issues reproduced from a non-sensitive TileKeeper diagnostics export. Do not paste raw inventory, saved layouts, goal text, seed values, device identifiers, or contact details.
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: Version shown in Settings > About or diagnostics export.
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: solver-version
+    attributes:
+      label: Solver version
+      placeholder: layout-solver-v0.3-backtracking
+    validations:
+      required: true
+  - type: input
+    id: catalog-version
+    attributes:
+      label: Catalog version
+      placeholder: 2026.06.support
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Include the command used to replay the anonymized diagnostics export and the sanitized replay output.
+      placeholder: npm run diagnostics:replay -- ./support/exports/tilekeeper-diagnostics-....json
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy-check
+    attributes:
+      label: Privacy check
+      options:
+        - label: I verified the issue contains no raw inventory, raw layouts, goal text, user seed values, device identifiers, account identifiers, network identifiers, or contact details.
+          required: true
+        - label: Any attached diagnostics export is the TileKeeper anonymized fixture export only.
+          required: true
